@@ -1,0 +1,17 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Character Controllers\Sources\Scripts\CharacterMotor.js">
+    <Files>
+      <File FileName="Assets\TK2DROOT\tk2d\Code\Sprites\tk2dSpriteCollection.cs" Line="533" Column="1" />
+      <File FileName="Assets\TK2DROOT\tk2d\Code\Camera\tk2dCamera.cs" Line="223" Column="82" />
+      <File FileName="Assets\RecessRoot\Avatar\Fitz.cs" Line="198" Column="17" />
+      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\FitzDetectBox.cs" Line="4" Column="33" />
+      <File FileName="Assets\Standard Assets\Character Controllers\Sources\Scripts\PlatformInputController.js" Line="7" Column="1" />
+      <File FileName="Assets\Standard Assets\Character Controllers\Sources\Scripts\CharacterMotor.js" Line="582" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
