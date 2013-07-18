@@ -1,258 +1,247 @@
- using UnityEngine;
+using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 
-public class Fitz : MonoBehaviour {
+public class Fitz : Platformer {
+
+	public MovementVariables mondo = new MovementVariables(1.25f, 2.25f, 3f, 0.09375f, 0.0625f, 0.15625f, 0.3125f, 64f, 32f, 1.25f, 4.8125f, 4f, 0.1875f, 0.375f);
+	public MovementVariables currentMotor;
+	public float CurMaxSpeed{
+		get { return isSprinting? mondo.sSpeed : (controller.getRun? currentMotor.rSpeed : currentMotor.wSpeed); }
+	}
+	public float SkidDecel{
+		get { return controller.getRun? currentMotor.rSkidDecel : currentMotor.skidDecel; }
+	}
 	
-	private GameObject dummy;
+	public float CurGravity{
+		get { return controller.getJump? currentMotor.gravity : currentMotor.gravityPlus; }
+	}
 	
-	private BoxCollider leftWall;
-	private BoxCollider rightWall;
-	
-	private Transform t;
-	private Renderer r;
-	private CharacterMotor motor;
-	private PlatformInputController controller;
+	//mondo specific other-variables:
+	private bool isSprinting = false;
+	private int pMeter = 0;
 	
 	
-	private tk2dAnimatedSprite anim;
-	private tk2dSprite sprite;
-	private tk2dSpriteCollectionData sprCol;
+	//animation variables
 	
-	private string a_initWalk = "walk";
+	
+	private string a_walk = "walk";
 	private string a_idle = "idle";
 	private string a_fall = "fall";
 	private string a_jump = "jump";
+	private string a_sJump = "sprintJump";
 	private string a_land = "land";
 	private string a_dash = "dash";
 	private string a_wallGrab = "wallGrab";
 	private string a_wallJump = "wallJump";
-	
-	private class InitMoveValues {
-		public float groundAccel;
-		public float walkSpeed;
-		public float runSpeed;
-		public float gravity;
-		public float maxFallSpeed;
-		
-	}
-	
-	private InitMoveValues initMoveValues = new InitMoveValues();
-	
-	private int walkCounter = 0;
-	private int airCounter = 0;
-	
-	private bool onGround = false;
-	private bool canWallGrab = true;
-	private int wallGrabSpeed = 28;
-	private bool wallGrabbing = false;
-	private bool WallGrabbing{
-		get { return wallGrabbing; }
-		set { wallGrabbing = value;
-			//motor.movement.maxFallSpeed 
-		}
-	}
-	
-	private bool isDashing = false;
-	private int dashTimer = 0;
-	private int dashTiming = 30;
-	private int dashAccel = 5000;
-	private int dashSpeed = 250;
-	private float doubleTapTiming = 0.2f;
-	
-	
-	
-	//inputs
-	
-	private bool getRun;
-	private bool doubleTap = false;
-	private float lastAxisH = 0.0f;
-	private float lastPressedH = 0.0f;
-	
-	private float lastY = 0f;
-	
-	private BoxCollider[] wallGrabTargets;
+	private string a_skid = "skid";
 	
 	// Use this for initialization
 	void Start () {
-		dummy = GameObject.Find("Fitzwilliam/dummy");
-		r = dummy.renderer;
-		t = transform;
-		motor = GetComponent<CharacterMotor>();
-		controller = GetComponent<PlatformInputController>();
-		
-		anim = dummy.GetComponent<tk2dAnimatedSprite>();
-		sprite = dummy.GetComponent<tk2dSprite>();
-		sprCol = sprite.Collection;
-		
-		leftWall = GameObject.Find(name + "/LeftWallDetector").GetComponent<BoxCollider>();
-		rightWall = GameObject.Find(name + "/RightWallDetector").GetComponent<BoxCollider>();
-		
-		GameObject[] allWallGrabTargets = GameObject.FindGameObjectsWithTag("wallGrabTarget");		//getting all my wall grab targets!
-		List<BoxCollider> boxes = new List<BoxCollider>();
-		foreach (GameObject go in allWallGrabTargets){
-			boxes.Add (go.GetComponent<BoxCollider>());
-		}
-		wallGrabTargets = boxes.ToArray();
-		
-				//storing my initial movement values!
-		initMoveValues.gravity = motor.movement.gravity;
-		initMoveValues.groundAccel = motor.movement.maxGroundAcceleration;
-		initMoveValues.runSpeed = motor.movement.maxRunSpeed;
-		initMoveValues.walkSpeed = motor.movement.maxWalkSpeed;
-		initMoveValues.maxFallSpeed = motor.movement.maxFallSpeed;
-		
+		Setup();
+		Application.targetFrameRate = 60;
+		//TEMP
+		currentMotor = mondo;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		Vector3 direction = motor.GetDirection();
+		controller.GetInputs();
 		
-		if (direction.x < 0){						//make sure the sprite is facing in the right direction
-			anim.scale = new Vector3(1, 1, 1);
-		}
-		else if (direction.x > 0){
-			anim.scale = new Vector3(-1, 1, 1);
-		}
-		//end
+		CheckStates();
 		
-		//Inputs!
-		doubleTap = false;
-		getRun = Input.GetButtonDown("Run");
-		float axisH = Input.GetAxis("Horizontal");
-		if (axisH != 0 && lastAxisH == 0){
-			if (Time.time - lastPressedH <= doubleTapTiming){
-				doubleTap = true;
-				Debug.Log("last time = " + lastPressedH + ", now time =" + Time.time);
-				
-			}
-			lastPressedH = Time.time;
-		}
-		lastAxisH = axisH;
-					//Reset my checks!
+		MondoUpdate();
 		
-		if (!onGround)				//If I'm not on the ground I want to go to the 'inAir' tag
-			goto inAir;
-		
-		
-		if (direction.x != 0){						//animate the walk
-			if (walkCounter == 0 && !isDashing)
-				anim.Play(a_initWalk);
+		ApplyMovement();
+	}
 	
-			walkCounter ++;
-		}
-		else{
-			if (anim.CurrentClip.name != a_land && !isDashing){
-				anim.Play(a_idle);
+	private void MondoUpdate(){
+		
+		
+		if (pMeter >= 112 && grounded && ((velocity.x <= -mondo.rSpeed && controller.getL) || (velocity.x >= mondo.rSpeed && controller.getR))){ //check to see if I'm sprinting! (pMeter)
+			pMeter = 112;	//I need to be on the ground, and I have to be pressing forward in the direction I'm running
+			isSprinting = true;
+			if (!anim.IsPlaying(a_dash)){
+				anim.Play(a_dash);
+				velocity = new Vector2((velocity.x > 0? mondo.sSpeed : -mondo.sSpeed), velocity.y);
+				Debug.Log("fixing velocity");
 			}
-			
-			walkCounter = 0;
 		}
-		
-													//<^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^>
-													//<===============DASHING!===============>
-													//<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv>
-		if (doubleTap && !isDashing){		//init the dash
-			doubleTap = false;
-			isDashing = true;
-			anim.Play(a_dash);
-			motor.movement.maxGroundAcceleration = dashAccel;
-			motor.movement.maxWalkSpeed = dashSpeed;
-			motor.movement.maxRunSpeed = dashSpeed;
-			controller.directionLocked = true;
-		}
-		
-		if (isDashing){
-			motor.inputMoveDirection = new Vector3(-anim.scale.x, 0, 0);
-			dashTimer ++;
-			if (dashTimer >= dashTiming){
-				EndDash();
+		else if (grounded) {
+			isSprinting = false;
+			if(!anim.IsPlaying(a_walk) && velocity.x != 0){
+				anim.Play(a_walk);
 			}
 		}
 		
-		return;
-	inAir:
-		airCounter ++;
+		//end sprint
 		
-		if (lastY > t.position.y && anim.CurrentClip.name != a_fall && !wallGrabbing){
-			anim.Play(a_fall);
-		}
-		
-		lastY = t.position.y;
-		//check my wall detectors to see if I can wall grab
-		foreach (BoxCollider bc in wallGrabTargets){
-			if ((axisH > 0 && rightWall.bounds.Intersects(bc.bounds)) || (axisH < 0 && leftWall.bounds.Intersects(bc.bounds))){
-				canWallGrab = true;
-				break;
+		if (controller.getL && canMoveLeft){									//if I'm going left...
+			if (velocity.x > 0){
+			//	Debug.Log(velocity + "before skid");
+				velocity += new Vector2(-SkidDecel, 0);		
+			//	Debug.Log(velocity + "after skid");
+				if (!anim.IsPlaying(a_skid) && grounded){
+					anim.Play(a_skid);
+					isSprinting = false;
+				}
 			}
 			else{
-				canWallGrab = false;
+				velocity += new Vector2(-mondo.accel, 0);
+				if (!anim.IsPlaying(a_walk) && grounded && !isSprinting){
+					anim.Play(a_walk);
+				}
 			}
 		}
-		if (!canWallGrab){
-			motor.movement.maxFallSpeed = initMoveValues.maxFallSpeed;
-			wallGrabbing = false;
+		else if (controller.getR && canMoveRight) {							//if I'm going right... in this instance having getL and getR both be true should be impossible,
+			if (velocity.x < 0){																							//but getL takes priority nonetheless
+				Debug.Log(velocity + "before skid");
+				velocity += new Vector2(SkidDecel, 0);		
+				Debug.Log(velocity + "after skid");
+				if (!anim.IsPlaying(a_skid) && grounded){
+					anim.Play(a_skid);
+					isSprinting = false;
+				}
+			}
+			else{
+				velocity += new Vector2(mondo.accel, 0);
+				if (!anim.IsPlaying(a_walk) && grounded && !isSprinting){
+					anim.Play(a_walk);
+				}
+			}
 		}
-		return;
-	}
-	
-	void OnControllerColliderHit (ControllerColliderHit other){
-		if (other.collider.tag == "wallGrabTarget" && canWallGrab){
-			motor.movement.maxFallSpeed = wallGrabSpeed;
-			anim.Play(a_wallGrab);
-			wallGrabbing = true;
+		else if (!controller.getL && !controller.getR && grounded){		//if I'm not going either direction, apply friction (but not if I'm in air)
+			if (velocity.x > mondo.decel) {
+				velocity += new Vector2(-mondo.decel, 0);
+			}
+			else if (velocity.x < -mondo.decel) {
+				velocity += new Vector2(mondo.decel, 0);
+			}
+			
+			if (velocity.x <= mondo.decel && velocity.x >= -mondo.decel){
+				velocity = new Vector2(0, velocity.y);
+				anim.Play(a_idle);
+			}
 		}
-	}
-	
-	void OnFall () {
-		if (!wallGrabbing)
-			anim.Play(a_fall);
+		//end L/R inputs
 		
-		onGround = false;
-		Debug.Log("OnFall!");
-	}
-	
-	void OnLand () {
-		airCounter = 0;
-		onGround = true;
-		walkCounter = 0;
-		if (motor.GetDirection().x == 0){
-			anim.Play(a_land);
+		bool goingMax = false;		//Check if I'm at my max speed	
+		
+		if (velocity.x > CurMaxSpeed){							
+			velocity = new Vector2(CurMaxSpeed, velocity.y);
+			if (controller.getRun)
+				goingMax = true;
 		}
 		
-		motor.movement.maxGroundAcceleration = initMoveValues.groundAccel;
-		motor.movement.maxWalkSpeed = initMoveValues.walkSpeed;
-		motor.movement.maxRunSpeed = initMoveValues.walkSpeed;
-	}
-	
-	void OnJump () {
-		anim.Play(a_jump);
-		onGround = false;
-		lastY = t.position.y;
-		if (isDashing){
-			EndDash();
-			motor.movement.maxAirAcceleration = dashAccel;
-			motor.movement.maxWalkSpeed = dashSpeed;
-			motor.movement.maxRunSpeed = dashSpeed;
+		if (velocity.x < -CurMaxSpeed){	
+			velocity = new Vector2(-CurMaxSpeed, velocity.y);
+			if (controller.getRun)
+				goingMax = true;
 		}
-	}
-	
-	void EndDash () {
-		isDashing = false;
-		dashTimer = 0;
-		if ((Input.GetAxis("Horizontal") > 0.5f || Input.GetAxis("Horizontal") < -0.5f) && !Input.GetButton("Jump")){
-			anim.Play(a_initWalk);
+		
+		if (velocity.x == mondo.rSpeed || velocity.x == -mondo.rSpeed && pMeter < 112 && grounded){
+			pMeter += 2;
+		}	
+		else if (velocity.x < mondo.rSpeed && velocity.x > -mondo.rSpeed && pMeter > 0){
+			pMeter --;
 		}
-		motor.movement.maxGroundAcceleration = initMoveValues.groundAccel;
-		motor.movement.maxWalkSpeed = initMoveValues.walkSpeed;
-		motor.movement.maxRunSpeed = initMoveValues.walkSpeed;
-		controller.directionLocked = false;
+		
+		
+		if (!grounded){											//Apply gravity!
+			if (velocity.y > -mondo.fallSpeedMax)
+				velocity += new Vector2(0, -CurGravity);
+			else if (velocity.y < -mondo.fallSpeedMax)
+				velocity = new Vector2(velocity.x, -mondo.fallSpeedMax);
+		}
+		
+		if (velocity.x > 0){
+			sprite.scale = new Vector3(1, 1, 1);
+		}
+		
+		if (velocity.x < 0){
+			sprite.scale = new Vector3(-1, 1, 1);
+		}
+		
+		if (!grounded && controller.getL){
+			sprite.scale = new Vector3(-1, 1, 1);
+		}
+		
+		if (!grounded && controller.getR){
+			sprite.scale = new Vector3(1, 1, 1);
+		}
+		
+		if (startJump){		//jump initiated!
+			velocity = new Vector2(velocity.x, mondo.airSpeedInit);
+			float calculator = Mathf.Abs(velocity.x) - mondo.runJumpIncrement;		//add extra height based on jump. 
+			while(calculator > 0){
+				velocity += new Vector2(0, mondo.airSpeedExtra);
+				calculator -= mondo.runJumpIncrement;
+			}
+			Debug.Log("Starting jump: Am I sprinting? " + isSprinting);
+			if (!anim.IsPlaying(a_jump) && !anim.IsPlaying(a_sJump)){
+				anim.Play(isSprinting? a_sJump : a_jump);
+			}
+			
+			startJump = false;
+		}
+		
+		if (velocity.y < 0){
+			falling = true;
+			jumping = false;
+			if (!anim.IsPlaying(a_fall) && !isSprinting){
+				anim.Play(a_fall);
+			}
+		}
 		
 	}
 	
-	void OnExternalVelocity () {
+	private void KirbyUpdate(){
 		
+		if (controller.getL && canMoveLeft){									//if I'm going left...
+			if (velocity.x > 0){
+			//	Debug.Log(velocity + "before skid");
+				velocity += new Vector2(-SkidDecel, 0);		
+			//	Debug.Log(velocity + "after skid");
+				if (!anim.IsPlaying(a_skid) && grounded){
+					anim.Play(a_skid);
+					isSprinting = false;
+				}
+			}
+			else{
+				velocity += new Vector2(-mondo.accel, 0);
+				if (!anim.IsPlaying(a_walk) && grounded && !isSprinting){
+					anim.Play(a_walk);
+				}
+			}
+		}
+		else if (controller.getR && canMoveRight) {							//if I'm going right... in this instance having getL and getR both be true should be impossible,
+			if (velocity.x < 0){																							//but getL takes priority nonetheless
+				Debug.Log(velocity + "before skid");
+				velocity += new Vector2(SkidDecel, 0);		
+				Debug.Log(velocity + "after skid");
+				if (!anim.IsPlaying(a_skid) && grounded){
+					anim.Play(a_skid);
+					isSprinting = false;
+				}
+			}
+			else{
+				velocity += new Vector2(mondo.accel, 0);
+				if (!anim.IsPlaying(a_walk) && grounded && !isSprinting){
+					anim.Play(a_walk);
+				}
+			}
+		}
+		else if (!controller.getL && !controller.getR && grounded){		//if I'm not going either direction, apply friction (but not if I'm in air)
+			if (velocity.x > mondo.decel) {
+				velocity += new Vector2(-mondo.decel, 0);
+			}
+			else if (velocity.x < -mondo.decel) {
+				velocity += new Vector2(mondo.decel, 0);
+			}
+			
+			if (velocity.x <= mondo.decel && velocity.x >= -mondo.decel){
+				velocity = new Vector2(0, velocity.y);
+				anim.Play(a_idle);
+			}
+		}
 	}
 }

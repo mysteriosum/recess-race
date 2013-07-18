@@ -77,11 +77,11 @@ public class GizmoDad : MonoBehaviour {
 			break;
 			
 		case Couleur.yellow:
-			myColor = new Color(255, 0, 255, alpha);
+			myColor = new Color(255, 255, 0, alpha);
 			break;
 			
 		case Couleur.magenta:
-			myColor = new Color(255, 255, 0, alpha);
+			myColor = new Color(255, 0, 255, alpha);
 			break;
 			
 		case Couleur.cyan:
