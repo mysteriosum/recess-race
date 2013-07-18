@@ -193,35 +193,59 @@ namespace tk2dEditor.SpriteCollectionEditor
 				bool flipIsland = false;
 				bool disconnectIsland = false;
 				
+				Event ev = Event.current;
+
 				for (int i = 0; i < island.points.Length; ++i)
 				{
 					Vector3 cp = island.points[i];
-					KeyCode keyCode = KeyCode.None;
-					int id = 16433 + i;
-					cp = (tk2dGuiUtility.PositionHandle(id, cp * editorDisplayScale + origin3, 4.0f, handleInactiveColor, handleActiveColor, out keyCode) - origin) / editorDisplayScale;
+					int id = "tk2dPolyEditor".GetHashCode() + islandId * 10000 + i;
+					cp = (tk2dGuiUtility.PositionHandle(id, cp * editorDisplayScale + origin3, 4.0f, handleInactiveColor, handleActiveColor, true) - origin) / editorDisplayScale;
 					
-					if (keyCode == KeyCode.Backspace || keyCode == KeyCode.Delete)
-					{
-						deletedIndex = i;
+					if (GUIUtility.keyboardControl == id && ev.type == EventType.KeyDown) {
+
+						switch (ev.keyCode) {
+							case KeyCode.Backspace: 
+							case KeyCode.Delete: {
+								GUIUtility.keyboardControl = 0;
+								deletedIndex = i;
+								ev.Use();
+								break;
+							}
+
+							case KeyCode.X: {
+								GUIUtility.keyboardControl = 0;
+								deletedIsland = islandId;
+								ev.Use();
+								break;
+							}
+
+							case KeyCode.T: {
+								if (!forceClosed) {
+									GUIUtility.keyboardControl = 0;
+									disconnectIsland = true;
+									ev.Use();
+									}
+								break;
+							}
+
+							case KeyCode.F: {
+								flipIsland = true;
+								GUIUtility.keyboardControl = 0;
+								ev.Use();
+								break;
+							}
+
+							case KeyCode.Escape: {
+								GUIUtility.hotControl = 0;
+								GUIUtility.keyboardControl = 0;
+								ev.Use();
+								break;
+							}
+						}
 					}
 					
-					if (keyCode == KeyCode.X)
-					{
-						deletedIsland = islandId;
-					}
-					
-					if (keyCode == KeyCode.T && !forceClosed)
-					{
-						disconnectIsland = true;
-					}
-					
-					if (keyCode == KeyCode.F)
-					{
-						flipIsland = true;
-					}
-					
-					cp.x = Mathf.Round(cp.x);
-					cp.y = Mathf.Round(cp.y);
+					cp.x = Mathf.Round(cp.x * 2) / 2.0f; // allow placing point at half texel
+					cp.y = Mathf.Round(cp.y * 2) / 2.0f;
 					
 					// constrain
 					cp.x = Mathf.Clamp(cp.x, 0.0f, tex.width);
@@ -388,6 +412,7 @@ namespace tk2dEditor.SpriteCollectionEditor
 				if (mode == Mode.Collider && !allowCollider) mode = Mode.Texture;
 				
 				Rect rect = GUILayoutUtility.GetRect(128.0f, 128.0f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+				tk2dGrid.Draw(rect);
 				
 				// middle mouse drag and scroll zoom
 				if (rect.Contains(Event.current.mousePosition))
@@ -458,12 +483,12 @@ namespace tk2dEditor.SpriteCollectionEditor
 			}
 				
 			// Draw toolbar
-			DrawToolbar(param);
+			DrawToolbar(param, texture);
 			
 			GUILayout.EndVertical();
 		}
 		
-		public void DrawToolbar(tk2dSpriteCollectionDefinition param)
+		public void DrawToolbar(tk2dSpriteCollectionDefinition param, Texture2D texture)
 		{
 			bool allowAnchor = param.anchor == tk2dSpriteCollectionDefinition.Anchor.Custom;
 			bool allowCollider = (param.colliderType == tk2dSpriteCollectionDefinition.ColliderType.Polygon ||
@@ -487,6 +512,9 @@ namespace tk2dEditor.SpriteCollectionEditor
 				(mode == Mode.Texture && param.customSpriteGeometry))
 			{
 				drawColliderNormals = GUILayout.Toggle(drawColliderNormals, new GUIContent("Show Normals", "Shift+N"), EditorStyles.toolbarButton);
+			}
+			if (mode == Mode.Texture && texture != null) {
+				GUILayout.Label(string.Format("W: {0} H: {1}", texture.width, texture.height));
 			}
 			GUILayout.EndHorizontal();			
 		}

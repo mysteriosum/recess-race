@@ -79,7 +79,6 @@ public class tk2dCamera : MonoBehaviour
 	tk2dCameraResolutionOverride currentResolutionOverride = null;
 
 	public tk2dCamera inheritSettings = null;
-	private Transform fitzwilliam;
 	
 	/// <summary>
 	/// Native resolution width of the camera. Override this in the inspector.
@@ -180,12 +179,10 @@ public class tk2dCamera : MonoBehaviour
 	/// The resolution to force the game window to when <see cref="forceResolutionInEditor"/> is enabled.
 	/// </summary>
 	public Vector2 forceResolution = new Vector2(960, 640);
-	private Transform t;
+	
 	// Use this for initialization
 	void Awake () 
 	{
-		fitzwilliam = GameObject.FindWithTag("fitzwilliam").transform;
-		t = GetComponent<Transform>();
 		mainCamera = GetComponent<Camera>();
 		if (mainCamera != null) {
 			UpdateCameraMatrix();
@@ -193,7 +190,6 @@ public class tk2dCamera : MonoBehaviour
 		
 		if (!viewportClippingEnabled) // the main camera can't display rect
 			inst = this;
-		
 	}
 	
 	void LateUpdate() 
@@ -202,11 +198,8 @@ public class tk2dCamera : MonoBehaviour
 	}
 
 	Rect _screenExtents;
-
 	Rect unitRect = new Rect(0, 0, 1, 1);
 	
-	public Vector2 dumbOffset = Vector2.zero;
-
 	// Trace back to the source, however far up the hierarchy that may be
 	tk2dCamera Settings {
 		get { 
@@ -219,9 +212,6 @@ public class tk2dCamera : MonoBehaviour
 	/// </summary>
 	public void UpdateCameraMatrix()
 	{
-		
-		t.position = new Vector3(0, fitzwilliam.position.y - nativeResolutionHeight / 2, -10);
-		
 		if (!this.viewportClippingEnabled)
 			inst = this;
 
@@ -387,7 +377,10 @@ public class tk2dCamera : MonoBehaviour
 			top = pixelHeight * maxHeight + offset.y +  rectOffsetY;
 		}
 		else {
-			mainCamera.rect = new Rect(0, 0, 1, 1);
+			Rect targetRect = new Rect(0, 0, 1, 1);
+			if (mainCamera.rect != targetRect) {
+				mainCamera.rect = targetRect;
+			}
 		}
 
 		_screenExtents.Set(left / scale.x, top / scale.y, (right - left) / scale.x, (bottom - top) / scale.y);
@@ -425,6 +418,8 @@ public class tk2dCamera : MonoBehaviour
 		m[2,0] = 0;  m[2,1] = 0;  m[2,2] = z;  m[2,3] = c;
 		m[3,0] = 0;  m[3,1] = 0;  m[3,2] = 0;  m[3,3] = 1;
 
-		mainCamera.projectionMatrix = m;			
+		if (mainCamera.projectionMatrix != m) {
+			mainCamera.projectionMatrix = m;
+		}
 	}
 }

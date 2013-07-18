@@ -253,7 +253,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 14}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -79, y: -47, z: 1}
+  m_LocalPosition: {x: -165, y: -92, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 35}
@@ -582,20 +582,21 @@ MonoBehaviour:
   m_Name: 
   collection: {fileID: 11400000, guid: 4864518b0693631458553f73aaa86021, type: 2}
   _color: {r: 0, g: .657381773, b: 1, a: 1}
-  _scale: {x: 3.41035485, y: 2.17263055, z: 1}
+  _scale: {x: 1, y: 1, z: 1}
   _spriteId: 3
   pixelPerfect: 0
   boxCollider: {fileID: 0}
   meshCollider: {fileID: 0}
   meshColliderPositions: []
   meshColliderMesh: {fileID: 0}
-  _dimensions: {x: 50, y: 50}
+  _dimensions: {x: 165, y: 89}
   _anchor: 0
-  legacyMode: 1
+  _borderOnly: 0
   borderTop: .200000003
   borderBottom: .200000003
   borderLeft: .177777782
   borderRight: .177777782
+  _createBoxCollider: 0
 --- !u!114 &56
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -858,11 +859,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 300, y: 120}
   _anchor: 4
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!114 &66152884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1391,11 +1393,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 560, y: 150}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &409047623
 GameObject:
   m_ObjectHideFlags: 0
@@ -1628,11 +1631,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 560, y: 150}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &567404636
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,11 +1956,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 560, y: 150}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &977200160
 GameObject:
   m_ObjectHideFlags: 0
@@ -2036,11 +2041,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 560, y: 150}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &1022680560
 GameObject:
   m_ObjectHideFlags: 0
@@ -2589,11 +2595,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 560, y: 150}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &1736640236
 GameObject:
   m_ObjectHideFlags: 0
@@ -2752,11 +2759,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 600, y: 600}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &1759958571
 GameObject:
   m_ObjectHideFlags: 0
@@ -3330,11 +3338,12 @@ MonoBehaviour:
   meshColliderMesh: {fileID: 0}
   _dimensions: {x: 600, y: 50}
   _anchor: 6
-  legacyMode: 0
+  _borderOnly: 0
   borderTop: .400000006
   borderBottom: .400000006
   borderLeft: .355555564
   borderRight: .355555564
+  _createBoxCollider: 0
 --- !u!1 &2071610275
 GameObject:
   m_ObjectHideFlags: 0

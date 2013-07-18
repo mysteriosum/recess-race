@@ -122,6 +122,7 @@ public class Platformer : MonoBehaviour {
 	protected float jumpImpulse = 0f;
 	protected float jumpStartY;
 	protected bool startJump = false;
+	protected bool justLanded = false;
 	
 	protected Vector2 velocity;
 	protected Vector2 lastVelocity;
@@ -130,7 +131,7 @@ public class Platformer : MonoBehaviour {
 	protected GameObject go;
 	protected Rigidbody rb;
 	protected BoxCollider bc;
-	protected tk2dAnimatedSprite anim;
+	protected tk2dSpriteAnimator anim;
 	protected tk2dSprite sprite;
 	
 	protected BoxCollider botDetector;
@@ -151,7 +152,7 @@ public class Platformer : MonoBehaviour {
 		rb = rigidbody;
 		go = gameObject;
 		sprite = GetComponentInChildren<tk2dSprite>();
-		anim = GetComponentInChildren<tk2dAnimatedSprite>();
+		anim = GetComponentInChildren<tk2dSpriteAnimator>();
 		
 		bc = GetComponent<BoxCollider>();
 		groundColliders = GameObject.Find("collisions").GetComponentsInChildren<BoxCollider>();
@@ -174,8 +175,11 @@ public class Platformer : MonoBehaviour {
 		ApplyMovement();
 	}
 	
-	protected void MondoUpdate(){
-		
+	protected virtual void Cleanup(){
+		justLanded = false;
+		startJump = false;
+		controller.doubleTap = false;
+		controller.aboutFace = false;
 	}
 	
 	
@@ -261,6 +265,7 @@ public class Platformer : MonoBehaviour {
 					grounded = true;
 					jumping = false;
 					falling = false;
+					justLanded = true;
 					velocity = new Vector2(velocity.x, 0);
 					t.position = new Vector3(t.position.x, botCollider.bounds.center.y + botCollider.size.y / 2 + bc.size.y / 2, 0);
 				}
@@ -307,6 +312,23 @@ public class Platformer : MonoBehaviour {
 		else{
 			canMoveLeft = true;
 		}
+		
+		if (velocity.x > 0){						//sprite directions. Check what direction I'm facing and flip sprite accordingly
+			sprite.scale = new Vector3(1, 1, 1);
+		}
+		
+		if (velocity.x < 0){
+			sprite.scale = new Vector3(-1, 1, 1);
+		}
+		
+		if (!grounded && controller.getL){
+			sprite.scale = new Vector3(-1, 1, 1);
+		}
+		
+		if (!grounded && controller.getR){
+			sprite.scale = new Vector3(1, 1, 1);
+		}
+		
 		
 		
 		if (grounded && controller.getJumpDown){			//initiate the JUMP action!
