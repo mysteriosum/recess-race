@@ -20,9 +20,6 @@ public class Platformer : MonoBehaviour {
 		public bool getRUp;
 		public bool getRDown;
 		
-		public float hAxisLast = 0.0f;
-		public float hAxisLastTime = 0.0f;
-		
 		public bool getD;
 		public bool getDDown;
 		public bool getDUp;
@@ -36,6 +33,17 @@ public class Platformer : MonoBehaviour {
 	
 		public bool locked;
 		
+		private float hAxisLast = 0.0f;
+		private float getLLastTime = 0f;
+		private float getRLastTime = 0f;
+		private float doubleTapTime = 0.2f;
+		
+		private Platformer parent;
+		
+		public Controller (Platformer parent){
+			this.parent = parent;
+		}
+		
 		public void GetInputs(){
 			if (locked) return;
 			
@@ -43,9 +51,21 @@ public class Platformer : MonoBehaviour {
 			getRunDown = Input.GetButtonDown("Run");
 			getRunUp = Input.GetButtonUp("Run");
 			
+			if (getRunDown && parent.RunDown != null)
+				parent.RunDown();
+			
+			if (getRunUp && parent.RunUp != null)
+				parent.RunUp();
+			
 			getJump = Input.GetButton("Jump");
 			getJumpDown = Input.GetButtonDown("Jump");
 			getJumpUp = Input.GetButtonUp("Jump");
+			
+			if (getJumpDown && parent.JumpDown != null)
+				parent.JumpDown();
+			
+			if (getJumpUp && parent.JumpUp != null)
+				parent.JumpUp();
 			
 			float hAxis = Input.GetAxis("Horizontal");
 			
@@ -58,13 +78,31 @@ public class Platformer : MonoBehaviour {
 			getLUp = hAxisLast < -0.3f && !getL;
 			getRUp = hAxisLast > 0.3f && !getR;
 			
+			if (getLDown){						//check for doubleTap
+				if (Time.time - getLLastTime < doubleTapTime){
+					doubleTap = true;
+					if (parent.DoubleTap != null)
+						parent.DoubleTap();
+				}
+				getLLastTime = Time.time;
+			}
+			
+			if (getRDown){
+				if (Time.time - getRLastTime < doubleTapTime){
+					doubleTap = true;
+					if (parent.DoubleTap != null)
+						parent.DoubleTap();
+				}
+				getRLastTime = Time.time;
+			}
+			
+			
 			hAxisLast = hAxis;
-			hAxisLastTime = Time.time;
 		}
 		
 	}
 	
-	protected Controller controller = new Controller();
+	protected Controller controller;
 	
 	
 	//[System.SerializableAttribute]
@@ -74,36 +112,36 @@ public class Platformer : MonoBehaviour {
 		public float sSpeed;
 		public float accel;
 		public float decel;
-		public float skidDecel;
-		public float rSkidDecel;
+		public float decelA;
+		public float decelB;
 		
 		public float jHeight;
 		public float jExtraHeight;
 		public float airSpeedInit;
 		public float airSpeedExtra = 0.15625f;
 		public float runJumpIncrement = 0.5f;
-		public float airAccel;
 		public float fallSpeedMax;
 		public float gravity;
-		public float gravityPlus;
+		public float gravityA;
 		
-		public MovementVariables(float wSpeed, float rSpeed, float sSpeed, float accel, float decel, float skidDecel, float rSkidDecel, float jHeight, float jExtraHeight, 
-			float airSpeedH, float airSpeedInit, float fallSpeedMax, float gravity, float gravityPlus){
+		
+		public MovementVariables(float wSpeed, float rSpeed, float sSpeed, float accel, float decel, float decelA, float decelB, float jHeight, float jExtraHeight, 
+			float airSpeedH, float airSpeedInit, float fallSpeedMax, float gravity, float gravityA){
 			this.wSpeed = wSpeed;
 			this.rSpeed = rSpeed;
 			this.sSpeed = sSpeed;
 			this.accel = accel;
 			this.decel = decel;
-			this.skidDecel = skidDecel;
-			this.rSkidDecel = rSkidDecel;
+			this.decelA = decelA;
+			this.decelB = decelB;
 			this.jHeight = jHeight;
 			this.jExtraHeight = jExtraHeight;
 			this.airSpeedInit = airSpeedInit;
-			this.airAccel = airAccel;
 			this.fallSpeedMax = fallSpeedMax;
 			this.gravity = gravity;
-			this.gravityPlus = gravityPlus;
+			this.gravityA = gravityA;
 		}
+		
 	}
 	
 	public MovementVariables jumpman;
@@ -127,6 +165,11 @@ public class Platformer : MonoBehaviour {
 	protected Vector2 velocity;
 	protected Vector2 lastVelocity;
 	
+	public Vector2 Velocity {
+		get { return velocity; }
+		set { velocity = value; }
+	}
+	
 	protected Transform t;
 	protected GameObject go;
 	protected Rigidbody rb;
@@ -139,8 +182,38 @@ public class Platformer : MonoBehaviour {
 	protected BoxCollider rightDetector;
 	protected BoxCollider topDetector;
 	
+	protected BoxCollider botCollider = null;
+	protected BoxCollider leftCollider = null;
+	protected BoxCollider rightCollider = null;
+	protected BoxCollider topCollider = null;
+	
+	protected FitzDetectBox botDScript;
+	protected FitzDetectBox leftDScript;
+	protected FitzDetectBox rightDScript;
+	protected FitzDetectBox topDScript;
+	
 	protected BoxCollider[] groundColliders;
 	
+	protected GameObject dummy;
+	
+	
+	//LOTS OF DELEGATES! YEAAAAAAAAAAAAAAAAAAAAAAAH
+	public delegate void InputDelegate();
+	
+	public InputDelegate StartJump;
+	public InputDelegate RunDown;
+	public InputDelegate RunUp;
+	public InputDelegate JumpUp;
+	public InputDelegate JumpDown;
+	public InputDelegate DoubleTap;
+	public InputDelegate AboutFace;
+	//public InputDelegate OnLand;
+	
+	
+	//events, wtf (IKR!)
+	
+	public delegate void OnLandEvent();
+	public event OnLandEvent OnLand;
 	
 	// Use this for initialization
 	void Start () {
@@ -148,6 +221,8 @@ public class Platformer : MonoBehaviour {
 	}
 	
 	protected virtual void Setup(){
+		controller = new Controller(this);
+		
 		t = transform;
 		rb = rigidbody;
 		go = gameObject;
@@ -162,15 +237,43 @@ public class Platformer : MonoBehaviour {
 		rightDetector = GameObject.Find(name + "/rightDetector").GetComponent<BoxCollider>();
 		topDetector = GameObject.Find(name + "/topDetector").GetComponent<BoxCollider>();
 		
+		botDScript = botDetector.GetComponent<FitzDetectBox>();
+		leftDScript = leftDetector.GetComponent<FitzDetectBox>();
+		rightDScript = rightDetector.GetComponent<FitzDetectBox>();
+		topDScript = topDetector.GetComponent<FitzDetectBox>();
+		
+		dummy = GameObject.Find(name + "/dummy");
+		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+		FitDetectors();
 	}
 	
+	protected void FitDetectors(){
+		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+		
+		//new sizes: 						x										y													z
+		botDetector.size = 		new Vector3	(bc.size.x - 1, 						Mathf.Abs(Mathf.Min(velocity.y, 0)), 				botDetector.size.z);
+		leftDetector.size =	 	new Vector3	(Mathf.Abs(Mathf.Min(velocity.x, 0)), 	bc.size.y - Mathf.Max(Mathf.Abs(velocity.y) *2, 2),	leftDetector.size.z);
+		rightDetector.size = 	new Vector3	(Mathf.Max(velocity.x, 0), 				bc.size.y - Mathf.Max(Mathf.Abs(velocity.y) *2, 2),	rightDetector.size.z);
+		topDetector.size = 		new Vector3	(bc.size.x - 1, 						Mathf.Max(velocity.y, 0), 							topDetector.size.z);
+		
+		//new positions: 										x											y											z = 0
+		botDetector.transform.localPosition = 		new Vector3(0, 											-bc.size.y / 2 - botDetector.size.y / 2, 	0);
+		leftDetector.transform.localPosition = 		new Vector3(-bc.size.x / 2 - leftDetector.size.x / 2, 	0, 											0);
+		rightDetector.transform.localPosition = 	new Vector3(bc.size.x / 2 + rightDetector.size.x / 2, 	0, 											0);
+		topDetector.transform.localPosition = 		new Vector3(0, 											bc.size.y / 2 + topDetector.size.y / 2, 	0);
+	}
+	protected void FitDetectorsOnComplete(tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
+		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+		FitDetectors();
+	}
 	// Update is called once per frame
 	void Update () {
+		
 		controller.GetInputs();
 		
 		CheckStates();
 		
-		//JumpmanUpdate();
+		FitDetectors();
 		
 		ApplyMovement();
 	}
@@ -182,6 +285,95 @@ public class Platformer : MonoBehaviour {
 		controller.aboutFace = false;
 	}
 	
+	public virtual void HitTop(BoxCollider topCollider){
+		if (jumping && !rightDScript.KnowsOf(topCollider) && !leftDScript.KnowsOf(topCollider)){
+			
+			falling = true;
+			jumping = false;
+			headBump = true;
+			velocity = new Vector2(velocity.x, 0);
+		}
+	}
+	
+	public virtual void HitBottom(BoxCollider botCollider){
+		if (!grounded && velocity.y <= 0){
+			grounded = true;
+			jumping = false;
+			falling = false;
+			justLanded = true;
+			velocity = new Vector2(velocity.x, 0);
+			t.position = new Vector3(t.position.x, botCollider.bounds.center.y + botCollider.size.y / 2 + bc.size.y / 2, 0);
+			OnLand();
+		}
+	}
+	
+	public virtual void HitRight(BoxCollider rightCollider){
+		if (botDScript.KnowsOf(rightCollider) || topDScript.KnowsOf(rightCollider)){
+			Debug.Log("I know this one already, on the top or bottom thing or whatever");
+			return;
+		}
+		canMoveRight = false;
+		velocity = new Vector2(0, velocity.y);				//reset velocity and set myself to the correct position if I'm up against a wall
+		t.position = new Vector3(rightCollider.collider.bounds.center.x - rightCollider.collider.bounds.size.x / 2 - bc.bounds.size.x / 2, t.position.y, t.position.z);
+	}
+	
+	public virtual void HitLeft(BoxCollider leftCollider){
+		if (botDScript.KnowsOf(leftCollider) || topDScript.KnowsOf(leftCollider)){
+			Debug.Log("I know this one already, on the top or bottom thing or whatever");
+			return;
+		}
+		canMoveLeft = false;
+		velocity = new Vector2(0, velocity.y);				//reset velocity and set myself to the correct position if I'm up against a wall
+		t.position = new Vector3(leftCollider.collider.bounds.center.x + leftCollider.collider.bounds.size.x / 2 + bc.bounds.size.x / 2, t.position.y, t.position.z);
+	}
+	
+	public virtual void NothingBottom(){
+		grounded = false;
+	}
+	
+	public virtual void NothingLeft(){
+		canMoveLeft = true;
+	}
+	
+	public virtual void NothingRight(){
+		canMoveRight = true;
+	}
+	
+	public virtual void NothingTop(){
+		
+	}
+	
+	public virtual void DetectorExit(BoxCollider detector, BoxCollider colExiting){
+		if (detector == botDetector){
+			NothingBottom();
+		}
+		else if (detector == leftDetector){
+			NothingLeft();
+		}
+		else if (detector == rightDetector){
+			NothingRight();
+		}
+		else if (detector == topDetector){
+			NothingTop();
+		}
+	}
+	
+	public virtual void DetectorEnter (BoxCollider detector, BoxCollider colEntering){
+		if (colEntering.gameObject.layer == 31 || colEntering.gameObject.layer == 30 || colEntering.gameObject.layer == 29){
+			if (detector == rightDetector){
+				HitRight(colEntering);
+			}
+			else if (detector == leftDetector){
+				HitLeft(colEntering);
+			}
+			else if (detector == botDetector){
+				HitBottom(colEntering);
+			}
+			else if (detector == topDetector){
+				HitTop(colEntering);
+			}
+		}
+	}
 	
 	protected void JumpmanUpdate(){
 		
@@ -205,7 +397,6 @@ public class Platformer : MonoBehaviour {
 		
 		if (falling){
 			velocity = new Vector2(velocity.x, Mathf.Max(-jumpman.fallSpeedMax, lastVelocity.y - jumpman.gravity));
-			Debug.Log(velocity);
 		}
 		
 		if (headBump){
@@ -216,109 +407,14 @@ public class Platformer : MonoBehaviour {
 	
 	protected void CheckStates(){
 	
-		
-		BoxCollider botCollider = null;
-		BoxCollider leftCollider = null;
-		BoxCollider rightCollider = null;
-		BoxCollider topCollider = null;
-		
-		foreach (BoxCollider box in groundColliders){			//Check each of my colliders to see if I have something in them
-			if (botDetector.bounds.Intersects(box.bounds)){
-				if (botCollider == null){
-					botCollider = box;
-				}
-				else if (bc.bounds.Intersects(box.bounds)){
-						botCollider = box;
-				}
-			}
-			if (leftDetector.bounds.Intersects(box.bounds)){
-				if (leftCollider == null){
-					leftCollider = box;
-				}
-				else if (bc.bounds.Intersects(box.bounds)){
-						leftCollider = box;
-				}
-			}
-			if (rightDetector.bounds.Intersects(box.bounds)){
-				if (rightCollider == null){
-					rightCollider = box;
-				}
-				else if (bc.bounds.Intersects(box.bounds)){
-						rightCollider = box;
-				}
-			}
-			if (topDetector.bounds.Intersects(box.bounds)){
-				if (topCollider == null){
-					topCollider = box;
-				}
-				else if (bc.bounds.Intersects(box.bounds)){
-						topCollider = box;
-				}
-			}
-			
-		}
-		
-		if (botCollider != null){
-			if (bc.bounds.Intersects(botCollider.bounds)){		
-													//Check if I should be grounded
-				if (!grounded && velocity.y <= 0){
-					grounded = true;
-					jumping = false;
-					falling = false;
-					justLanded = true;
-					velocity = new Vector2(velocity.x, 0);
-					t.position = new Vector3(t.position.x, botCollider.bounds.center.y + botCollider.size.y / 2 + bc.size.y / 2, 0);
-				}
-			}
-			else {
-				grounded = false;
-				falling = true;
-			}
-			
-		}
-		else{
-			if (!jumping){				//I didn't jump, so I'm falling
-				falling = true;
-				grounded = false;
-			}
-		}
-		//no more checking bottom
-		
-		
-		if (rightCollider != null){
-			if (bc.bounds.Intersects(rightCollider.bounds)){
-				canMoveRight = false;
-				velocity = new Vector2(0, velocity.y);				//reset velocity and set myself to the correct position if I'm up against a wall
-				t.position = new Vector3(rightCollider.collider.bounds.center.x - rightCollider.collider.bounds.size.x / 2 - bc.bounds.size.x / 2, t.position.y, t.position.z);
-			}
-			else{
-				canMoveRight = true;
-			}
-		}
-		else{
-			canMoveRight = true;
-		}
-		
-		if (leftCollider != null){
-			if (bc.bounds.Intersects(leftCollider.bounds)){
-				canMoveLeft = false;
-				velocity = new Vector2(0, velocity.y);				//reset velocity and set myself to the correct position if I'm up against a wall
-				t.position = new Vector3(leftCollider.collider.bounds.center.x + leftCollider.collider.bounds.size.x / 2 + bc.bounds.size.x / 2, t.position.y, t.position.z);
-			}
-			else{
-				canMoveLeft = true;
-			}
-		}
-		else{
-			canMoveLeft = true;
-		}
-		
 		if (velocity.x > 0){						//sprite directions. Check what direction I'm facing and flip sprite accordingly
 			sprite.scale = new Vector3(1, 1, 1);
+			canMoveLeft = true;
 		}
 		
 		if (velocity.x < 0){
 			sprite.scale = new Vector3(-1, 1, 1);
+			canMoveRight = true;
 		}
 		
 		if (!grounded && controller.getL){
@@ -331,33 +427,38 @@ public class Platformer : MonoBehaviour {
 		
 		
 		
-		if (grounded && controller.getJumpDown){			//initiate the JUMP action!
-			jumping = true;
-			grounded = false;
-			jumpStartY = t.position.y;
-			startJump = true;
-		}
 		
-		if (jumping){
-			jumpCounter ++;
-			if (topCollider != null){
-				if (bc.bounds.Intersects(topCollider.bounds) && !rightDetector.bounds.Intersects(topCollider.bounds) && !leftDetector.bounds.Intersects(topCollider.bounds)){
-					falling = true;
-					jumping = false;
-					headBump = true;
-					velocity = new Vector2(velocity.x, 0);
-					Debug.Log("Hahah yeah right");
-				}
-			}
-		}
+	}
+	
+	protected void ApplyMovement(){
+		t.Translate(velocity);
+		lastVelocity = new Vector2(velocity.x, velocity.y);
+		
+		t.rotation = Quaternion.identity;
 	}
 	
 	
-	protected void ApplyMovement(){
+	protected void GetOutOfWall(BoxCollider detector, BoxCollider other){
+		int starter = 1;
+		int counter = 1;
+		int modifier = (int) bc.bounds.size.x;
+		if (Fitz.fitz.transform.position.x < t.position.x)
+			starter = -1;
+		int changeat = starter;
+		while (other.bounds.Contains(t.position)){
+			t.position += new Vector3(starter * counter * modifier, (counter - 1) * modifier, 0);
+			
+			starter *= -1;
+			if (starter == changeat)
+				counter ++;
+			
+			if (counter > 10){
+				Debug.Log("It's gotten out of hand");
+				break;
+			}
+		}
 		
+		//now check if I'm in the avatar or something
 		
-		t.Translate(velocity);
-		lastVelocity = new Vector2(velocity.x, velocity.y);
-		//velocity = Vector2.zero;
 	}
 }

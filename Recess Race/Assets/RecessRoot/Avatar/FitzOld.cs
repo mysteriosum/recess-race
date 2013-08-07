@@ -12,14 +12,11 @@ public class FitzOld : MonoBehaviour {
 	private BoxCollider rightWall;
 	
 	private Transform t;
-	private Renderer r;
 	private CharacterMotor motor;
 	private PlatformInputController controller;
 	
 	
 	private tk2dAnimatedSprite anim;
-	private tk2dSprite sprite;
-	private tk2dSpriteCollectionData sprCol;
 	
 	private string a_initWalk = "walk";
 	private string a_idle = "idle";
@@ -28,7 +25,6 @@ public class FitzOld : MonoBehaviour {
 	private string a_land = "land";
 	private string a_dash = "dash";
 	private string a_wallGrab = "wallGrab";
-	private string a_wallJump = "wallJump";
 	
 	private class InitMoveValues {
 		public float groundAccel;
@@ -66,7 +62,6 @@ public class FitzOld : MonoBehaviour {
 	
 	//inputs
 	
-	private bool getRun;
 	private bool doubleTap = false;
 	private float lastAxisH = 0.0f;
 	private float lastPressedH = 0.0f;
@@ -78,14 +73,11 @@ public class FitzOld : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		dummy = GameObject.Find("Fitzwilliam/dummy");
-		r = dummy.renderer;
 		t = transform;
 		motor = GetComponent<CharacterMotor>();
 		controller = GetComponent<PlatformInputController>();
 		
 		anim = dummy.GetComponent<tk2dAnimatedSprite>();
-		sprite = dummy.GetComponent<tk2dSprite>();
-		sprCol = sprite.Collection;
 		
 		leftWall = GameObject.Find(name + "/LeftWallDetector").GetComponent<BoxCollider>();
 		rightWall = GameObject.Find(name + "/RightWallDetector").GetComponent<BoxCollider>();
@@ -120,7 +112,7 @@ public class FitzOld : MonoBehaviour {
 		
 		//Inputs!
 		doubleTap = false;
-		getRun = Input.GetButtonDown("Run");
+		
 		float axisH = Input.GetAxis("Horizontal");
 		if (axisH != 0 && lastAxisH == 0){
 			if (Time.time - lastPressedH <= doubleTapTiming){
