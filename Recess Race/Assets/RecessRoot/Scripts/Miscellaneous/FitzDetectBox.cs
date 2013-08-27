@@ -20,6 +20,7 @@ public class FitzDetectBox : GizmoDad {
 		}
 		
 		bc = GetComponent<BoxCollider>();
+		bc.isTrigger = true;
 	}
 	
 	// Update is called once per frame
@@ -55,21 +56,18 @@ public class FitzDetectBox : GizmoDad {
 	}
 	
 	void OnTriggerEnter (Collider other){
+		if (!pScript) return;
 		BoxCollider otherBC = other.GetComponent<BoxCollider>();
 		if (otherBC != null){
-			if (colList.Count == 0){
+			
+			if (colList.Count == 0 || other.gameObject.layer == LayerMask.NameToLayer("danger") || other.tag == "checkpoint"){
 				pScript.DetectorEnter(bc, otherBC);
-			}
-			else if ((name == "rightDetector" || name == "leftDetector") && (other.gameObject.layer == 31 || other.gameObject.layer == 30 || other.gameObject.layer == 29)){
-				Debug.Log("I'm not colliding because I already had something in my list. Here's who: " + colList[0].GetInstanceID() + " at " + colList[0].transform.position);
-				Debug.Log("My name is " + name + ", the first collider was " + colList[0].GetInstanceID() + " and the current collider is " + other.name + ", id = " + other.GetInstanceID());
 			}
 			
 			if ((other.gameObject.layer == 31 || other.gameObject.layer == 30 || other.gameObject.layer == 29) && !colList.Contains(otherBC)){
 				colList.Add(otherBC);
 			}
 		}
-		
 	}
 	
 	public bool KnowsOf(BoxCollider collision){

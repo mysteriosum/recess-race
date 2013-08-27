@@ -34,6 +34,7 @@ public class Platformer : MonoBehaviour {
 		public bool locked;
 		
 		private float hAxisLast = 0.0f;
+		private float vAxisLast = 0.0f;
 		private float getLLastTime = 0f;
 		private float getRLastTime = 0f;
 		private float doubleTapTime = 0.2f;
@@ -69,6 +70,10 @@ public class Platformer : MonoBehaviour {
 			
 			float hAxis = Input.GetAxis("Horizontal");
 			
+			if (hAxis != 0 && parent.Direction != null){
+				parent.Direction(hAxis);
+			}
+			
 			getL = hAxis < -0.3f;
 			getR = hAxis > 0.3f;
 			
@@ -77,6 +82,14 @@ public class Platformer : MonoBehaviour {
 			
 			getLUp = hAxisLast < -0.3f && !getL;
 			getRUp = hAxisLast > 0.3f && !getR;
+			
+			if ((getLUp || getRUp) && parent.DirectionUp != null && !getR && !getL){
+				parent.DirectionUp();
+			}
+			
+			if ((getLDown || getRDown) && parent.DirectionDown != null){
+				parent.DirectionDown();
+			}
 			
 			if (getLDown){						//check for doubleTap
 				if (Time.time - getLLastTime < doubleTapTime){
@@ -95,9 +108,27 @@ public class Platformer : MonoBehaviour {
 				}
 				getRLastTime = Time.time;
 			}
-			
-			
 			hAxisLast = hAxis;
+			
+			float vAxis = Input.GetAxis ("Vertical");
+			getD = vAxis < -0.3f;
+			getU = vAxis > 0.3f;
+			
+			getDDown = (vAxisLast < 0.3f && vAxisLast > -0.3f) && getD;
+			getUDown = (vAxisLast < 0.3f && vAxisLast > -0.3f) && getU;
+			
+			if (getDDown && parent.DownDown != null){
+				parent.DownDown();
+			}
+			
+			getDUp = vAxisLast < -0.3f && !getD;
+			getUUp = vAxisLast > 0.3f && !getU;
+			
+			if (getDUp && parent.DownUp != null){
+				parent.DownUp();
+			}
+			
+			vAxisLast = vAxis;
 		}
 		
 	}
@@ -192,21 +223,47 @@ public class Platformer : MonoBehaviour {
 	protected FitzDetectBox rightDScript;
 	protected FitzDetectBox topDScript;
 	
-	protected BoxCollider[] groundColliders;
-	
 	protected GameObject dummy;
+	
+	//layer values
+	public int FullCollision {
+		get { return 1 << LayerMask.NameToLayer("normalCollision"); }
+	}
+	
+	public int AnyCollisionMask {
+		get { return 1 << LayerMask.NameToLayer("normalCollision") | 1 << LayerMask.NameToLayer("softBottom") | 1 << LayerMask.NameToLayer("softTop"); }
+	}
+	
+	public int DocLayer {
+		get { return 1 << LayerMask.NameToLayer("danger"); }
+	}
+	
+	public int AvatarOrWall {
+		get { return 1 << LayerMask.NameToLayer("normalCollision") | 1 << LayerMask.NameToLayer("avatar"); }
+	}
+
 	
 	
 	//LOTS OF DELEGATES! YEAAAAAAAAAAAAAAAAAAAAAAAH
 	public delegate void InputDelegate();
+	public delegate void FloatyDelegate (float para);
 	
 	public InputDelegate StartJump;
+	public InputDelegate Run;
 	public InputDelegate RunDown;
 	public InputDelegate RunUp;
 	public InputDelegate JumpUp;
 	public InputDelegate JumpDown;
 	public InputDelegate DoubleTap;
 	public InputDelegate AboutFace;
+	public InputDelegate DownDown;
+	public InputDelegate DownUp;
+	public InputDelegate DirectionDown;
+	public FloatyDelegate Direction;
+	public InputDelegate DirectionUp;
+	public InputDelegate Fall;
+	public InputDelegate Gravity;
+	
 	//public InputDelegate OnLand;
 	
 	
@@ -230,7 +287,6 @@ public class Platformer : MonoBehaviour {
 		anim = GetComponentInChildren<tk2dSpriteAnimator>();
 		
 		bc = GetComponent<BoxCollider>();
-		groundColliders = GameObject.Find("collisions").GetComponentsInChildren<BoxCollider>();
 		
 		botDetector = GameObject.Find(name + "/downDetector").GetComponent<BoxCollider>();
 		leftDetector = GameObject.Find(name + "/leftDetector").GetComponent<BoxCollider>();
@@ -242,12 +298,17 @@ public class Platformer : MonoBehaviour {
 		rightDScript = rightDetector.GetComponent<FitzDetectBox>();
 		topDScript = topDetector.GetComponent<FitzDetectBox>();
 		
+		Debug.Log ("My right detector is " + rightDetector.gameObject.GetInstanceID());
+		
 		dummy = GameObject.Find(name + "/dummy");
 		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+		Debug.Log ("Fitting detectors for " + gameObject.GetInstanceID());
 		FitDetectors();
 	}
 	
 	protected void FitDetectors(){
+		
+		float groundy = t.position.y - bc.bounds.size.y/2;		//such a hack I can't even
 		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
 		
 		//new sizes: 						x										y													z
@@ -261,6 +322,8 @@ public class Platformer : MonoBehaviour {
 		leftDetector.transform.localPosition = 		new Vector3(-bc.size.x / 2 - leftDetector.size.x / 2, 	0, 											0);
 		rightDetector.transform.localPosition = 	new Vector3(bc.size.x / 2 + rightDetector.size.x / 2, 	0, 											0);
 		topDetector.transform.localPosition = 		new Vector3(0, 											bc.size.y / 2 + topDetector.size.y / 2, 	0);
+		
+		t.position = new Vector3(t.position.x, groundy + bc.bounds.size.y/2, t.position.z);
 	}
 	protected void FitDetectorsOnComplete(tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
 		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
@@ -408,21 +471,30 @@ public class Platformer : MonoBehaviour {
 	protected void CheckStates(){
 	
 		if (velocity.x > 0){						//sprite directions. Check what direction I'm facing and flip sprite accordingly
-			sprite.scale = new Vector3(1, 1, 1);
+			dummy.transform.localScale = new Vector3(1, 1, 1);
 			canMoveLeft = true;
 		}
 		
 		if (velocity.x < 0){
-			sprite.scale = new Vector3(-1, 1, 1);
+			dummy.transform.localScale = new Vector3(-1, 1, 1);
 			canMoveRight = true;
 		}
 		
+		if (velocity.y < 0 && Fall != null && !falling && !grounded){
+			Fall();
+			falling = true;
+		}
+		
 		if (!grounded && controller.getL){
-			sprite.scale = new Vector3(-1, 1, 1);
+			dummy.transform.localScale = new Vector3(-1, 1, 1);
 		}
 		
 		if (!grounded && controller.getR){
-			sprite.scale = new Vector3(1, 1, 1);
+			dummy.transform.localScale = new Vector3(1, 1, 1);
+		}
+		
+		if (!grounded && Gravity != null){
+			Gravity();
 		}
 		
 		

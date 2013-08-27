@@ -61,8 +61,8 @@ public class Doc : Platformer {
 				velocity = new Vector2(0, velocity.y);
 			}
 			else{
-				goingRight = sprite.scale.x > 0.9f;
-				velocity = new Vector2(movement.wSpeed * sprite.scale.x, velocity.y);
+				goingRight = dummy.transform.localScale.x > 0.9f;
+				velocity = new Vector2(movement.wSpeed * dummy.transform.localScale.x, velocity.y);
 				anim.Play(a_walk);
 			}
 		}
@@ -148,8 +148,9 @@ public class Doc : Platformer {
 		
 		collisionMask = 1 << LayerMask.NameToLayer("normalCollision") | 1 << LayerMask.NameToLayer("softBottom") | 1 << LayerMask.NameToLayer("softTop");
 		
-		goingRight = sprite.scale.x > 0.9f;
-		velocity = new Vector2(movement.wSpeed * sprite.scale.x, velocity.y);
+		goingRight = dummy.transform.localScale.x > 0.9f;
+		Debug.Log ("I'm " + gameObject.GetInstanceID());
+		velocity = new Vector2(movement.wSpeed * dummy.transform.localScale.x, velocity.y);
 		
 		blDetector = GameObject.Find(name + "/blDetector").GetComponent<BoxCollider>();
 		brDetector = GameObject.Find(name + "/brDetector").GetComponent<BoxCollider>();
@@ -185,7 +186,7 @@ public class Doc : Platformer {
 		//here's where I do my calculations for Doc, my medicine ball enemy! :D
 		
 		
-		if (rolling){
+		if (rolling && grounded){
 			if (velocity.x > movement.decel) {
 				velocity += new Vector2(-movement.decel, 0);
 			}
@@ -235,7 +236,7 @@ public class Doc : Platformer {
 		}/*
 		else if (anim.IsPlaying(a_roll)){
 			velocity = new Vector2(prevV.x * -1, prevV.y);
-			sprite.scale = new Vector3(sprite.scale.x * -1, 1, 1);
+			dummy.transform.localScale = new Vector3(dummy.transform.localScale.x * -1, 1, 1);
 		}*/
 		
 		//GetOutOfWall(rightDetector, rightCollider);
@@ -257,7 +258,7 @@ public class Doc : Platformer {
 		}/*
 		else if (anim.IsPlaying(a_roll)){
 			velocity = new Vector2(prevV.x * -1, prevV.y);
-			sprite.scale = new Vector3(sprite.scale.x * 1, 1, 1);
+			dummy.transform.localScale = new Vector3(dummy.transform.localScale.x * 1, 1, 1);
 		}
 		Debug.Log("Hit left");*/
 	}
@@ -301,7 +302,7 @@ public class Doc : Platformer {
 	}
 	
 	public void FlipSprite(tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip, int index) {
-		sprite.scale = new Vector3(sprite.scale.x * -1, 1, 1);
+		dummy.transform.localScale = new Vector3(dummy.transform.localScale.x * -1, 1, 1);
 		anim.AnimationEventTriggered = null;
 	}
 	
@@ -328,7 +329,7 @@ public class Doc : Platformer {
 	}
 	
 	public void BeginCharge (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
-		velocity = new Vector2(movement.rSpeed * sprite.scale.x, velocity.y);
+		velocity = new Vector2(movement.rSpeed * dummy.transform.localScale.x, velocity.y);
 		anim.Play(a_spin);
 		charging = true;
 	}

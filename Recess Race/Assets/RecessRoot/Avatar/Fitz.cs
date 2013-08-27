@@ -50,7 +50,7 @@ public class Fitz : Platformer {
 			0.03125f,			//air decel
 			1.3125f,  			//float speed
 			5.5f, 				//height of jump with Jump pressed
-			3.0f,  				//height of jump w/out Jump pressed
+			2.5f,  				//floating air speed init
 			1.4375f,  			//airSpeedH
 			4f,  				//airSpeedInit
 			4f,  				//fallSpeedMax
@@ -85,10 +85,10 @@ public class Fitz : Platformer {
 					return sprinting? currentMotor.sSpeed : (controller.getRun? currentMotor.rSpeed : currentMotor.wSpeed); 
 				}
 				else if (currentMotor == pinky){
-					return sprinting? (falling? pinky.rSpeed : (agape? pinky.rSpeed : pinky.sSpeed)) : (jumping? pinky.rSpeed : pinky.wSpeed);
+					return sprinting || charging? (falling && !charging? pinky.rSpeed : (agape? pinky.rSpeed : pinky.sSpeed)) : (jumping? pinky.rSpeed : pinky.wSpeed);
 				}
 				else if (currentMotor == boogerBoy){
-					return 0.0f;
+					return dashing? currentMotor.sSpeed : currentMotor.wSpeed;
 				}
 				else if (currentMotor == jumpman){
 					return jumpman.wSpeed;
@@ -102,6 +102,10 @@ public class Fitz : Platformer {
 	}
 	public float SkidDecel{
 		get { return controller.getRun? currentMotor.decelB : currentMotor.decelA; }
+	}
+	
+	public float PinkyDecel{
+		get { return crouching ? currentMotor.decelA : currentMotor.decel; }
 	}
 	
 	public float CurGravity{
@@ -143,6 +147,8 @@ public class Fitz : Platformer {
 	private Transform ballHolding;
 	private int ballOffset = 16;
 	
+	private bool crouching = false;
+	
 	
 	//pinky specific other-variables
 	
@@ -153,6 +159,7 @@ public class Fitz : Platformer {
 	private bool meteor = false;
 	private bool mouthFull = false;
 	private GameObject inMouth;
+	private bool swallowing = false;
 	private float busyTiming = 0.5f;
 	private float busyTimer;
 	private bool busy;
@@ -162,10 +169,52 @@ public class Fitz : Platformer {
 			busyTimer = busy? busyTiming : 0;
 		}
 	}
+	private bool isDoc = false;
+	private bool IsDoc{
+		get { return isDoc; }
+		set {
+			isDoc = value;
+			charging = false;
+			int scale = (int) anim.transform.localScale.x;
+			Destroy(dummy);
+			dummy = Instantiate(Resources.Load("pinkyDocDummy"), t.position - Vector3.forward, t.rotation) as GameObject;
+			anim = dummy.GetComponent<tk2dSpriteAnimator>();
+			sprite = dummy.GetComponent<tk2dSprite>();
+			sprite.transform.localScale = new Vector3(scale, 1, 1);
+			dummy.transform.parent = t;
+			FitDetectors();
+		}
+	}
+	private bool sliding = false;
+	private bool Sliding {
+		get { return sliding; }
+		set {
+			sliding = value;
+			if (value){
+				anim.Play (a_dash);
+				velocity = new Vector2(currentMotor.sSpeed * FacingRightMod, 0);
+			}
+			else{
+				Debug.Log ("Sliding? PFF");
+				if (!controller.getD){
+					PinkyDownUp();
+				}
+				else{
+					anim.Play (a_crouch);
+				}
+			}
+		}
+	}
+	private bool charging = false;
+	private Vector2 wallHitVelocity = new Vector2(1.35f, 4.0f);
 	
 	
 	public bool FacingRight { 
-		get { return sprite.scale.x > 0.9f; }
+		get { return sprite.transform.localScale.x > 0.9f; }
+	}
+	
+	public int FacingRightMod {
+		get { return FacingRight? 1 : -1; }
 	}
 	
 	//animation variables
@@ -188,6 +237,7 @@ public class Fitz : Platformer {
 	private string a_exhale = "exhale";
 	private string a_agape = "agape";
 	private string a_hurt = "hurt";
+	private string a_crouch = "crouch";
 	
 	//Pinky big anims
 	private string a_swallow = "swallow";
@@ -196,6 +246,15 @@ public class Fitz : Platformer {
 	private string a_jumpBig = "jumpBig";
 	private string a_hurtBig = "hurtBig";
 	private string a_idleBig = "idleBig";
+	
+	//pinky doc anims
+	private string a_curl = "curl";
+	private string a_charge = "charge";
+	private string a_uncurl = "uncurl";
+	
+	//booger boy anims
+	private string a_endDash = "endDash";
+		
 	
 	public static Fitz fitz;
 	
@@ -215,7 +274,7 @@ public class Fitz : Platformer {
 		Setup();
 		Application.targetFrameRate = 60;
 		//TEMP
-		ChangeToMondo();
+		ChangeToBoogerBoy();
 	}
 	
 	// Update is called once per frame
@@ -237,7 +296,7 @@ public class Fitz : Platformer {
 		else if (currentMotor == pinky){
 			PinkyUpdate();
 		}
-		else{
+		else if (currentMotor != boogerBoy){
 			JumpmanUpdate();
 			
 		}
@@ -250,6 +309,15 @@ public class Fitz : Platformer {
 			ChangeToMondo();
 		}
 		Cleanup();
+	}
+	
+	public override void NothingBottom (){
+		base.NothingBottom ();
+		if (sliding){
+			Sliding = false;
+			if (currentMotor == pinky)
+				RunUp();
+		}
 	}
 	
 	public override void DetectorEnter (BoxCollider detector, BoxCollider colEntering)
@@ -271,7 +339,7 @@ public class Fitz : Platformer {
 				else if ((detector == rightDetector || detector == leftDetector)){
 					if (docScript.Dangerous){			//should the shell hurt me?
 						Debug.Log("Get hurt!");
-						
+						RecessManager.Instance.Death();
 					}
 					else if (!controller.getRun){ 		//should I kick the shell?
 						docScript.Kicked();
@@ -295,6 +363,8 @@ public class Fitz : Platformer {
 				//TODO : hurt Doc; he always gets hurt if I touch him, unless I'm spitting him out.
 				if ((detector == topDetector || detector == botDetector) && !meteor){
 					//TODO: Hurt self because I'm not going fast enough to be a weapon
+					RecessManager.Instance.Death();
+					return;
 				}
 				
 				if (((detector == rightDetector && FacingRight) || (detector == leftDetector && !FacingRight)) && agape){
@@ -306,8 +376,27 @@ public class Fitz : Platformer {
 					
 				}
 			}
+		} 		//end if docscript
+		else if (detector == botDetector){
+			
+			Checkpoint checkScript = colEntering.GetComponent<Checkpoint>();
+			if (checkScript != null){
+				checkScript.Enter ();
+				Debug.Log ("There's a checkpoint script.");
+			}
 		}
+		
+		if (colEntering.gameObject.layer == LayerMask.NameToLayer("normalCollision") && (detector == leftDetector || detector == rightDetector) && charging){
+			EndCharge ();
+		}
+		int layer = colEntering.gameObject.layer;
+		if (layer == 31 && colEntering.tag == "spike"){
+			Debug.Log ("OUCH");
+			RecessManager.Instance.Death ();
+		}
+		
 	}
+	
 	
 	private void MondoUpdate(){
 		
@@ -431,9 +520,8 @@ public class Fitz : Platformer {
 				}
 			}
 		}
-		
-		Debug.Log(busyTimer);
-		if (controller.getL && canMoveLeft && !agape){									//if I'm going left...
+		if (charging) goto capSpeed;
+		if (controller.getL && canMoveLeft && !agape && !crouching && !swallowing){									//if I'm going left...
 			if (velocity.x > -CurMaxSpeed)
 				velocity += new Vector2(-pinky.accel, 0);
 			if (!anim.IsPlaying(PinkyWalk) && grounded && !sprinting && !exhaling){
@@ -441,7 +529,7 @@ public class Fitz : Platformer {
 			}
 			
 		}
-		else if (controller.getR && canMoveRight && !agape) {							//if I'm going right... in this instance having getL and getR both be true should be impossible,
+		else if (controller.getR && canMoveRight && !agape && !crouching && !swallowing) {							//if I'm going right... in this instance having getL and getR both be true should be impossible,
 			if (velocity.x < CurMaxSpeed)
 				velocity += new Vector2(pinky.accel, 0);
 			if (!anim.IsPlaying(PinkyWalk) && grounded && !sprinting && !exhaling){
@@ -449,32 +537,36 @@ public class Fitz : Platformer {
 			}
 			
 		}
-		else if ((!controller.getL && !controller.getR) || agape){		//if I'm not going either direction, apply friction (but not if I'm in air)
-			if (velocity.x > pinky.decel) {
-				velocity += new Vector2(-(grounded? pinky.decel : pinky.decelA), 0);
-				
+		else if ((!controller.getL && !controller.getR) || agape || crouching){		//if I'm not going either direction, apply friction (but not if I'm in air)
+			if (velocity.x > PinkyDecel) {
+				velocity += new Vector2(-(grounded? PinkyDecel : pinky.decelA), 0);
 			}
-			else if (velocity.x < -pinky.decel) {
-				velocity += new Vector2(grounded? pinky.decel : pinky.decelA, 0);
+				
+			else if (velocity.x < PinkyDecel) {
+				velocity += new Vector2(grounded? PinkyDecel : pinky.decelA, 0);
 			}
 			
-			if (velocity.x <= pinky.decel && velocity.x >= -pinky.decel){
+			if (velocity.x <= PinkyDecel && velocity.x >= -PinkyDecel){
 				velocity = new Vector2(0, velocity.y);
-				if (grounded && !exhaling && !agape)
+				if (grounded && !exhaling && !agape && !crouching && !swallowing)
 					anim.Play(PinkyIdle);
-				
+				if (sliding){
+					Sliding = false;
+				}
 			}
-			else if (grounded){
-				if (!anim.IsPlaying(PinkyStop) && !exhaling && !agape){
+			else if (grounded && !swallowing){
+				if (!anim.IsPlaying(PinkyStop) && !exhaling && !agape && !crouching){
 					anim.Play(PinkyStop);
 				}
 			}
 		}
 		
-		if (controller.doubleTap && grounded && !agape){
+		if (controller.doubleTap && grounded && !agape && !swallowing){
 			sprinting = true;
 			anim.Play(PinkyRun);
 		}
+		
+	capSpeed:
 		
 		if (velocity.x > CurMaxSpeed){
 			velocity = new Vector2(Mathf.Max(CurMaxSpeed, velocity.x - pinky.decel), velocity.y);
@@ -484,7 +576,7 @@ public class Fitz : Platformer {
 			velocity = new Vector2(Mathf.Min(-CurMaxSpeed, velocity.x + pinky.decel), velocity.y);
 		}
 		
-		
+	stopSprint:
 		if ((controller.getLUp || controller.getRUp) && sprinting && grounded){
 			sprinting = false;
 		}
@@ -495,7 +587,7 @@ public class Fitz : Platformer {
 		
 		
 		
-		
+	gravity:
 		if (!grounded){											//Apply gravity!
 			if (velocity.y > -FallSpeed)
 				velocity += new Vector2(0, -pinky.gravity);
@@ -505,11 +597,11 @@ public class Fitz : Platformer {
 			
 			
 		}
-		
+	falling:
 		if (velocity.y < 0){									//play fall animation
 			falling = true;
 			jumping = false;
-			if (!anim.IsPlaying(a_fall) && !sprinting && !fallingSlowly && !agape && !exhaling && !mouthFull){
+			if (!anim.IsPlaying(a_fall) && !sprinting && !fallingSlowly && !agape && !exhaling && !mouthFull && !charging){
 				anim.Play(a_fall);
 			}
 		}
@@ -536,10 +628,13 @@ public class Fitz : Platformer {
 		sprinting = false;
 		
 		RunDown = null;
+		Fall = null;
+		Gravity = null;
 		JumpDown = MondoJumpDown;
+		DownDown = MondoDownDown;
 		OnLand -= PinkyOnLand;
 		OnLand += MondoOnLand;
-		OnLand -= BBOnLand;
+		OnLand -= BoogerOnLand;
 	}
 	
 	public void ChangeToPinky (){
@@ -560,23 +655,160 @@ public class Fitz : Platformer {
 		Busy = false;
 		sprinting = false;
 		//change delegates and shit
+		Fall = null;
+		Gravity = null;  //gonna have to replace this stuff when the time comes
 		RunDown = PinkyRunDown;
 		RunUp = PinkyRunUp;
 		JumpDown = PinkyJumpDown;
+		DownDown = PinkyDownDown;
+		DownUp = PinkyDownUp;
 		OnLand += PinkyOnLand;
 		OnLand -= MondoOnLand;
-		OnLand -= BBOnLand;
+		OnLand -= BoogerOnLand;
 	}
 	
+	public void ChangeToBoogerBoy () {
+		currentMotor = boogerBoy;
+		Destroy(dummy);
+		dummy = Instantiate(Resources.Load("boogerDummy"), t.position - Vector3.forward, t.rotation) as GameObject;
+		velocity = Vector2.zero;
+		Debug.Log("Should be loading booger boy now");
+		anim = dummy.GetComponent<tk2dSpriteAnimator>();
+		anim.Play(grounded? a_idle : a_fall);
+		dummy.transform.parent = t;
+		sprite = dummy.GetComponent<tk2dSprite>();
+		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+		/*
+		exhaling = false;
+		agape = false;
+		inMouth = null;
+		mouthFull = false;
+		Busy = false;
+		sprinting = false;
+		*/
+		//change delegates and shit
+		
+		OnLand -= PinkyOnLand;
+		OnLand -= MondoOnLand;
+		OnLand += BoogerOnLand;
+		
+						//call this on fall
+		Fall = delegate(){
+			anim.Play (a_fall);
+		};
+						//apply gravity
+		Gravity = delegate(){
+			velocity = new Vector2(velocity.x, Mathf.Max (velocity.y - boogerBoy.gravity, -boogerBoy.fallSpeedMax));
+		};
+						//run button pressed: Shoot/charge
+		Run = delegate(){
+			Debug.Log ("Shoot!");
+		};
+						//run button up: Release charge
+		RunUp = delegate(){
+			Debug.Log ("Release if I've been charging!");
+		};
+		
+						//jump button pressed: jump
+		JumpDown = delegate(){
+			if (!grounded) return;
+			velocity = new Vector2(velocity.x, boogerBoy.airSpeedInit);
+			anim.Play (a_jump);
+		};
+						//jump button released: fall
+		JumpUp = delegate() {
+			velocity = new Vector2(velocity.x, 0);
+		};
+		
+						//pressing a direction (left-right): move
+		Direction = delegate(float amount) {
+			if (directionTimer == 0 && grounded){
+				anim.Play (a_walk);
+			}
+			directionTimer = Mathf.Min (directionTimer + 1, DirectionMax);
+			velocity = new Vector2(CurMaxSpeed * (directionTimer / DirectionMax) * (amount < 0? -1 : 1), velocity.y);
+		};
+		
+						//just pressed a direction
+		DirectionDown = delegate() {
+			CancelInvoke("BoogerStop");
+		};
+		
+						//direction release
+		DirectionUp = delegate(){
+			Invoke ("BoogerStop", Time.deltaTime * 4);
+		};
+		
+						//double tap : Dash!
+		DoubleTap = delegate() {
+			Debug.Log ("Dash!");
+			dashing = true;
+			anim.Play (a_dash);
+			
+		};
+		
+						//down doesn't do anything for Megaman
+		DownDown = delegate(){
+			
+		};
+		
+		DownUp = delegate(){
+			
+		};
+	}
+	private int directionTimer = 0;
+	private int DirectionMax {
+		get { return dashing? 10 : 5; }
+	}
+	private bool dashing = false;
 	
+	
+	public void BoogerStop () {
+		directionTimer = 0;
+		velocity = new Vector2(0, velocity.y);
+		if (grounded)
+			anim.Play (a_idle);
+		if (dashing){
+			anim.Play (a_endDash);
+		}
+	}
+
+	
+	public void BoogerOnLand () {
+		dashing = false;
+		if (directionTimer > 0){
+			anim.Play (anim.GetClipByName(a_walk), anim.ClipFps * DirectionMax, anim.ClipFps);
+		}
+		else{
+			anim.Play (a_land);
+		}
+	}
+											//<^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^>
+											//<:::::::::::::::::PINKY EVENT FUNCTIONS::::::::::::::::::::>
+											//<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv>
 	public void PinkyRunDown() {
 		if (busy) return;
+		//exhale my air
 		if (fallingSlowly){
 			exhaling = true;
 			anim.Play(a_exhale);
 			return;
 		}
+		//start charging
+		else if (isDoc){
+			if (!charging){
+				charging = true;
+				anim.Play (a_curl);
+				anim.AnimationCompleted = StartCharging;
+			}
+			else{
+				Debug.Log("Stop charging");
+				charging = false;
+			}
+			return;
+		}
 		
+		//spit it out
 		if (mouthFull) {
 			exhaling = true;
 			agape = false;
@@ -588,6 +820,7 @@ public class Fitz : Platformer {
 			Busy = true;
 			return;
 		}
+		//just open my mouth and get ready to swallow
 		Busy = true;
 		Debug.Log("Rundown!");
 		agape = true;
@@ -607,6 +840,16 @@ public class Fitz : Platformer {
 	}
 	
 	public void PinkyJumpDown(){
+		if (crouching && !sliding){
+			Sliding = true;
+			return;
+		}
+		else if (sliding){
+			return;
+		}
+		
+		if (charging) return;
+		
 		if (!agape && grounded){		//jump initiated!
 			velocity = new Vector2(velocity.x, pinky.airSpeedInit);
 			jumping = true;
@@ -614,13 +857,14 @@ public class Fitz : Platformer {
 			if (!anim.IsPlaying(PinkyJump)){
 				anim.Play(PinkyJump);
 			}
+			crouching = false;
 		}
 		
-		else if (!grounded && !agape){
+		else if (!grounded && !agape && !mouthFull){
 			fallingSlowly = true;
 			jumping = true;
 			sprinting = false;
-			velocity = new Vector2(velocity.x, pinky.sSpeed);
+			velocity = new Vector2(velocity.x, pinky.jExtraHeight);
 			anim.Play(a_float);
 		}
 	}
@@ -635,7 +879,7 @@ public class Fitz : Platformer {
 			sprinting = false;
 			
 		}
-		else if (sprinting){
+		else if (sprinting && !charging){
 			anim.Play(PinkyRun);
 		}
 		else{
@@ -644,17 +888,85 @@ public class Fitz : Platformer {
 				exhaling = true;
 			}
 		}
+		
+		if (controller.getD){
+			PinkyDownDown ();
+		}
 	}
 	
+	public void DoneSwallowing (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
+		swallowing = false;
+		Doc docScript = inMouth.GetComponent<Doc>();
+		if (docScript != null){
+			Debug.Log ("I am a walrus");
+			IsDoc = true;
+		}
+		inMouth = null;
+		mouthFull = false;
+	}
+	
+	public void PinkyDownDown (){  //HACK. LIKE, MEGA HACK
+		if (!grounded) return;
+		
+		//Swallow what's in my mouth
+		if (inMouth != null){
+			swallowing = true;
+			anim.Play (a_swallow);
+			anim.AnimationCompleted = DoneSwallowing;
+			return;
+		}
+		
+		//crouch
+		anim.Play (a_crouch);
+		FitDetectors ();
+		grounded = true;
+		falling = false;
+		crouching = true;
+	}
+	
+	public void PinkyDownUp(){
+		if (sliding || !grounded || swallowing) return;
+		//float groundy = t.position.y - bc.bounds.size.y/2;		//such a hack I can't even
+		anim.Play (a_idle);
+		crouching = false;
+		FitDetectors ();
+		//t.position = new Vector3(t.position.x, groundy + bc.bounds.size.y/2, t.position.z);
+		
+	}
+	
+	public void PinkyBigJumpAnim (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip, int id) {
+		anim.AnimationEventTriggered = null;
+		anim.Play(a_jumpBig);
+	}
+	
+	//small methods for Pinky's roll-up-and-charge ability
+	public void StartCharging (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
+		velocity = new Vector2(pinky.sSpeed * FacingRightMod, velocity.y);
+		anim.Play (a_charge);
+		if ((FacingRight && !canMoveRight) || (!FacingRight && !canMoveLeft)){
+			EndCharge ();
+		}
+	}
+	
+	public void EndCharge (){
+		anim.Play (a_uncurl);
+		velocity = Vector2.zero;
+		anim.AnimationCompleted = DoneUncurl;
+	}
+	
+	public void DoneUncurl (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
+		charging = false;
+	}
+	
+											//<^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^>
+											//<:::::::::::::::::MONDO EVENT FUNCTIONS::::::::::::::::::::>
+											//<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv>
 	public void MondoOnLand (){
 		
 	}
 	
-	public void BBOnLand (){
-		
-	}
 	
-	public void MondoJumpDown(){
+	public void MondoJumpDown(){	
 		if (!grounded) return;
 		
 		jumping = true;
@@ -670,13 +982,15 @@ public class Fitz : Platformer {
 			anim.Play(sprinting? a_sJump : a_jump);
 			Debug.Log("Playing jump!");
 		}
-		else if (mouthFull){
-			anim.AnimationEventTriggered = PinkyBigJumpAnim;
-		}
 	}
 	
-	public void PinkyBigJumpAnim (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip, int id) {
-		anim.AnimationEventTriggered = null;
-		anim.Play(a_jumpBig);
+	public void MondoDownDown () {
+		Debug.Log ("Mondo Crouch!");
 	}
+	
+											//<^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^>
+											//<::::::::::::::::BOOGER EVENT FUNCTIONS::::::::::::::::::::>
+											//<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv>
+	//booger boy variables
+
 }
