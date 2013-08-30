@@ -58,6 +58,9 @@ public class Platformer : MonoBehaviour {
 			if (getRunUp && parent.RunUp != null)
 				parent.RunUp();
 			
+			if (getRun && parent.Run != null)
+				parent.Run();
+			
 			getJump = Input.GetButton("Jump");
 			getJumpDown = Input.GetButtonDown("Jump");
 			getJumpUp = Input.GetButtonUp("Jump");
@@ -309,7 +312,9 @@ public class Platformer : MonoBehaviour {
 	protected void FitDetectors(){
 		
 		float groundy = t.position.y - bc.bounds.size.y/2;		//such a hack I can't even
-		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+		bc.size = new Vector3(Mathf.Abs(sprite.CurrentSprite.colliderVertices[1].x * 2), sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
+						//    ^^^^^^^^^  HACK to relegate the fact that all the Megaman sprites are flipped in the tk2d editor
+		
 		
 		//new sizes: 						x										y													z
 		botDetector.size = 		new Vector3	(bc.size.x - 1, 						Mathf.Abs(Mathf.Min(velocity.y, 0)), 				botDetector.size.z);
@@ -372,7 +377,6 @@ public class Platformer : MonoBehaviour {
 	
 	public virtual void HitRight(BoxCollider rightCollider){
 		if (botDScript.KnowsOf(rightCollider) || topDScript.KnowsOf(rightCollider)){
-			Debug.Log("I know this one already, on the top or bottom thing or whatever");
 			return;
 		}
 		canMoveRight = false;
@@ -382,7 +386,6 @@ public class Platformer : MonoBehaviour {
 	
 	public virtual void HitLeft(BoxCollider leftCollider){
 		if (botDScript.KnowsOf(leftCollider) || topDScript.KnowsOf(leftCollider)){
-			Debug.Log("I know this one already, on the top or bottom thing or whatever");
 			return;
 		}
 		canMoveLeft = false;
@@ -468,8 +471,8 @@ public class Platformer : MonoBehaviour {
 		}
 	}
 	
-	protected void CheckStates(){
-	
+	protected void CheckDirection() {
+		
 		if (velocity.x > 0){						//sprite directions. Check what direction I'm facing and flip sprite accordingly
 			dummy.transform.localScale = new Vector3(1, 1, 1);
 			canMoveLeft = true;
@@ -479,6 +482,9 @@ public class Platformer : MonoBehaviour {
 			dummy.transform.localScale = new Vector3(-1, 1, 1);
 			canMoveRight = true;
 		}
+	}
+	
+	protected void CheckStates(){
 		
 		if (velocity.y < 0 && Fall != null && !falling && !grounded){
 			Fall();

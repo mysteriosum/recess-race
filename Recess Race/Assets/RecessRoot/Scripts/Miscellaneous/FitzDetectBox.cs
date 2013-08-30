@@ -63,6 +63,9 @@ public class FitzDetectBox : GizmoDad {
 			if (colList.Count == 0 || other.gameObject.layer == LayerMask.NameToLayer("danger") || other.tag == "checkpoint"){
 				pScript.DetectorEnter(bc, otherBC);
 			}
+			else{
+				Debug.Log("NOO!" + name);
+			}
 			
 			if ((other.gameObject.layer == 31 || other.gameObject.layer == 30 || other.gameObject.layer == 29) && !colList.Contains(otherBC)){
 				colList.Add(otherBC);

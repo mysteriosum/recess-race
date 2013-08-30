@@ -177,6 +177,7 @@ public class Doc : Platformer {
 		
 		FitDetectors();
 		ApplyMovement();
+		CheckDirection();
 		CheckStates();
 		
 		DocUpdate();

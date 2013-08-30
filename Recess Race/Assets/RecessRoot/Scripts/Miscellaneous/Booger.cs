@@ -14,15 +14,17 @@ public class Booger : MonoBehaviour {
 	private int damage;
 	private Doc docScript;
 	
-	private float speed = 2.5f;
+	
+	
+	private float speed = 3.5f;
 	
 	private bool facingRight = true;
 	public bool FacingRight {
 		get { return facingRight; }
 		set {
 			facingRight = value;
-			sprite.scale = new Vector3(facingRight? 1 : -1, 1, 1);
 			speed = facingRight? Mathf.Abs(speed) : -Mathf.Abs(speed);
+			Debug.Log(value);
 		}
 	}
 	
@@ -33,10 +35,11 @@ public class Booger : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		damage = (int) size;
-		speed = facingRight? speed : -speed;
 		t = transform;
 		
 		sprite = GetComponent<tk2dSprite>();
+		sprite.scale = new Vector3(facingRight? 1 : -1, 1, 1);
+		Invoke("A_Splode", 5.5f);
 	}
 	
 	// Update is called once per frame
@@ -55,5 +58,9 @@ public class Booger : MonoBehaviour {
 			Destroy(gameObject);
 			break;
 		}
+	}
+	
+	private void A_Splode(){ 
+		Destroy(gameObject);
 	}
 }

@@ -61,20 +61,20 @@ public class Fitz : Platformer {
 	
 	public MovementVariables boogerBoy = new MovementVariables
 		(
-			1.3125f,  			//wSpeed
-			1.4375f,  			//rSpeed
-			2f,  				//sSpeed
+			1.75f,  			//normal walk speed
+			1.25f,  			//speed when slowing from dash
+			3.25f,  			//dash speed
 			0.5f,  				//accel
 			0.1875f,  			//decel
 			0.03125f,			//air decel
 			1.3125f,  			//float speed
-			64f,  				//jHeight
+			4f,  				//wall jump jHeight
 			0.0f,  				//jExtraHeight
 			1.4375f,  			//airSpeedH
 			4f,  				//airSpeedInit
 			4f,  				//fallSpeedMax
 			0.15625f,  			//gravity
-			0.01625f			//gravity for floating
+			1.5f				//speed for wallHang
 		);
 	
 	public MovementVariables currentMotor = null;
@@ -138,6 +138,10 @@ public class Fitz : Platformer {
 	
 	public string PinkyStop {
 		get { return mouthFull? a_jumpBig : a_stop; }
+	}
+	
+	public float BoogerFallSpeed{
+		get { return wallHanging? boogerBoy.gravityA : boogerBoy.fallSpeedMax;}
 	}
 	
 	//mondo specific other-variables:
@@ -211,11 +215,36 @@ public class Fitz : Platformer {
 	
 	public bool FacingRight { 
 		get { return sprite.transform.localScale.x > 0.9f; }
+		set {
+			sprite.transform.localScale = new Vector3(value? 1 : -1, 1, 1);
+		}
 	}
 	
 	public int FacingRightMod {
 		get { return FacingRight? 1 : -1; }
 	}
+	
+	//array of t/fs. This is the sequence that blinks Fitz in and out when he 'dies'
+	private bool[] blinkArray = new bool[] {
+		true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+		false, false, 
+		true, true, true, true, true, true, true, true, true, true, true, true, 
+		false, false, 
+		true, true, true, true, true, true, true, true, true, true, 
+		false, false, false, false, 
+		true, true, true, true, true, true, true, true, 
+		false, false,false, false, 
+		true, true, true, true, true, 
+		false, false, false, false, false, false, 
+		true, true, true, true, 
+		false, false, false, false, false, false, 
+		true, true, true, 
+		false, false, false, false, false, false, 
+		true, true, 
+		false, false, false, false, false, false, false, false, 
+		true, true, 
+		false, false, false, false, false, false, false, false, false, false, false, false, 
+	};
 	
 	//animation variables
 	
@@ -238,6 +267,7 @@ public class Fitz : Platformer {
 	private string a_agape = "agape";
 	private string a_hurt = "hurt";
 	private string a_crouch = "crouch";
+	private string a_death = "death";
 	
 	//Pinky big anims
 	private string a_swallow = "swallow";
@@ -257,7 +287,19 @@ public class Fitz : Platformer {
 		
 	
 	public static Fitz fitz;
+	private bool dying = false;
+	private bool respawning = false;
+	private int deathCounter = 0;
 	
+	public bool Dying {
+		get { return dying; }
+		set { 
+			dying = value;
+			if (value){
+				anim.Play(a_death);
+			}
+		}
+	}
 	
 	void Awake(){
 		if (fitz == null){
@@ -280,6 +322,30 @@ public class Fitz : Platformer {
 	// Update is called once per frame
 	void Update () {
 		
+		if (dying){
+			
+			if (deathCounter == blinkArray.Length){
+				RecessManager.Instance.Death();
+				respawning = true;
+				deathCounter --;
+			}
+			
+			dummy.renderer.enabled = blinkArray[deathCounter];
+			
+			if (respawning){
+				deathCounter --;
+			}
+			else{
+				deathCounter ++;
+			}
+			
+			if (respawning && deathCounter == 0){
+				respawning = false;
+				dying = false;
+			}
+			return;
+		}
+		
 		FitDetectors();
 		
 		ApplyMovement();
@@ -290,26 +356,61 @@ public class Fitz : Platformer {
 		
 		if (currentMotor == mondo){			//play the update of whoever I'm powered up as
 			MondoUpdate();
-								//TODO : make a real switching mechanism. Pressing 1 and 2 or whatever is shitty and needs to change
 			
 		}
 		else if (currentMotor == pinky){
 			PinkyUpdate();
 		}
-		else if (currentMotor != boogerBoy){
+		else if (currentMotor == boogerBoy){
+			BoogerUpdate();
+		}
+		else {
 			JumpmanUpdate();
 			
+		}
+								//TODO : make a real switching mechanism. Pressing 1 and 2 or whatever is shitty and needs to change
+		
+		if (Input.GetKeyDown(KeyCode.Alpha1)){
+			ChangeToMondo();
 		}
 		
 		if (Input.GetKeyDown(KeyCode.Alpha2)){
 			ChangeToPinky();
 		}
 		
-		if (Input.GetKeyDown(KeyCode.Alpha1)){
-			ChangeToMondo();
+		if (Input.GetKeyDown(KeyCode.Alpha3)){
+			ChangeToBoogerBoy();
 		}
 		Cleanup();
 	}
+	
+	void OnTriggerEnter (Collider other){
+		Pickup pickupScript = other.GetComponent<Pickup>();
+		
+		if (pickupScript != null){
+			PowerEnum pow = pickupScript.power;
+						//change power because I got a pickup
+			switch (pow){
+			case PowerEnum.Otto:
+				ChangeToMondo();
+				break;
+			case PowerEnum.Pinky:
+				ChangeToPinky();
+				break;
+			case PowerEnum.BoogerBoy:
+				ChangeToBoogerBoy();
+				break;
+			}
+			Destroy(pickupScript.gameObject);
+		}
+	}
+	
+	
+	
+	
+											//<^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^>
+											//<:::::::::::::::::::COLLISION OVERRIDES::::::::::::::::::::>
+											//<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv>
 	
 	public override void NothingBottom (){
 		base.NothingBottom ();
@@ -318,6 +419,18 @@ public class Fitz : Platformer {
 			if (currentMotor == pinky)
 				RunUp();
 		}
+	}
+	
+	public override void HitLeft (BoxCollider leftCollider)
+	{
+		base.HitLeft (leftCollider);
+		
+		
+	}
+	
+	public override void HitRight (BoxCollider rightCollider)
+	{
+		base.HitRight (rightCollider);
 	}
 	
 	public override void DetectorEnter (BoxCollider detector, BoxCollider colEntering)
@@ -339,7 +452,7 @@ public class Fitz : Platformer {
 				else if ((detector == rightDetector || detector == leftDetector)){
 					if (docScript.Dangerous){			//should the shell hurt me?
 						Debug.Log("Get hurt!");
-						RecessManager.Instance.Death();
+						Dying = true;
 					}
 					else if (!controller.getRun){ 		//should I kick the shell?
 						docScript.Kicked();
@@ -363,7 +476,7 @@ public class Fitz : Platformer {
 				//TODO : hurt Doc; he always gets hurt if I touch him, unless I'm spitting him out.
 				if ((detector == topDetector || detector == botDetector) && !meteor){
 					//TODO: Hurt self because I'm not going fast enough to be a weapon
-					RecessManager.Instance.Death();
+					Dying = true;
 					return;
 				}
 				
@@ -392,14 +505,17 @@ public class Fitz : Platformer {
 		int layer = colEntering.gameObject.layer;
 		if (layer == 31 && colEntering.tag == "spike"){
 			Debug.Log ("OUCH");
-			RecessManager.Instance.Death ();
+			Dying = true;
 		}
 		
 	}
 	
+											//<^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^>
+											//<::::::::::::::::::::UPDATE FUNCTIONS::::::::::::::::::::::>
+											//<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv>
 	
 	private void MondoUpdate(){
-		
+		CheckDirection();
 		//TODO This should be put in an event to save on checking its stuff each frame. MEH
 		if (pMeter >= 112 && grounded && ((velocity.x <= -mondo.rSpeed && controller.getL) || (velocity.x >= mondo.rSpeed && controller.getR))){ //check to see if I'm sprinting! (pMeter)
 			pMeter = 112;	//I need to be on the ground, and I have to be pressing forward in the direction I'm running
@@ -508,7 +624,7 @@ public class Fitz : Platformer {
 	}
 	
 	private void PinkyUpdate(){
-		
+		CheckDirection();
 		if (busy){
 			busyTimer -= Time.deltaTime;
 			if (busyTimer <= 0){
@@ -613,6 +729,23 @@ public class Fitz : Platformer {
 		}
 	}
 	
+	public void BoogerUpdate () {
+		if (wallHanging){
+			if ((FacingRight && !controller.getR) || (!FacingRight && !controller.getL)){
+				Debug.Log("Disengage wallhang!");
+				wallHanging = false;
+				anim.Play(a_fall);
+				FacingRight = !FacingRight;
+			}
+		}
+		
+		if (wallJumpTimer > 0){
+			wallJumpTimer --;
+			velocity.x = Mathf.Lerp(FacingRight? -boogerBoy.wSpeed : boogerBoy.wSpeed, 0, (wallJumpMax - wallJumpTimer) / wallJumpMax);
+			
+		}
+	}
+	
 					//functions that change my motor!
 	
 	public void ChangeToMondo (){
@@ -626,6 +759,9 @@ public class Fitz : Platformer {
 		sprite = dummy.GetComponent<tk2dSprite>();
 		bc.size = new Vector3(sprite.CurrentSprite.colliderVertices[1].x * 2, sprite.CurrentSprite.colliderVertices[1].y * 2, 10);
 		sprinting = false;
+		
+		Run = null;
+		RunUp = null;
 		
 		RunDown = null;
 		Fall = null;
@@ -659,6 +795,12 @@ public class Fitz : Platformer {
 		Gravity = null;  //gonna have to replace this stuff when the time comes
 		RunDown = PinkyRunDown;
 		RunUp = PinkyRunUp;
+		Direction = null;
+		DirectionDown = null;
+		DirectionUp = null;
+		
+		Run = null;
+		
 		JumpDown = PinkyJumpDown;
 		DownDown = PinkyDownDown;
 		DownUp = PinkyDownUp;
@@ -694,35 +836,116 @@ public class Fitz : Platformer {
 		
 						//call this on fall
 		Fall = delegate(){
+			
 			anim.Play (a_fall);
 		};
 						//apply gravity
 		Gravity = delegate(){
-			velocity = new Vector2(velocity.x, Mathf.Max (velocity.y - boogerBoy.gravity, -boogerBoy.fallSpeedMax));
+			
+			velocity = new Vector2(velocity.x, Mathf.Max (velocity.y - boogerBoy.gravity, -BoogerFallSpeed));
 		};
 						//run button pressed: Shoot/charge
 		Run = delegate(){
-			Debug.Log ("Shoot!");
+			
+			if (chargeTimer == 0){
+				
+				GameObject myBooger = Instantiate(Resources.Load(boogerS), 
+								t.position + new Vector3(boogerOffsetX * FacingRightMod, boogerOffsetY, 0), 
+								t.rotation) as GameObject;
+				
+				myBooger.GetComponent<Booger>().FacingRight = FacingRight;
+			}
+			
+			chargeTimer ++;
+			
 		};
 						//run button up: Release charge
 		RunUp = delegate(){
-			Debug.Log ("Release if I've been charging!");
+			if (chargeTimer > maximumCharge){
+				GameObject myBooger = Instantiate(Resources.Load(boogerL), 
+								t.position + new Vector3(boogerOffsetX * FacingRightMod, boogerOffsetY, 0), 
+								t.rotation) as GameObject;
+				
+				myBooger.GetComponent<Booger>().FacingRight = FacingRight;
+			}
+			else if (chargeTimer > mediumCharge){
+				GameObject myBooger = Instantiate(Resources.Load(boogerM), 
+								t.position + new Vector3(boogerOffsetX * FacingRightMod, boogerOffsetY, 0), 
+								t.rotation) as GameObject;
+				
+				myBooger.GetComponent<Booger>().FacingRight = FacingRight;
+			}
+			
+			
+			chargeTimer = 0;
 		};
 		
 						//jump button pressed: jump
 		JumpDown = delegate(){
-			if (!grounded) return;
-			velocity = new Vector2(velocity.x, boogerBoy.airSpeedInit);
-			anim.Play (a_jump);
+			
+			if (grounded){
+				velocity = new Vector2(velocity.x, boogerBoy.airSpeedInit);
+				anim.Play (a_jump);
+			}
+			else if (wallHanging){
+				wallJumpTimer = wallJumpMax;
+				velocity = new Vector2(FacingRight? -boogerBoy.wSpeed : boogerBoy.wSpeed, boogerBoy.jHeight);
+				anim.Play(a_wallJump);
+				wallHanging = false;
+				falling = false;
+			}
 		};
 						//jump button released: fall
 		JumpUp = delegate() {
-			velocity = new Vector2(velocity.x, 0);
+			if (!falling)
+				velocity = new Vector2(velocity.x, 0);
 		};
 		
 						//pressing a direction (left-right): move
 		Direction = delegate(float amount) {
-			if (directionTimer == 0 && grounded){
+			
+			if (wallJumpTimer > 0){
+				return;
+			}
+			
+			if (dashing && grounded){
+				dashTimer ++;
+				if (dashTimer >= dashMax){
+					dashing = false;
+					if (controller.getL == false && !controller.getR){
+						anim.Play (a_endDash);
+					}
+					else {
+						anim.Play (anim.GetClipByName(a_walk), anim.ClipFps * DirectionMax, anim.ClipFps);
+					}
+					anim.AnimationCompleted = AnimAfterDash;
+				}
+			}
+			
+			
+			if (((amount < 0 && !canMoveLeft) || (amount > 0 && !canMoveRight)) && !grounded && !wallHanging && falling){
+				
+				anim.Play(a_wallGrab);
+				wallHanging = true;
+				return;
+			}
+			
+			if (amount < 0){			//flip sprite when appropriate
+				if (!canMoveLeft) return;
+				
+				if (FacingRight)
+					FacingRight = false;
+			}
+			else if (amount > 0){
+				if (!canMoveRight) return;
+				if (!FacingRight)
+					FacingRight = true;
+			}
+			
+			if (!grounded)
+				directionTimer = DirectionMax;
+			
+			if (directionTimer == 0){
 				anim.Play (a_walk);
 			}
 			directionTimer = Mathf.Min (directionTimer + 1, DirectionMax);
@@ -731,20 +954,26 @@ public class Fitz : Platformer {
 		
 						//just pressed a direction
 		DirectionDown = delegate() {
+			
 			CancelInvoke("BoogerStop");
 		};
 		
 						//direction release
 		DirectionUp = delegate(){
+			
 			Invoke ("BoogerStop", Time.deltaTime * 4);
 		};
 		
 						//double tap : Dash!
 		DoubleTap = delegate() {
+			
+			if (!grounded) return;
+			
+			directionTimer = 5;
 			Debug.Log ("Dash!");
 			dashing = true;
 			anim.Play (a_dash);
-			
+			dashTimer = 0;
 		};
 		
 						//down doesn't do anything for Megaman
@@ -760,22 +989,57 @@ public class Fitz : Platformer {
 	private int DirectionMax {
 		get { return dashing? 10 : 5; }
 	}
-	private bool dashing = false;
 	
+	private bool dashing = false;
+	private int dashTimer = 0;
+	private int dashMax = 30;
+	
+	private int chargeTimer = 0;
+	private int mediumCharge = 30;
+	private int maximumCharge = 120;
+	private int boogerOffsetX = 16;
+	private int boogerOffsetY = 4;
+	
+	private string boogerS = "pre_boogerSmall";
+	private string boogerM = "pre_boogerMedium";
+	private string boogerL = "pre_boogerLarge";
+	
+	private bool wallHanging = false;
+	private int wallJumpTimer = 0;
+	private readonly int wallJumpMax = 10;
 	
 	public void BoogerStop () {
 		directionTimer = 0;
 		velocity = new Vector2(0, velocity.y);
-		if (grounded)
+		if (grounded){
 			anim.Play (a_idle);
-		if (dashing){
-			anim.Play (a_endDash);
+			if (dashing){
+				dashing = false;
+				anim.Play (a_endDash);
+				anim.AnimationCompleted = AnimAfterDash;
+			}
 		}
+	}
+	
+	public void AnimAfterDash (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
+		
+		anim.AnimationCompleted = null;
+		
+		if (clip != anim.GetClipByName(a_endDash) || !grounded) return;
+		
+		if (controller.getL || controller.getR){
+			anim.Play(a_walk);
+		}
+		else{
+			anim.Play(a_idle);
+		}
+					//reset the completed delegate so it doesn't pull this every time an animation ends
 	}
 
 	
 	public void BoogerOnLand () {
 		dashing = false;
+		wallHanging = false;
 		if (directionTimer > 0){
 			anim.Play (anim.GetClipByName(a_walk), anim.ClipFps * DirectionMax, anim.ClipFps);
 		}
