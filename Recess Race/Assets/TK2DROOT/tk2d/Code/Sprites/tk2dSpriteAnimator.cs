@@ -125,7 +125,7 @@ public class tk2dSpriteAnimator : MonoBehaviour
 		}
 	}
 	
-	[SerializeField] protected tk2dBaseSprite _sprite = null;
+	protected tk2dBaseSprite _sprite = null;
 	virtual public tk2dBaseSprite Sprite {
 		get {
 			if (_sprite == null) {
@@ -720,7 +720,7 @@ public class tk2dSpriteAnimator : MonoBehaviour
 		}
 	}
 	
-	void LateUpdate() 
+	public virtual void LateUpdate() 
 	{
 		UpdateAnimation(Time.deltaTime);
 	}

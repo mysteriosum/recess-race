@@ -69,6 +69,13 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 	public Vector3[] meshColliderPositions = null;
 	public Mesh meshColliderMesh = null;
 	
+	/// <summary>
+	/// This event is called whenever a sprite is changed. 
+	/// A sprite is considered to be changed when the sprite itself
+	/// is changed, or the scale applied to the sprite is changed.
+	/// </summary>
+	public event System.Action<tk2dBaseSprite> SpriteChanged;
+
 	// This is unfortunate, but required due to the unpredictable script execution order in Unity.
 	// The only problem happens in Awake(), where if another class is Awaken before this one, and tries to
 	// modify this instance before it is initialized, very bad things could happen.
@@ -120,6 +127,9 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 #else
 				UpdateCollider();
 #endif
+				if (SpriteChanged != null) {
+					SpriteChanged( this );
+				}
 			}
 		}
 	}
@@ -174,6 +184,10 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 				}
 				UpdateMaterial();
 				UpdateCollider();
+
+				if (SpriteChanged != null) {
+					SpriteChanged( this );
+				}
 			}
 		} 
 	}
@@ -240,14 +254,17 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 	public void MakePixelPerfect()
 	{
 		float s = 1.0f;
-		if (tk2dCamera.inst)
+		tk2dCamera cam = tk2dCamera.CameraForLayer(gameObject.layer);
+		if (cam != null)
 		{
 			if (Collection.version < 2)
 			{
 				Debug.LogError("Need to rebuild sprite collection.");
 			}
 
-			s = Collection.halfTargetHeight;
+			float zdist = (transform.position.z - cam.transform.position.z);
+			float spriteSize = (Collection.invOrthoSize * Collection.halfTargetHeight);
+			s = cam.GetSizeAtDistance(zdist) * spriteSize;
 		}
 		else if (Camera.main)
 		{
@@ -258,15 +275,15 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 			else
 			{
 				float zdist = (transform.position.z - Camera.main.transform.position.z);
-				s = tk2dPixelPerfectHelper.CalculateScaleForPerspectiveCamera(Camera.main.fov, zdist);
+				s = tk2dPixelPerfectHelper.CalculateScaleForPerspectiveCamera(Camera.main.fieldOfView, zdist);
 			}
+			s *= Collection.invOrthoSize;
 		}
 		else
 		{
 			Debug.LogError("Main camera not found.");
 		}
 		
-		s *= Collection.invOrthoSize;
 		
 		scale = new Vector3(Mathf.Sign(scale.x) * s, Mathf.Sign(scale.y) * s, Mathf.Sign(scale.z) * s);
 	}	
@@ -459,7 +476,7 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 			if (sprite.colliderType == tk2dSpriteDefinition.ColliderType.Box)
 			{
 				boxCollider.center = new Vector3(sprite.colliderVertices[0].x * _scale.x, sprite.colliderVertices[0].y * _scale.y, sprite.colliderVertices[0].z * _scale.z);
-				boxCollider.extents = new Vector3(sprite.colliderVertices[1].x * _scale.x, sprite.colliderVertices[1].y * _scale.y, sprite.colliderVertices[1].z * _scale.z);
+				boxCollider.size = new Vector3(2 * sprite.colliderVertices[1].x * _scale.x, 2 * sprite.colliderVertices[1].y * _scale.y, 2 * sprite.colliderVertices[1].z * _scale.z);
 			}
 			else if (sprite.colliderType == tk2dSpriteDefinition.ColliderType.Unset)
 			{
@@ -471,7 +488,7 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 				{
 					// move the box far far away, boxes with zero extents still collide
 					boxCollider.center = new Vector3(0, 0, -100000.0f);
-					boxCollider.extents = Vector3.zero;
+					boxCollider.size = Vector3.zero;
 				}
 			}
 		}
@@ -615,6 +632,9 @@ public abstract class tk2dBaseSprite : MonoBehaviour, tk2dRuntime.ISpriteCollect
 #if UNITY_EDITOR
 		EditMode__CreateCollider();
 #endif
+		if (SpriteChanged != null) {
+			SpriteChanged(this);
+		}
 	}
 
 	/// <summary>

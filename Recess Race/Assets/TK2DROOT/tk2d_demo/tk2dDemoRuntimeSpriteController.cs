@@ -129,8 +129,8 @@ public class tk2dDemoRuntimeSpriteController : MonoBehaviour {
 
 	void OnGUI() {
 		tk2dSpriteCollectionSize spriteCollectionSize = tk2dSpriteCollectionSize.Explicit(5, 640);
-		// If using the tk2dCamera, use this:
-		// tk2dSpriteCollectionSize spriteCollectionSize = tk2dSpriteCollectionSize.ForTk2dCamera();
+		// If using the tk2dCamera using pixels per meter, use this:
+		//tk2dSpriteCollectionSize spriteCollectionSize = tk2dSpriteCollectionSize.PixelsPerMeter( 20 );
 
 		GUILayout.BeginHorizontal();
 

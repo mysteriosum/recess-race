@@ -16,7 +16,7 @@ namespace tk2dEditor.SpriteCollectionEditor
 		Texture2D GetTextureForSprite(int spriteId);
 		
 		SpriteCollectionProxy SpriteCollection { get; }
-		
+
 		int InspectorWidth { get; }
 		SpriteView SpriteView { get; }
 		void SelectSpritesFromList(int[] indices);
@@ -60,7 +60,7 @@ public class tk2dSpriteCollectionEditorPopup : EditorWindow, IEditorHost
 	SpriteCollectionProxy spriteCollectionProxy = null;
 	public SpriteCollectionProxy SpriteCollection { get { return spriteCollectionProxy; } }
 	public SpriteView SpriteView { get { return spriteView; } }
-	
+
 	// This lists all entries
 	List<SpriteCollectionEditorEntry> entries = new List<SpriteCollectionEditorEntry>();
 	// This lists all selected entries
@@ -315,12 +315,11 @@ public class tk2dSpriteCollectionEditorPopup : EditorWindow, IEditorHost
 	void OnDisable()
 	{
 		ClearTextureCache();
-
 		_spriteCollection = null;
-		tk2dEditorUtility.CollectAndUnloadUnusedAssets();
 	}
 
 	void OnDestroy() {
+		tk2dSpriteThumbnailCache.Done();
 		tk2dEditorSkin.Done();
 	}
 	

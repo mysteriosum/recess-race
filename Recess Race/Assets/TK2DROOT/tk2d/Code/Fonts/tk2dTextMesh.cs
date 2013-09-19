@@ -192,7 +192,7 @@ public class tk2dTextMesh : MonoBehaviour, tk2dRuntime.ISpriteCollectionForceBui
 				}
 				else
 				{*/
-					widthSoFar += chr.advance * data.scale.x;
+					widthSoFar += (chr.advance + data.spacing) * data.scale.x;
 				//}
 
 				wordStart = widthSoFar;
@@ -217,12 +217,12 @@ public class tk2dTextMesh : MonoBehaviour, tk2dRuntime.ISpriteCollectionForceBui
 					else
 					{
 						target.Append('\n');
-						widthSoFar = chr.advance * data.scale.x;
+						widthSoFar = (chr.advance + data.spacing) * data.scale.x;
 					}
 				}
 				else
 				{
-					widthSoFar += chr.advance * data.scale.x;
+					widthSoFar += (chr.advance + data.spacing) * data.scale.x;
 				}
 			}
 			
@@ -610,14 +610,17 @@ public class tk2dTextMesh : MonoBehaviour, tk2dRuntime.ISpriteCollectionForceBui
 	public void MakePixelPerfect()
 	{
 		float s = 1.0f;
-		if (tk2dCamera.inst != null)
+		tk2dCamera cam = tk2dCamera.CameraForLayer(gameObject.layer);
+		if (cam != null)
 		{
 			if (_fontInst.version < 1)
 			{
 				Debug.LogError("Need to rebuild font.");
 			}
 
-			s = _fontInst.invOrthoSize * _fontInst.halfTargetHeight;
+			float zdist = (transform.position.z - cam.transform.position.z);
+			float textMeshSize = (_fontInst.invOrthoSize * _fontInst.halfTargetHeight);
+			s = cam.GetSizeAtDistance(zdist) * textMeshSize;
 		}
 		else if (Camera.main)
 		{
@@ -628,8 +631,9 @@ public class tk2dTextMesh : MonoBehaviour, tk2dRuntime.ISpriteCollectionForceBui
 			else
 			{
 				float zdist = (transform.position.z - Camera.main.transform.position.z);
-				s = tk2dPixelPerfectHelper.CalculateScaleForPerspectiveCamera(Camera.main.fov, zdist);
+				s = tk2dPixelPerfectHelper.CalculateScaleForPerspectiveCamera(Camera.main.fieldOfView, zdist);
 			}
+			s *= _fontInst.invOrthoSize;
 		}
 		scale = new Vector3(Mathf.Sign(scale.x) * s, Mathf.Sign(scale.y) * s, Mathf.Sign(scale.z) * s);
 	}	

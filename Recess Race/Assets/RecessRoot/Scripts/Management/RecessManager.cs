@@ -15,6 +15,8 @@ public class RecessManager : MonoBehaviour {
 	private int curLevel = -1;
 	private Transform curCheckpoint;
 	
+	private tk2dUIManager tk2dUI;
+	
 	public static RecessManager Instance{
 		get {
 			if (instance == null)
@@ -33,13 +35,19 @@ public class RecessManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		loadLevelMax = Application.levelCount - 1;
+		//loadLevelMax = Application.levelCount - 1;
 		DontDestroyOnLoad(this.gameObject);
 		
 		for (loadingLevel = 0; loadingLevel < levelsToLoad; loadingLevel ++){
-			Application.LoadLevelAdditive("room_floor_" + 1.ToString());
+			Application.LoadLevelAdditive("room_floor_" + Random.Range(loadLevelMin, loadLevelMax + 1).ToString());
 			
 		}
+		
+		if (TextBox.bubble == null){
+			Instantiate(Resources.Load("textBox"));
+		}
+		
+		tk2dUI = GetComponent<tk2dUIManager>();
 	}
 	
 	// Update is called once per frame

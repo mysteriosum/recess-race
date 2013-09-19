@@ -6,8 +6,6 @@ using System.Collections.Generic;
 [CustomEditor(typeof(tk2dSprite))]
 class tk2dSpriteEditor : Editor
 {
-	tk2dSpriteThumbnailCache thumbnailCache;
-	
 	// Serialized properties are going to be far too much hassle
 	private tk2dBaseSprite[] targetSprites = new tk2dBaseSprite[0];
 
@@ -65,7 +63,7 @@ class tk2dSpriteEditor : Editor
 			if (EditorGUI.EndChangeCheck()) {
 				Undo.RegisterUndo (t, "Rotate");
 				if (Mathf.Abs(theta) > Mathf.Epsilon) {
-					t.Rotate(t.forward, theta);
+					t.Rotate(t.forward, theta, Space.World);
 				}
 			}
 		}
@@ -80,7 +78,7 @@ class tk2dSpriteEditor : Editor
 
     protected T[] GetTargetsOfType<T>( Object[] objects ) where T : UnityEngine.Object {
     	List<T> ts = new List<T>();
-    	foreach (Object o in targets) {
+    	foreach (Object o in objects) {
     		T s = o as T;
     		if (s != null)
     			ts.Add(s);
@@ -90,15 +88,14 @@ class tk2dSpriteEditor : Editor
 
     protected void OnEnable()
     {
-    	thumbnailCache = new tk2dSpriteThumbnailCache();
     	targetSprites = GetTargetsOfType<tk2dBaseSprite>( targets );
     }
 	
 	void OnDestroy()
 	{
 		targetSprites = new tk2dBaseSprite[0];
-		thumbnailCache.Destroy();
-	
+
+		tk2dSpriteThumbnailCache.Done();
 		tk2dGrid.Done();
 		tk2dEditorSkin.Done();
 	}
@@ -152,7 +149,7 @@ class tk2dSpriteEditor : Editor
 					int tileSize = 128;
 					Rect r = GUILayoutUtility.GetRect(tileSize, tileSize, GUILayout.ExpandWidth(false));
 					tk2dGrid.Draw(r);
-					thumbnailCache.DrawSpriteTextureInRect(r, def, Color.white);
+					tk2dSpriteThumbnailCache.DrawSpriteTextureInRect(r, def, Color.white);
 
 					GUILayout.EndHorizontal();
 
@@ -382,17 +379,12 @@ class tk2dSpriteEditor : Editor
 		}
 	}
 
-	[MenuItem("CONTEXT/tk2dBaseSprite/Remove animator", true, 10001)]
-	static bool ValidateRemoveAnimator() {
-		if (Selection.activeGameObject == null) return false;
-		return Selection.activeGameObject.GetComponent<tk2dSpriteAnimator>() != null;
-	}
-	[MenuItem("CONTEXT/tk2dBaseSprite/Remove animator", false, 10001)]
+	[MenuItem("CONTEXT/tk2dBaseSprite/Add AttachPoint", false, 10002)]
 	static void DoRemoveAnimator() {
-		PerformActionOnGlobalSelection("Remove animator", delegate(GameObject go) {
-			tk2dSpriteAnimator anim = go.GetComponent<tk2dSpriteAnimator>();
-			if (anim != null) {
-				Object.DestroyImmediate(anim, true);
+		PerformActionOnGlobalSelection("Add AttachPoint", delegate(GameObject go) {
+			tk2dSpriteAttachPoint ap = go.GetComponent<tk2dSpriteAttachPoint>();
+			if (ap == null) {
+				go.AddComponent<tk2dSpriteAttachPoint>();
 			}
 		});	
 	}

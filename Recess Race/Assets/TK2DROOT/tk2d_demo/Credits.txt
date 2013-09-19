@@ -16,3 +16,6 @@ http://www.dafont.com/commodore-64.font
 
 Old Sans Black font by Manfred Klein
 http://manfred-klein.ina-mar.com/
+
+MV Platformer Male by MoikMellah (CC0)
+http://opengameart.org/content/mv-platformer-male-32x64

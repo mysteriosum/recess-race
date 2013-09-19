@@ -3,23 +3,6 @@ using System.Collections;
 
 public class Fitz : Platformer {
 	
-	/*public float wSpeed;
-		public float rSpeed;
-		public float sSpeed;
-		public float accel;
-		public float decel;
-		public float skidDecel;
-		public float rSkidDecel;
-		
-		public float jHeight;
-		public float jExtraHeight;
-		public float airSpeedInit;
-		public float airSpeedExtra = 0.15625f;
-		public float runJumpIncrement = 0.5f;
-		public float airAccel;
-		public float fallSpeedMax;
-		public float gravity;
-		public float gravityPlus;*/
 	
 	public MovementVariables mondo = new MovementVariables
 		(
@@ -213,19 +196,14 @@ public class Fitz : Platformer {
 	private Vector2 wallHitVelocity = new Vector2(1.35f, 4.0f);
 	
 	
-	public bool FacingRight { 
-		get { return sprite.transform.localScale.x > 0.9f; }
-		set {
-			sprite.transform.localScale = new Vector3(value? 1 : -1, 1, 1);
-		}
-	}
+	
 	
 	public int FacingRightMod {
 		get { return FacingRight? 1 : -1; }
 	}
 	
 	//array of t/fs. This is the sequence that blinks Fitz in and out when he 'dies'
-	private bool[] blinkArray = new bool[] {
+	public static readonly bool[] blinkArray = new bool[] {
 		true, true, true, true, true, true, true, true, true, true, true, true, true, true,
 		false, false, 
 		true, true, true, true, true, true, true, true, true, true, true, true, 
@@ -249,12 +227,7 @@ public class Fitz : Platformer {
 	//animation variables
 	
 	
-	private string a_walk = "walk";
-	private string a_idle = "idle";
-	private string a_fall = "fall";
-	private string a_jump = "jump";
 	private string a_sJump = "sprintJump";
-	private string a_land = "land";
 	private string a_dash = "dash";
 	private string a_wallGrab = "wallGrab";
 	private string a_wallJump = "wallJump";
@@ -402,7 +375,15 @@ public class Fitz : Platformer {
 				break;
 			}
 			Destroy(pickupScript.gameObject);
+			return;
 		}
+		
+		TennisBall ballScript = other.GetComponent<TennisBall>();
+		
+		if (ballScript != null){
+			Dying = true;
+		}
+		
 	}
 	
 	
@@ -732,7 +713,6 @@ public class Fitz : Platformer {
 	public void BoogerUpdate () {
 		if (wallHanging){
 			if ((FacingRight && !controller.getR) || (!FacingRight && !controller.getL)){
-				Debug.Log("Disengage wallhang!");
 				wallHanging = false;
 				anim.Play(a_fall);
 				FacingRight = !FacingRight;
@@ -812,6 +792,7 @@ public class Fitz : Platformer {
 	public void ChangeToBoogerBoy () {
 		currentMotor = boogerBoy;
 		Destroy(dummy);
+		Debug.Log("My name is " + name);
 		dummy = Instantiate(Resources.Load("boogerDummy"), t.position - Vector3.forward, t.rotation) as GameObject;
 		velocity = Vector2.zero;
 		Debug.Log("Should be loading booger boy now");
@@ -841,7 +822,9 @@ public class Fitz : Platformer {
 		};
 						//apply gravity
 		Gravity = delegate(){
-			
+			if (falling && velocity.y > 0){
+				JumpUp();
+			}
 			velocity = new Vector2(velocity.x, Mathf.Max (velocity.y - boogerBoy.gravity, -BoogerFallSpeed));
 		};
 						//run button pressed: Shoot/charge
@@ -886,6 +869,7 @@ public class Fitz : Platformer {
 			if (grounded){
 				velocity = new Vector2(velocity.x, boogerBoy.airSpeedInit);
 				anim.Play (a_jump);
+				jumping = true;
 			}
 			else if (wallHanging){
 				wallJumpTimer = wallJumpMax;
@@ -893,6 +877,7 @@ public class Fitz : Platformer {
 				anim.Play(a_wallJump);
 				wallHanging = false;
 				falling = false;
+				jumping = true;
 			}
 		};
 						//jump button released: fall

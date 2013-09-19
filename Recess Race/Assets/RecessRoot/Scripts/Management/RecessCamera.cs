@@ -4,6 +4,7 @@ using System.Collections;
 public class RecessCamera : MonoBehaviour {
 	private Transform t;
 	private Transform fitz;
+	private Transform box;
 	
 	public static RecessCamera cam;
 	
@@ -19,11 +20,25 @@ public class RecessCamera : MonoBehaviour {
 	void Start () {
 		t = transform;
 		Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
-		fitz = fitzScript.transform;
+		if (fitzScript != null)
+			fitz = fitzScript.transform;
+		
+		if (TextBox.bubble != null){
+			box = TextBox.bubble.transform;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		t.position = new Vector3(0, fitz.position.y - 240, t.position.z);
+		if (fitz != null){
+			t.position = new Vector3(0, fitz.position.y - 240, t.position.z);
+		}
+		
+		if (box != null){
+			box.position = t.position + new Vector3(320, 240, 3);
+		}
+		else if (TextBox.bubble != null){
+			box = TextBox.bubble.transform;
+		}
 	}
 }

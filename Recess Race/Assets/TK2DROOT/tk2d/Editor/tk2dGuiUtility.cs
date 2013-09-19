@@ -17,16 +17,14 @@ public static class tk2dGuiUtility
 			activePositionHandlePosition = val;
 	}
 	
-	public static Vector2 PositionHandle(int id, Vector2 position, float size, Color inactiveColor, Color activeColor)
+	public static Vector2 PositionHandle(int id, Vector2 position)
 	{
-		return PositionHandle(id, position, size, inactiveColor, activeColor, false);
+		return Handle(tk2dEditorSkin.MoveHandle, id, position, false);
 	}
 	
-	public static Vector2 PositionHandle(int id, Vector2 position, float size, Color inactiveColor, Color activeColor, bool allowKeyboardFocus)
+	public static Vector2 Handle(GUIStyle style, int id, Vector2 position, bool allowKeyboardFocus)
 	{
-		GUIStyle style = tk2dEditorSkin.MoveHandle;
 		int handleSize = (int)style.fixedWidth;
-
 		Rect rect = new Rect(position.x - handleSize / 2, position.y - handleSize / 2, handleSize, handleSize);
 		int controlID = id;
 		
@@ -213,6 +211,29 @@ public static class tk2dGuiUtility
 		return hasChanged;
 	}
 
+	public static void SpriteCollectionSize( tk2dSpriteCollectionSize scs ) {
+		GUILayout.BeginHorizontal();
+		scs.type = (tk2dSpriteCollectionSize.Type)EditorGUILayout.EnumPopup("Size", scs.type);
+		tk2dCamera cam = tk2dCamera.Editor__Inst;
+		GUI.enabled = cam != null;
+		if (GUILayout.Button(new GUIContent("g", "Grab from tk2dCamera"), EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+			scs.CopyFrom( tk2dSpriteCollectionSize.ForTk2dCamera(cam) );
+			GUI.changed = true;
+		}
+		GUI.enabled = true;
+		GUILayout.EndHorizontal();
+		EditorGUI.indentLevel++;
+		switch (scs.type) {
+			case tk2dSpriteCollectionSize.Type.Explicit:
+				scs.orthoSize = EditorGUILayout.FloatField("Ortho Size", scs.orthoSize);
+				scs.height = EditorGUILayout.FloatField("Target Height", scs.height);
+				break;
+			case tk2dSpriteCollectionSize.Type.PixelsPerMeter:
+				scs.pixelsPerMeter = EditorGUILayout.FloatField("Pixels Per Meter", scs.pixelsPerMeter);
+				break;
+		}
+		EditorGUI.indentLevel--;
+	}
 
 	public static string PlatformPopup(tk2dSystem system, string label, string platform)
 	{

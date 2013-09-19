@@ -34,7 +34,7 @@ public class tk2dUIScrollableAreaEditor : Editor
         Vector3 up = m.MultiplyVector(Vector3.up);
         Vector3 right = m.MultiplyVector(Vector3.right);
 
-        float newVisibleAreaLength = tk2dUIControlsHelperEditor.DrawLengthHandles("Visible Area Length", scrollableArea.VisibleAreaLength,scrollableArea.transform.position, isYAxis? -up:right, Color.red,isYAxis?.2f:-.2f, 0, .05f);
+        float newVisibleAreaLength = tk2dUIControlsHelperEditor.DrawLengthHandles("Visible Area Length", scrollableArea.VisibleAreaLength,scrollableArea.contentContainer.transform.position, isYAxis? -up:right, Color.red,isYAxis?.2f:-.2f, 0, .05f);
         if (newVisibleAreaLength != scrollableArea.VisibleAreaLength)
         {
             Undo.RegisterUndo(scrollableArea, "Visible area changed");
@@ -42,7 +42,7 @@ public class tk2dUIScrollableAreaEditor : Editor
             wasChange = true;
         }
 
-        float newContentLength = tk2dUIControlsHelperEditor.DrawLengthHandles("Content Length", scrollableArea.ContentLength, scrollableArea.transform.position, isYAxis ? -up : right, Color.blue, isYAxis ? .2f : -.2f, isYAxis?.4f:-.4f, .1f);
+        float newContentLength = tk2dUIControlsHelperEditor.DrawLengthHandles("Content Length", scrollableArea.ContentLength, scrollableArea.contentContainer.transform.position, isYAxis ? -up : right, Color.blue, isYAxis ? .2f : -.2f, isYAxis?.4f:-.4f, .1f);
         if (newContentLength != scrollableArea.ContentLength)
         {
             Undo.RegisterUndo(scrollableArea, "Content length changed");

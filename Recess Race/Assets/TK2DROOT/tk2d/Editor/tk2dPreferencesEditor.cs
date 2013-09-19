@@ -14,6 +14,12 @@ public class tk2dPreferences {
 	public bool enableSpriteHandles = true;
 	public bool enableMoveHandles = true;
 
+	public Color tileMapToolColor_brush = new Color32(0, 128, 255, 32);
+	public Color tileMapToolColor_brushRandom = new Color32(128, 255, 0, 32);
+	public Color tileMapToolColor_erase = new Color32(255, 64, 64, 32);
+	public Color tileMapToolColor_eyedropper = new Color32(255, 212, 32, 32);
+	public Color tileMapToolColor_cut = new Color32(255, 128, 32, 32);
+
 	public int spriteCollectionListWidth {
 		get { return _spriteCollectionListWidth; }
 		set { if (_spriteCollectionListWidth != value) _spriteCollectionListWidth = value; Save(); }
@@ -48,7 +54,7 @@ public class tk2dPreferences {
 	int _spriteThumbnailSize = 128;
 
 	// Grid settings
-
+	[System.Xml.Serialization.XmlIgnoreAttribute]
 	public tk2dGrid.Type gridType {
 		get { return _gridType; }
 		set {
@@ -59,6 +65,7 @@ public class tk2dPreferences {
 			}
 		}
 	}
+	[System.Xml.Serialization.XmlIgnoreAttribute]
 	public Color customGridColor0 {
 		get { return _customGridColor0; }
 		set { 
@@ -69,6 +76,7 @@ public class tk2dPreferences {
 			}
 		}
 	}
+	[System.Xml.Serialization.XmlIgnoreAttribute]
 	public Color customGridColor1 {
 		get { return _customGridColor1; }
 		set { 
@@ -80,9 +88,9 @@ public class tk2dPreferences {
 		}
 	}
 	
-	tk2dGrid.Type _gridType = tk2dGrid.Type.DarkChecked;
-	Color _customGridColor0 = Color.white;
-	Color _customGridColor1 = Color.gray;
+	public tk2dGrid.Type _gridType = tk2dGrid.Type.DarkChecked;
+	public Color _customGridColor0 = Color.white;
+	public Color _customGridColor1 = Color.gray;
 
 	// Instance
 	static tk2dPreferences _inst = null;
@@ -228,10 +236,29 @@ public class tk2dPreferencesEditor : EditorWindow
 		EditorGUI.indentLevel--;
 		GUI.enabled = oldGuiEnable;
 
+		EditorGUILayout.LabelField("Tilemap Paint Mode Colors");
+		++EditorGUI.indentLevel;
+		EditorGUI.BeginChangeCheck();
+		prefs.tileMapToolColor_brush = EditorGUILayout.ColorField("Brush", prefs.tileMapToolColor_brush);
+		prefs.tileMapToolColor_brushRandom = EditorGUILayout.ColorField("Random", prefs.tileMapToolColor_brushRandom);
+		prefs.tileMapToolColor_erase = EditorGUILayout.ColorField("Erase", prefs.tileMapToolColor_erase);
+		prefs.tileMapToolColor_eyedropper = EditorGUILayout.ColorField("Eyedropper", prefs.tileMapToolColor_eyedropper);
+		prefs.tileMapToolColor_cut = EditorGUILayout.ColorField("Cut", prefs.tileMapToolColor_cut);
+		if (EditorGUI.EndChangeCheck())
+			updateTilemapCursorColor = true;
+		--EditorGUI.indentLevel;
+
 		GUILayout.EndScrollView();
 
 		if (GUI.changed) {
 			tk2dPreferences.inst.Save();
 		}
+	}
+
+	static bool updateTilemapCursorColor = false;
+	static public bool CheckTilemapCursorColorUpdate() {
+		bool result = updateTilemapCursorColor;
+		updateTilemapCursorColor = false;
+		return result;
 	}
 }

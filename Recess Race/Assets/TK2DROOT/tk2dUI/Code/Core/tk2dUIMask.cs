@@ -124,7 +124,7 @@ public class tk2dUIMask : MonoBehaviour {
 			}
 			Bounds bounds = ThisMeshFilter.sharedMesh.bounds;
 			ThisBoxCollider.center = new Vector3( bounds.center.x, bounds.center.y, -depth );
-			ThisBoxCollider.extents = new Vector3( bounds.extents.x, bounds.extents.y, 0.0001f );
+			ThisBoxCollider.size = new Vector3( bounds.size.x, bounds.size.y, 0.0002f );
 		}
 		else if (ThisBoxCollider != null) {
 #if UNITY_EDITOR

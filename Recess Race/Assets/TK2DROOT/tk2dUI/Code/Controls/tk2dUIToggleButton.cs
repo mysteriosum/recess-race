@@ -19,7 +19,9 @@ public class tk2dUIToggleButton : tk2dUIBaseItemControl
     /// </summary>
     public bool activateOnPress = false;
 
+    [SerializeField]
     private bool isOn = true;
+    
     private bool isInToggleGroup = false;
 
     /// <summary>

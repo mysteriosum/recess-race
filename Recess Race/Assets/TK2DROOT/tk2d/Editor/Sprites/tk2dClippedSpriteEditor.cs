@@ -104,7 +104,7 @@ class tk2dClippedSpriteEditor : tk2dSpriteEditor
 				if (EditorGUI.EndChangeCheck()) {
 					Undo.RegisterUndo (t, "Rotate");
 					if (Mathf.Abs(theta) > Mathf.Epsilon) {
-						t.Rotate(t.forward, theta);
+						t.Rotate(t.forward, theta, Space.World);
 					}
 				}
 			}

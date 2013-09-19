@@ -152,7 +152,7 @@ public class Platformer : MonoBehaviour {
 		public float jHeight;
 		public float jExtraHeight;
 		public float airSpeedInit;
-		public float airSpeedExtra = 0.15625f;
+		public float airSpeedExtra = 0.25825f;
 		public float runJumpIncrement = 0.5f;
 		public float fallSpeedMax;
 		public float gravity;
@@ -228,7 +228,15 @@ public class Platformer : MonoBehaviour {
 	
 	protected GameObject dummy;
 	
-	//layer values
+	
+	//animations
+	protected string a_walk = "walk";
+	protected string a_idle = "idle";
+	protected string a_fall = "fall";
+	protected string a_jump = "jump";
+	protected string a_land = "land";
+	
+	//layer masks
 	public int FullCollision {
 		get { return 1 << LayerMask.NameToLayer("normalCollision"); }
 	}
@@ -245,7 +253,12 @@ public class Platformer : MonoBehaviour {
 		get { return 1 << LayerMask.NameToLayer("normalCollision") | 1 << LayerMask.NameToLayer("avatar"); }
 	}
 
-	
+	public bool FacingRight { 
+		get { return sprite.transform.localScale.x > 0.9f; }
+		set {
+			sprite.transform.localScale = new Vector3(value? 1 : -1, 1, 1);
+		}
+	}
 	
 	//LOTS OF DELEGATES! YEAAAAAAAAAAAAAAAAAAAAAAAH
 	public delegate void InputDelegate();
@@ -355,11 +368,14 @@ public class Platformer : MonoBehaviour {
 	
 	public virtual void HitTop(BoxCollider topCollider){
 		if (jumping && !rightDScript.KnowsOf(topCollider) && !leftDScript.KnowsOf(topCollider)){
-			
+			Debug.Log("HIt");
 			falling = true;
 			jumping = false;
 			headBump = true;
 			velocity = new Vector2(velocity.x, 0);
+		}
+		else {
+			Debug.Log("Rawr");
 		}
 	}
 	
@@ -395,6 +411,7 @@ public class Platformer : MonoBehaviour {
 	
 	public virtual void NothingBottom(){
 		grounded = false;
+		Debug.Log("Yeah nothing bottom");
 	}
 	
 	public virtual void NothingLeft(){
@@ -425,17 +442,18 @@ public class Platformer : MonoBehaviour {
 	}
 	
 	public virtual void DetectorEnter (BoxCollider detector, BoxCollider colEntering){
-		if (colEntering.gameObject.layer == 31 || colEntering.gameObject.layer == 30 || colEntering.gameObject.layer == 29){
-			if (detector == rightDetector){
+		int lay = colEntering.gameObject.layer;
+		if (lay == 31 || lay == 30 || lay == 29){
+			if (detector == rightDetector && lay == LayerMask.NameToLayer("normalCollision")){
 				HitRight(colEntering);
 			}
-			else if (detector == leftDetector){
+			else if (detector == leftDetector && lay == LayerMask.NameToLayer("normalCollision")){
 				HitLeft(colEntering);
 			}
-			else if (detector == botDetector){
+			else if (detector == botDetector && lay != LayerMask.NameToLayer("softTop")){
 				HitBottom(colEntering);
 			}
-			else if (detector == topDetector){
+			else if (detector == topDetector && lay != LayerMask.NameToLayer("softBottom")){
 				HitTop(colEntering);
 			}
 		}

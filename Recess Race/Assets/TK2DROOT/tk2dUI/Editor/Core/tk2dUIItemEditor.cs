@@ -16,6 +16,54 @@ public class tk2dUIItemEditor : Editor
         ignoreBoundsProp = serializedObject.FindProperty("editorIgnoreBounds");
     }
 
+    GameObject cachedMethodBinding = null;
+    List<string> cachedMethods = new List<string>();
+
+    void MethodBinding( string name, GameObject target, ref string methodName ) {
+        if (target != cachedMethodBinding) {
+            cachedMethods.Clear();
+
+            List<System.Type> addedTypes = new List<System.Type>();
+
+            MonoBehaviour[] behaviours = target.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour beh in behaviours) {
+                System.Type type = beh.GetType();
+                if (addedTypes.IndexOf(type) == -1) {
+                    System.Reflection.MethodInfo[] methods = type.GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+                    foreach (System.Reflection.MethodInfo method in methods) {
+                        // Only add variables added by user, i.e. we don't want functions from the base UnityEngine baseclasses or lower
+                        string moduleName = method.DeclaringType.Assembly.ManifestModule.Name;
+                        if (!moduleName.Contains("UnityEngine") && !moduleName.Contains("mscorlib") &&
+                            !method.ContainsGenericParameters && 
+                            method.Name != "Start" && method.Name != "Awake" && method.Name != "OnEnable" && method.Name != "OnDisable") {
+                            System.Reflection.ParameterInfo[] paramInfo = method.GetParameters();
+                            if (paramInfo.Length == 0) {
+                                cachedMethods.Add(method.Name);
+                            }
+                            else if (paramInfo.Length == 1 && paramInfo[0].ParameterType == typeof(tk2dUIItem)) {
+                                cachedMethods.Add(method.Name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int idx = cachedMethods.IndexOf(methodName);
+        GUILayout.BeginHorizontal();
+        int nidx = EditorGUILayout.Popup( name, idx, cachedMethods.ToArray() );
+        if (nidx != idx) {
+            methodName = cachedMethods[nidx];
+        }
+        if (methodName.Length != 0) {
+            if (GUILayout.Button("Clear", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+                methodName = "";
+                Repaint();
+            }
+        }
+        GUILayout.EndHorizontal();
+    }
+
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
@@ -52,10 +100,12 @@ public class tk2dUIItemEditor : Editor
         }
         if (btn.sendMessageTarget != null)
         {
-            btn.SendMessageOnDownMethodName = EditorGUILayout.TextField("On Down Method Name", btn.SendMessageOnDownMethodName);
-            btn.SendMessageOnUpMethodName = EditorGUILayout.TextField("On Up Method Name", btn.SendMessageOnUpMethodName);
-            btn.SendMessageOnClickMethodName = EditorGUILayout.TextField("On Clicked Method Name", btn.SendMessageOnClickMethodName);
-            btn.SendMessageOnReleaseMethodName = EditorGUILayout.TextField("On Release Method Name", btn.SendMessageOnReleaseMethodName);
+            EditorGUI.indentLevel++;
+            MethodBinding( "On Down", btn.sendMessageTarget, ref btn.SendMessageOnDownMethodName );
+            MethodBinding( "On Up", btn.sendMessageTarget, ref btn.SendMessageOnUpMethodName );
+            MethodBinding( "On Click", btn.sendMessageTarget, ref btn.SendMessageOnClickMethodName );
+            MethodBinding( "On Release", btn.sendMessageTarget, ref btn.SendMessageOnReleaseMethodName );
+            EditorGUI.indentLevel--;
         }
         EditorGUI.indentLevel--;
 

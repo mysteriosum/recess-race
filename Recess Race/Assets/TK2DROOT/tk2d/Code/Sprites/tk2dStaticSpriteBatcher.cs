@@ -141,6 +141,7 @@ public class tk2dStaticSpriteBatcher : MonoBehaviour, tk2dRuntime.ISpriteCollect
 		None = 0,
 		GenerateCollider = 1,
 		FlattenDepth = 2,
+		SortToCamera = 4,
 	}
 	
 	// default to keep backwards compatibility

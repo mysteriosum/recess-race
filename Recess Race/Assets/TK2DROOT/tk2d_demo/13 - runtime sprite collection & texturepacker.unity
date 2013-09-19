@@ -142,7 +142,6 @@ MonoBehaviour:
   _color: {r: 1, g: 1, b: 1, a: 1}
   _scale: {x: 5, y: 5, z: 5}
   _spriteId: 31
-  pixelPerfect: 0
   boxCollider: {fileID: 0}
   meshCollider: {fileID: 0}
   meshColliderPositions: []
@@ -150,6 +149,7 @@ MonoBehaviour:
   _dimensions: {x: 250, y: 120}
   _anchor: 4
   _borderOnly: 0
+  legacyMode: 0
   borderTop: .263157904
   borderBottom: .263157904
   borderLeft: .141843975
@@ -356,6 +356,22 @@ MonoBehaviour:
   _inlineStyling: 0
   _formatting: 0
   _wordWrapWidth: 0
-  pixelPerfect: 0
   spacing: 0
   lineSpacing: 0
+  data:
+    version: 1
+    font: {fileID: 11400000, guid: 44e006873ca04f741b2ac3ba5dec92ad, type: 2}
+    text: Press Play
+    color: {r: 1, g: 1, b: 1, a: 1}
+    color2: {r: 1, g: 1, b: 1, a: 1}
+    useGradient: 0
+    textureGradient: 0
+    anchor: 4
+    scale: {x: 5, y: 5, z: 5}
+    kerning: 0
+    maxChars: 10
+    inlineStyling: 0
+    formatting: 0
+    wordWrapWidth: 0
+    spacing: 0
+    lineSpacing: 0

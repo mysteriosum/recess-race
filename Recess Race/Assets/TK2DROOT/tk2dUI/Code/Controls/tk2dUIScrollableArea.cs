@@ -97,17 +97,52 @@ public class tk2dUIScrollableArea : MonoBehaviour
     /// </summary>
     public float Value
     {
-        get { return percent; }
+        get { return Mathf.Clamp01( percent ); }
         set
         {
             value = Mathf.Clamp(value, 0f, 1f);
             if (value != percent)
             {
                 UnpressAllUIItemChildren();
+                percent = value;
+                if (OnScroll != null) { OnScroll(this); }
             }
-            percent = value;
             if (scrollBar != null) { scrollBar.SetScrollPercentWithoutEvent(percent); }
             SetContentPosition();
+        }
+    }
+
+    /// <summary>
+    /// Manually set scrolling percent without firing OnScroll event
+    /// </summary>
+    public void SetScrollPercentWithoutEvent(float newScrollPercent)
+    {
+        percent = Mathf.Clamp(newScrollPercent, 0f, 1f);
+        UnpressAllUIItemChildren();
+        if (scrollBar != null) { scrollBar.SetScrollPercentWithoutEvent(percent); }
+        SetContentPosition();
+    }
+
+    /// <summary>
+    /// Measures the content length. This isn't very fast, so if you know the content length
+    /// it is often more efficient to tell it rather than asking it to measure the content.
+    /// Returns the height in Unity units, of everything under the Content contentContainer.
+    /// </summary>
+    public float MeasureContentLength() {
+        Vector3 vector3Min = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+        Vector3 vector3Max = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        Vector3[] minMax = new Vector3[] {
+            vector3Max,
+            vector3Min
+        };
+        Transform t = contentContainer.transform;
+        GetRendererBoundsInChildren(t.worldToLocalMatrix, minMax, t);
+        if (minMax[0] != vector3Max && minMax[1] != vector3Min) {
+            return minMax[1].y - minMax[0].y;
+        }
+        else {
+            Debug.LogError("Unable to measure content length");
+            return VisibleAreaLength * 0.9f;
         }
     }
 
@@ -151,13 +186,14 @@ public class tk2dUIScrollableArea : MonoBehaviour
             isBackgroundButtonOver = false;
         }
 
-        if (isBackgroundButtonDown)
+        if (isBackgroundButtonDown || isSwipeScrollingInProgress)
         {
             if (tk2dUIManager.Instance != null)
             {
                 tk2dUIManager.Instance.OnInputUpdate -= BackgroundOverUpdate;
             }
             isBackgroundButtonDown = false;
+            isSwipeScrollingInProgress = false;
         }
 
         swipeCurrVelocity = 0;
@@ -257,6 +293,7 @@ public class tk2dUIScrollableArea : MonoBehaviour
         }
         if (isSwipeScrollingInProgress)
         {
+            float newPercent = percent;
             float destValue = 0;
             if (scrollAxes == Axes.XAxis)
             {
@@ -297,20 +334,26 @@ public class tk2dUIScrollableArea : MonoBehaviour
                 {
                     swipeScrollingContentDestLocalPos.y = destValue;
                 }
-                ContentContainerOffset = swipeScrollingContentDestLocalPos;
+
+                newPercent = destValue / (contentLength - visibleAreaLength);
             }
             else //background button not down
             {
+                float velocityThreshold = visibleAreaLength * 0.001f;
                 if (destValue < minDest || destValue > maxDest)
                 {
                     float target = ( destValue < minDest ) ? minDest : maxDest;
                     destValue = Mathf.SmoothDamp( destValue, target, ref snapBackVelocity, 0.05f, Mathf.Infinity, tk2dUITime.deltaTime );
+                    if (Mathf.Abs(snapBackVelocity) < velocityThreshold) {
+                        destValue = target;
+                        snapBackVelocity = 0;
+                    }
                     swipeCurrVelocity = 0;
                 }
                 else if (swipeCurrVelocity != 0) //velocity scrolling
                 {
                     destValue += swipeCurrVelocity * tk2dUITime.deltaTime * 20; //swipe velocity multiplier
-                    if (swipeCurrVelocity > 0.001f || swipeCurrVelocity < -0.001f)
+                    if (swipeCurrVelocity > velocityThreshold || swipeCurrVelocity < -velocityThreshold)
                     {
                         swipeCurrVelocity = Mathf.Lerp(swipeCurrVelocity, 0, tk2dUITime.deltaTime * 2.5f); //change multiplier to change slowdown velocity
                     }
@@ -334,7 +377,13 @@ public class tk2dUIScrollableArea : MonoBehaviour
                     swipeScrollingContentDestLocalPos.y = destValue;
                 }
 
+                newPercent = destValue / (contentLength - visibleAreaLength);
+            }
+
+            if (newPercent != percent) {
+                percent = newPercent;
                 ContentContainerOffset = swipeScrollingContentDestLocalPos;
+                if (OnScroll != null) OnScroll(this);
             }
 
             if (scrollBar != null)
@@ -486,6 +535,35 @@ public class tk2dUIScrollableArea : MonoBehaviour
 
     private void UnpressAllUIItemChildren()
     {
-
     }
+
+
+    private static readonly Vector3[] boxExtents = new Vector3[] {
+        new Vector3(-1, -1, -1), new Vector3( 1, -1, -1), new Vector3(-1,  1, -1), new Vector3( 1,  1, -1), new Vector3(-1, -1,  1), new Vector3( 1, -1,  1), new Vector3(-1,  1,  1), new Vector3( 1,  1,  1)
+    };
+
+    private static void GetRendererBoundsInChildren(Matrix4x4 rootWorldToLocal, Vector3[] minMax, Transform t) {
+        MeshFilter mf = t.GetComponent<MeshFilter>();
+        if (mf != null && mf.sharedMesh != null) {
+            Bounds b = mf.sharedMesh.bounds;
+            Matrix4x4 relativeMatrix = rootWorldToLocal * t.localToWorldMatrix;
+            for (int j = 0; j < 8; ++j) {
+                Vector3 localPoint = b.center + Vector3.Scale(b.extents, boxExtents[j]);
+                Vector3 pointRelativeToRoot = relativeMatrix.MultiplyPoint(localPoint);
+                minMax[0] = Vector3.Min(minMax[0], pointRelativeToRoot);
+                minMax[1] = Vector3.Max(minMax[1], pointRelativeToRoot);
+            }
+        }
+        int childCount = t.childCount;
+        for (int i = 0; i < childCount; ++i) {
+            Transform child = t.GetChild(i);
+#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_3_6 || UNITY_3_7 || UNITY_3_8 || UNITY_3_9
+            if (t.gameObject.active) {
+#else
+            if (t.gameObject.activeSelf) {
+#endif
+                GetRendererBoundsInChildren(rootWorldToLocal, minMax, child);
+            }
+        }
+    }   
 }

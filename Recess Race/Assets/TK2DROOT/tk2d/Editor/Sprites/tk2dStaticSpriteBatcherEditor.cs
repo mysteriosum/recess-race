@@ -17,7 +17,14 @@ class tk2dStaticSpriteBatcherEditor : Editor
 			allTransforms = (from t in allTransforms where t != batcher.transform select t).ToArray();
 			
 			// sort sprites, smaller to larger z
-			allTransforms = (from t in allTransforms orderby t.position.z descending select t).ToArray();
+			if (batcher.CheckFlag(tk2dStaticSpriteBatcher.Flags.SortToCamera)) {
+				tk2dCamera tk2dCam = tk2dCamera.CameraForLayer( batcher.gameObject.layer );
+				Camera cam = tk2dCam ? tk2dCam.camera : Camera.main;
+				allTransforms = (from t in allTransforms orderby cam.WorldToScreenPoint((t.renderer != null) ? t.renderer.bounds.center : t.position).z descending select t).ToArray();
+			}
+			else {
+				allTransforms = (from t in allTransforms orderby t.position.z descending select t).ToArray();
+			}
 			
 			// and within the z sort by material
 			if (allTransforms.Length == 0)
@@ -129,9 +136,9 @@ class tk2dStaticSpriteBatcherEditor : Editor
 			Vector3 p = boxCollider.center;
 			p.z = offset;
 			boxCollider.center = p;
-			p = boxCollider.extents;
-			p.z = extents;
-			boxCollider.extents = p;
+			p = boxCollider.size;
+			p.z = extents * 2;
+			boxCollider.size = p;
 		}
 	}
 	
@@ -149,7 +156,7 @@ class tk2dStaticSpriteBatcherEditor : Editor
 		if (baseSprite.boxCollider != null)
 		{
 			bs.BoxColliderOffsetZ = baseSprite.boxCollider.center.z;
-			bs.BoxColliderExtentZ = baseSprite.boxCollider.extents.z;
+			bs.BoxColliderExtentZ = baseSprite.boxCollider.size.z * 0.5f;
 		}
 		else {
 			bs.BoxColliderOffsetZ = 0.0f;
@@ -332,6 +339,7 @@ class tk2dStaticSpriteBatcherEditor : Editor
 
 		batcher.SetFlag(tk2dStaticSpriteBatcher.Flags.GenerateCollider, EditorGUILayout.Toggle("Generate Collider", batcher.CheckFlag(tk2dStaticSpriteBatcher.Flags.GenerateCollider)));
 		batcher.SetFlag(tk2dStaticSpriteBatcher.Flags.FlattenDepth, EditorGUILayout.Toggle("Flatten Depth", batcher.CheckFlag(tk2dStaticSpriteBatcher.Flags.FlattenDepth)));
+		batcher.SetFlag(tk2dStaticSpriteBatcher.Flags.SortToCamera, EditorGUILayout.Toggle("Sort to Camera", batcher.CheckFlag(tk2dStaticSpriteBatcher.Flags.SortToCamera)));
 
 		MeshFilter meshFilter = batcher.GetComponent<MeshFilter>();
 		MeshRenderer meshRenderer = batcher.GetComponent<MeshRenderer>();

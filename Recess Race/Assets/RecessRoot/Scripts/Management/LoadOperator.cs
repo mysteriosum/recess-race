@@ -24,8 +24,8 @@ public class LoadOperator : MonoBehaviour {
 		
 		if (loaders % 2 == 1){
 			transform.localScale = new Vector3(-1, 1, 1);
+			BroadcastMessage("Flip", SendMessageOptions.DontRequireReceiver);
 		}
-		
 		
 	}
 	

@@ -215,7 +215,7 @@ public class tk2dTiledSprite : tk2dBaseSprite
 					boxCollider = gameObject.AddComponent<BoxCollider>();
 				}
 			}
-			boxCollider.extents = boundsExtents;
+			boxCollider.size = 2 * boundsExtents;
 			boxCollider.center = boundsCenter;
 		} else {
 #if UNITY_EDITOR
