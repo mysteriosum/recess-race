@@ -6,7 +6,7 @@ public class LoadOperator : MonoBehaviour {
 	private RecessManager man;
 	private Decoy[] decoys;
 	
-	
+	static bool willFlip = true;
 	private static int loaders = 0;
 	// Use this for initialization
 	
@@ -22,7 +22,13 @@ public class LoadOperator : MonoBehaviour {
 		man.AddDecoys(decoys);
 		transform.position += new Vector3(0, loaders * man.levelOffset, 0);
 		
-		if (loaders % 2 == 1){
+		if (loaders % 2 == 0){
+			willFlip = willFlip? false : true;
+			Debug.Log("AWRR" + willFlip);
+		}
+		
+		if (willFlip){
+			
 			transform.localScale = new Vector3(-1, 1, 1);
 			BroadcastMessage("Flip", SendMessageOptions.DontRequireReceiver);
 		}

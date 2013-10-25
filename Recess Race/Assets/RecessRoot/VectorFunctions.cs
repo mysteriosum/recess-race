@@ -57,7 +57,6 @@ static class VectorFunctions {
 	}
 	
 	static public Vector2 Bounce (Vector2 velocityBefore, Vector3 normal) {
-		Debug.Log("are these two different? " + normal + " and " + (Vector2) normal);
 		return Bounce (velocityBefore, (Vector2) normal);
 	}
 }

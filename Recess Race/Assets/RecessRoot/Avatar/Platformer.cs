@@ -303,7 +303,7 @@ public class Platformer : MonoBehaviour {
 		anim = GetComponentInChildren<tk2dSpriteAnimator>();
 		
 		bc = GetComponent<BoxCollider>();
-		
+		name = name + gameObject.GetInstanceID();
 		botDetector = GameObject.Find(name + "/downDetector").GetComponent<BoxCollider>();
 		leftDetector = GameObject.Find(name + "/leftDetector").GetComponent<BoxCollider>();
 		rightDetector = GameObject.Find(name + "/rightDetector").GetComponent<BoxCollider>();
@@ -368,14 +368,10 @@ public class Platformer : MonoBehaviour {
 	
 	public virtual void HitTop(BoxCollider topCollider){
 		if (jumping && !rightDScript.KnowsOf(topCollider) && !leftDScript.KnowsOf(topCollider)){
-			Debug.Log("HIt");
 			falling = true;
 			jumping = false;
 			headBump = true;
 			velocity = new Vector2(velocity.x, 0);
-		}
-		else {
-			Debug.Log("Rawr");
 		}
 	}
 	
@@ -386,7 +382,7 @@ public class Platformer : MonoBehaviour {
 			falling = false;
 			justLanded = true;
 			velocity = new Vector2(velocity.x, 0);
-			t.position = new Vector3(t.position.x, botCollider.bounds.center.y + botCollider.size.y / 2 + bc.size.y / 2, 0);
+			t.position = new Vector3(t.position.x, botCollider.bounds.center.y + botCollider.size.y / 2 * botCollider.transform.localScale.y + bc.size.y / 2, 0);
 			OnLand();
 		}
 	}
@@ -411,7 +407,7 @@ public class Platformer : MonoBehaviour {
 	
 	public virtual void NothingBottom(){
 		grounded = false;
-		Debug.Log("Yeah nothing bottom");
+		//Debug.Log("Yeah nothing bottom");
 	}
 	
 	public virtual void NothingLeft(){

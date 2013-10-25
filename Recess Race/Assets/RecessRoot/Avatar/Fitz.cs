@@ -479,6 +479,13 @@ public class Fitz : Platformer {
 				Debug.Log ("There's a checkpoint script.");
 			}
 		}
+		else if (detector == topDetector && currentMotor == mondo){
+			BrickBlock brickScript = colEntering.GetComponent<BrickBlock>();
+			
+			if (brickScript){
+				brickScript.SendMessage("Explode");
+			}
+		}
 		
 		if (colEntering.gameObject.layer == LayerMask.NameToLayer("normalCollision") && (detector == leftDetector || detector == rightDetector) && charging){
 			EndCharge ();

@@ -113,7 +113,6 @@ public class Doc : Platformer {
 	private int refreshTimer = 0;
 	private Vector2 emergeVelocity = Vector2.up * 2;
 	
-	private string a_walk = "walk";
 	private string a_turn = "turn";
 	private string a_hide = "hide";
 	private string a_emerge = "emerge";
