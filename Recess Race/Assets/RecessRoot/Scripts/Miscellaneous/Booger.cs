@@ -13,7 +13,7 @@ public class Booger : MonoBehaviour {
 	public BoogerSize size = BoogerSize.small;
 	
 	private int damage;
-	private Doc docScript;
+	private DocOld docScript;
 	
 	
 	
@@ -45,7 +45,7 @@ public class Booger : MonoBehaviour {
 		Debug.Log("Ray stuff is: Offset " + rayOffset + " and length " + rayLength);
 		
 		sprite = GetComponent<tk2dSprite>();
-		sprite.scale = new Vector3(facingRight? 1 : -1, 1, 1);
+		sprite.scale = new Vector3((facingRight? 1 : -1), 1, 1);
 		Invoke("A_Splode", 5.5f);
 	}
 	
@@ -87,20 +87,22 @@ public class Booger : MonoBehaviour {
 			|| other.gameObject.layer == LayerMask.NameToLayer("softBottom") 
 			|| other.gameObject.layer == LayerMask.NameToLayer("softTop")) return true;
 		
-		if (other.gameObject.layer == RecessManager.Instance.docLayer){
-			Doc doc = other.GetComponent<Doc>();
+		switch (other.gameObject.layer){
+			
+		case RecessManager.docLayer:
+			DocOld doc = other.GetComponent<DocOld>();
 			if (doc){
 				doc.Hurt(damage);
 			}
 			Destroy(gameObject);
-		}
-		else if (other.gameObject.layer == RecessManager.Instance.brickLayer){
-				
+			break;
+		case RecessManager.brickLayer:
 			BrickBlock brick = other.GetComponent<BrickBlock>();
 			if (brick){
 				brick.SendMessage(size == BoogerSize.small? "Crack" : "Explode");
 				
 			}
+			break;
 		}
 		
 		if (size != BoogerSize.large){

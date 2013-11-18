@@ -16,8 +16,8 @@ public class RecessManager : MonoBehaviour {
 	private int curLevel = -1;
 	private Transform curCheckpoint;
 	
-	public int docLayer;
-	public int brickLayer;
+	public const int docLayer = 28;
+	public const int brickLayer = 12;
 	
 	string roomString = "room_";
 	
@@ -59,9 +59,7 @@ public class RecessManager : MonoBehaviour {
 		tk2dUI = GetComponent<tk2dUIManager>();
 		
 		
-			//-------------------------------setting layer variables-------------------------------
-		docLayer = LayerMask.NameToLayer("danger");
-		brickLayer = LayerMask.NameToLayer("brickBlock");
+		
 	}
 	
 	// Update is called once per frame

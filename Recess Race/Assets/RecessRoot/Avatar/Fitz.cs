@@ -417,7 +417,7 @@ public class Fitz : Platformer {
 	public override void DetectorEnter (BoxCollider detector, BoxCollider colEntering)
 	{
 		base.DetectorEnter (detector, colEntering);
-		Doc docScript = colEntering.GetComponent<Doc>();
+		DocOld docScript = colEntering.GetComponent<DocOld>();
 		
 		if (docScript){				//what happens when what I hit is Doc?
 			
@@ -1152,7 +1152,7 @@ public class Fitz : Platformer {
 	
 	public void DoneSwallowing (tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip){
 		swallowing = false;
-		Doc docScript = inMouth.GetComponent<Doc>();
+		DocOld docScript = inMouth.GetComponent<DocOld>();
 		if (docScript != null){
 			Debug.Log ("I am a walrus");
 			IsDoc = true;

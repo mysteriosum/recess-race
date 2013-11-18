@@ -37,8 +37,8 @@ public class jump : MonoBehaviour {
 	public int timeout = 5;
 	public int currentTime=0;
 	// Use this for initialization
-	void Start () {
-		d= GameObject.Find("dude");
+	protected void Start () {
+		d= gameObject;
 		rigsauce=d.rigidbody;
 		Physics.gravity = new Vector3(0,-grav,0);
 		jumpcounter=0;
@@ -47,6 +47,9 @@ public class jump : MonoBehaviour {
 		
 	}
 	
+	protected virtual void Setup (){
+	
+	}
 
 	
 	// Update is called once per frame

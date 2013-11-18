@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Doc : Platformer {
+public class DocOld : Platformer {
 	private BoxCollider tlDetector;
 	private BoxCollider trDetector;
 	private BoxCollider blDetector;
