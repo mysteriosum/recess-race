@@ -1,14 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\RecessRoot\Scripts\Management\RecessCamera.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\RecessRoot\Scripts\Enemies\Bully.cs">
     <Files>
-      <File FileName="Assets\RecessRoot\Scripts\Controls\jump.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Scripts\Static\Textf.cs" Line="25" Column="2" />
-      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\FitzDetectBox.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Scripts\Race Elements\Countdown.cs" Line="41" Column="7" />
-      <File FileName="Assets\RecessRoot\Scripts\Management\RecessCamera.cs" Line="58" Column="23" />
+      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\BullyInstruction.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Avatar\Otto.cs" Line="42" Column="44" />
+      <File FileName="Assets\RecessRoot\Scripts\Parents\Movable.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Controls\Kirby.cs" Line="6" Column="3" />
+      <File FileName="Assets\RecessRoot\Scripts\Enemies\Bully.cs" Line="31" Column="54" />
       <File FileName="Assets\RecessRoot\Scripts\Parents\Character.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Scripts\Parents\Movable.cs" Line="261" Column="96" />
+      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\GizmoDad.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Controls\Buster.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

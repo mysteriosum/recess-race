@@ -15,10 +15,12 @@ public class Movable : MonoBehaviour {
 	
 	public float acceleration = 4f;
 	public float maxHorizontalSpeed = 25f;
-	private float skidMultiplier = 2f;
+	public float skidMultiplier = 2f;
 	
 	public float initialJumpVelocity = 6f;
 	public float runningJumpModifier = 3f;
+	
+	
 	
 				// Overridable Getters & Setters
 	protected virtual float Gravity {
@@ -28,6 +30,40 @@ public class Movable : MonoBehaviour {
 	protected virtual float MaxFallSpeed {
 		get { return defaultMaxFallSpeed; }
 	}
+	
+	protected virtual float Acceleration {
+		get { return acceleration; }
+	}
+	
+	protected virtual float MaxSpeed {
+		get { return maxHorizontalSpeed; }
+	}
+	
+	protected virtual bool FacingRight {
+		get {
+			if (!anim)
+				return false;
+			return anim.Sprite.scale.x == 1;
+		}
+	}
+	
+	protected virtual string A_jump {
+		get { return "jump"; }
+	}
+	protected virtual string A_fall {
+		get { return "fall"; }
+	}
+	protected virtual string A_walk {
+		get { return "walk"; }
+	}
+	protected virtual string A_land {
+		get { return "land"; }
+	}
+	
+	protected virtual string A_idle {
+		get { return "idle"; }
+	}
+	
 	
 	protected Vector2 velocity;
 	protected bool grounded;
@@ -42,7 +78,7 @@ public class Movable : MonoBehaviour {
 	
 	public bool canMoveLeft;
 	public bool canMoveRight;
-	
+	private bool canJump;
 	//singleton
 	
 				//events & sheeeit
@@ -59,6 +95,8 @@ public class Movable : MonoBehaviour {
 	private bool started = false;
 	
 	private Vector3 initPos;
+	protected tk2dSpriteAnimator anim;
+	
 	
 	public class Raylayers{
 		public readonly int onlyCollisions;
@@ -80,6 +118,7 @@ public class Movable : MonoBehaviour {
 		go = gameObject;
 		bc = GetComponent<BoxCollider>();
 		rb = rigidbody;
+		anim = GetComponent<tk2dSpriteAnimator>();
 		
 		if (bc == null){
 			Debug.LogWarning("There's no box collider on " + name);
@@ -111,11 +150,12 @@ public class Movable : MonoBehaviour {
 		if(!grounded){
 			velocity = new Vector2(velocity.x, Mathf.Max(MaxFallSpeed, velocity.y - Gravity));
 		}
-		
+		#region checkDown
 		//check my bottom!
 		Vector2 pos = new Vector2(bc.bounds.center.x, bc.bounds.center.y);
 		//Vector2 pos = new Vector2(t.position.x, t.position.y);
-		float rayLengthV = box.y / 2 + Mathf.Abs(velocity.y * Time.deltaTime);
+		//float rayLengthV = box.y / 2 + Mathf.Abs(velocity.y * Time.deltaTime);
+		float rayLengthV = box.y / 2 + Mathf.Max(velocity.y * Time.deltaTime * -1, margin);
 		List<Ray> downRays = new List<Ray>();
 		RaycastHit downHit;
 		
@@ -149,86 +189,49 @@ public class Movable : MonoBehaviour {
 		if (!somethingBottom){
 			grounded = false;
 		}
-		/*
-		//raymaking
-		Vector2 box = new Vector2(bc.size.x, bc.size.y);
+		#endregion
 		
-		int 
-		int 
-		
-		float rayLengthH = box.x / 2 + Mathf.Abs(velocity.x * Time.deltaTime);
-		float rayLengthV = box.y / 2 + Mathf.Abs(velocity.y * Time.deltaTime);
-		
-		List<Ray> leftRays = new List<Ray>();
-		List<Ray> rightRays = new List<Ray>();
+		#region checkUp
+		float upRayLength = 0;
+		if (grounded)
+			upRayLength = box.y / 2 + margin;
+		else
+			upRayLength = box.y / 2 + (velocity.y > 0? velocity.y : 0) * Time.deltaTime;
 		List<Ray> upRays = new List<Ray>();
-		List<Ray> downRays = new List<Ray>();
-		RaycastHit leftHit;
-		RaycastHit rightHit;
 		RaycastHit upHit;
-		RaycastHit downHit;
-		
-		
-		//making horizontal rays
-		for (int i = 0; i < rayNumberH; i ++){
-			//offset: how far along the y axis of my collision box am I at this stage of the loop?
-			int offset = i == 0? margin : i == rayNumberH - 1? (int)box.y - margin : i * frequency + margin; 
-			
-			//start position of my ray
-			Vector3 start = new Vector3(pos.x, pos.y - box.y/2 + offset, t.position.z);
-			
-			leftRays.Add (new Ray(start, Vector3.left));
-			rightRays.Add (new Ray(start, Vector3.right));
-		}
 		
 		for (int i = 0; i < rayNumberV; i ++){
 			//offset: how far along the y axis of my collision box am I at this stage of the loop?
-			int offset = i == 0? margin : i == rayNumberV - 1? (int)box.x - margin : i * frequency + margin; 
+			float offset = i == 0? margin : i == rayNumberV - 1? box.x - margin : i * frequency + margin; 
 			
 			//start position of my ray
 			Vector3 start = new Vector3(pos.x - box.x/2 + offset, pos.y, t.position.z);
 			
 			upRays.Add (new Ray(start, Vector3.up));
-			downRays.Add (new Ray(start, Vector3.down));
 		}
-		//Debug.Log("My primary ray will be " + downRays[0] + " and my length is " + rayLengthV);
 		
-		//check for something below me!
-		bool somethingBottom = false;
+		bool somethingTop = false;
 		
-		foreach (Ray ray in downRays){
-			somethingBottom = Physics.Raycast(ray, out downHit, rayLengthV);
+		foreach (Ray ray in upRays){
+			somethingTop = Physics.Raycast(ray, out upHit, upRayLength, layers.onlyCollisions);
 			
-			if (somethingBottom){
-				bool cont = false;
-				if (downEvent){
-					cont = downEvent(downHit);
-				}
-				if (!cont)
+			if (somethingTop){
+				if (grounded) break;
+				else {
+					SendMessage("HitHead", SendMessageOptions.DontRequireReceiver);
+					velocity = new Vector2(velocity.x, -margin);
+					t.Translate(Vector3.up * (upHit.distance - box.y/2));
 					break;
+				}
 			}
 		}
-		
-		//TEST tempo gravity to see if everything is ok
-		if (!somethingBottom && grounded){
-			grounded = false;
+		if (somethingTop && grounded){
+			canJump = false;
 		}
-		
-		if (somethingBottom && !grounded){
-			grounded = true;
-			t.position += Vector3.down * velocity.y * Time.deltaTime;
-			velocity = new Vector2(velocity.x, 0);
-			Debug.Log("I'm on the ground!");
+		else if (!somethingTop && grounded){
+			canJump = true;
 		}
-		
-		//apply gravity
-		if (!grounded){
-			velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - Gravity, MaxFallSpeed));
-		}
-		
-		//TEST THIS is to test mah shiet
-		velocity = new Vector2(60 * Input.GetAxis("Horizontal"), 0);
-		*/
+		#endregion
 	}
 	
 	
@@ -237,16 +240,6 @@ public class Movable : MonoBehaviour {
 	}
 	
 	virtual protected Vector2 Move (Vector2 curVel, float amount){
-		//get me out of here if I'm trying to do impossibru movements.
-		/*
-		if ((!canMoveLeft && amount < -minInput) || (!canMoveRight && amount > minInput)){
-			return new Vector2(0, curVel.y);
-		}
-		else{
-			canMoveLeft = true;
-			canMoveRight = true;
-		}
-		*/
 		
 		
 		//Vector2 pos = new Vector2(t.position.x, t.position.y);
@@ -259,16 +252,28 @@ public class Movable : MonoBehaviour {
 		}
 		
 		if ((amount < 0 && canMoveLeft) || (amount > 0 && canMoveRight)){
-			vel = new Vector2(Mathf.Clamp(vel.x + mod * acceleration, -maxHorizontalSpeed, maxHorizontalSpeed), vel.y);
+			vel = new Vector2(Mathf.Clamp(vel.x + mod * Acceleration, -MaxSpeed, MaxSpeed), vel.y);
+			if (anim){
+				if (!anim.IsPlaying (anim.GetClipByName(A_walk)) && grounded){
+					anim.Play (A_walk);
+				}
+			}
 		}
 		else{
-			vel.x -= vel.x > 0? acceleration : vel.x < 0? -acceleration : 0;
-			if (vel.x > -acceleration && vel.x < acceleration){
+			vel.x -= vel.x > 0? Acceleration : vel.x < 0? -Acceleration : 0;
+			if (vel.x > -Acceleration && vel.x < Acceleration){		//so many ifs... but I mean like what else can I do (probably something better but who cares)
 				vel = new Vector2(0, vel.y);
+				if (anim){
+					if (!anim.IsPlaying (anim.GetClipByName(A_idle)) && grounded){
+						anim.Play (A_idle);
+					}
+				}
 			}
 		}
 		
-		
+		if (anim){							//here: flip my sprite according to the input direction
+			anim.Sprite.scale = new Vector3(amount > 0? 1 : amount < 0? -1 : anim.Sprite.scale.x, anim.Sprite.scale.y, anim.Sprite.scale.z);
+		}
 		
 		float rayLengthH = box.x / 2 + Mathf.Abs(vel.x * Time.deltaTime);
 		
