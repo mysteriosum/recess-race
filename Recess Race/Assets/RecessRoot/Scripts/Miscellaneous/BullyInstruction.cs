@@ -12,7 +12,7 @@ public enum CommandEnum{
 }
 
 public enum DifficultyEnum{
-	assured = 150,
+	assured = 200,
 	easy = 100,
 	medium = 80,
 	difficult = 70,

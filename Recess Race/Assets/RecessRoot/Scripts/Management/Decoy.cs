@@ -8,9 +8,7 @@ public class Decoy : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		if (Application.loadedLevel != 0){
-			Activate ();
-		}
+			
 		if (original == null){
 			Debug.LogWarning("You didn't assign an original to this decoy!");
 			Destroy (gameObject);

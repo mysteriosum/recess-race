@@ -33,7 +33,21 @@ static class VectorFunctions {
 	static public Vector3 ConvertLookDirection(Vector3 convertee){
 		return new Vector3(convertee.z, convertee.y, convertee.x);
 	}
-	
+	/// <summary>
+	/// Finds the closest of a specified tag.
+	/// </summary>
+	/// <returns>
+	/// The closest Transform of the tag appropriate tag to [closestTo].
+	/// </returns>
+	/// <param name='closestTo'>
+	/// What point do I want to compare the objects to?
+	/// </param>
+	/// <param name='tag'>
+	/// The tag.
+	/// </param>
+	/// <param name='maxDistance'>
+	/// The furthest distance I'll check
+	/// </param>
 	static public Transform FindClosestOfTag(Vector3 closestTo, string tag, int maxDistance){
 		GameObject[] tagged = GameObject.FindGameObjectsWithTag(tag);
 		float closestDist = maxDistance;
@@ -50,7 +64,15 @@ static class VectorFunctions {
 		return closestHere;
 		
 	}
-	
+	/// <summary>
+	/// Bounce the velocityBefore according to a normal.
+	/// </summary>
+	/// <param name='velocityBefore'>
+	/// Velocity before.
+	/// </param>
+	/// <param name='normal'>
+	/// Normal.
+	/// </param>
 	static public Vector2 Bounce (Vector2 velocityBefore, Vector2 normal) {
 		Vector2 modified = new Vector2(normal.y, normal.x);
 		return (2 * Vector2.Dot(velocityBefore, modified) * modified - velocityBefore);
@@ -58,5 +80,29 @@ static class VectorFunctions {
 	
 	static public Vector2 Bounce (Vector2 velocityBefore, Vector3 normal) {
 		return Bounce (velocityBefore, (Vector2) normal);
+	}
+	
+	/// <summary>
+	/// Create a LookRotation based on a single direction (where you want the sprite facing) for 2D.
+	/// </summary>
+	/// <returns>
+	/// The Quaternion to set your t.rotation to
+	/// </returns>
+	/// <param name='direction'>
+	/// Where you want to face
+	/// </param>
+	static public Quaternion Look2D (Vector2 direction){
+		float cs = Mathf.Cos(Mathf.Deg2Rad * 90);
+		float sn = Mathf.Sin(Mathf.Deg2Rad * 90);
+		
+		Vector3 up = new Vector3(direction.x * cs - direction.y * sn, direction.x * sn + direction.y * cs);
+			
+		Quaternion newLook = Quaternion.LookRotation(new Vector3(0, 0, 1), up);
+		
+		return newLook;
+	}
+	
+	static public Quaternion Look2D(Vector3 direction){
+		return Look2D(new Vector2(direction.x, direction.y));
 	}
 }

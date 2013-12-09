@@ -2,91 +2,96 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class TennisBall : MonoBehaviour {
+public class TennisBall : Movable {
 	
-	public float speed;
-	private Vector2 velocity;
-	private Rigidbody rb;
-	private Transform t;
-	private bool hasCollid = false;
-	private bool hasGravity = false;
-	private float gravity = 0.1f;
-	private bool disappearing = false;
-	private int timer = 0;
-	private Renderer r;
-	private List<Vector3> collidedAt = new List<Vector3>();
+	private bool bouncing;
+	private float floorBounceModifier = 0.8f;
+	private Vector2 pushVector = new Vector2(140, 0);
+	public int MoveDirection {
+		get { return bouncing? 0 : 1; }
+	}
 	
+	protected override float Acceleration {
+		get {
+			return bouncing? acceleration : maxHorizontalSpeed;
+		}
+	}
 	
-	// Use this for initialization
+	private bool harmless = false;
+	
+	public bool Harmless {
+		get { return harmless; }
+		set {
+			harmless = value;
+			sprite.scale = harmless? Vector3.one * 0.5f : Vector3.one;
+		}
+	}
+	
 	void Start () {
-		t = transform;
-		rb = GetComponent<Rigidbody>();
-		r = renderer;
-		velocity = new Vector2(speed * Mathf.Cos(t.rotation.eulerAngles.z * Mathf.Deg2Rad), speed * Mathf.Sin(t.rotation.eulerAngles.z * Mathf.Deg2Rad));
-		t.rotation = Quaternion.identity;
+		base.Start();
+		hasGravity = false;
+		
+		velocity = new Vector2(maxHorizontalSpeed, 0);
+		
 	}
 	
-	// Update is called once per frame
 	void Update () {
-		t.Translate(velocity, Space.Self);
-		
-		if (hasGravity){
-			if (!disappearing){
-				velocity -= new Vector2(0, gravity);
-				
+		velocity = Move(velocity, MoveDirection);	//always moving right (locally)
+		if (bouncing){
+			float ySpeed = velocity.y;
+			base.Update();
+			if (grounded){
+				Jump(Mathf.Abs(ySpeed * floorBounceModifier));
 			}
-			else{
-				r.enabled = Fitz.blinkArray[timer];
-				timer ++;
-				if (timer == Fitz.blinkArray.Length){
-					Destroy(gameObject);
-				}
-			}
-			
 		}
-		/*
-		//shoot some raycasts
-		for (int i = 0; i < 4; i ++){
-			RaycastHit hit;
-			bool line = 
-				Physics.Linecast(
-					t.position + new Vector3(Mathf.Sin(i * 90 * Mathf.Deg2Rad) * collider.bounds.size.x / 2, Mathf.Cos(i * 90 * Mathf.Deg2Rad) * collider.bounds.size.y / 2, 
-					t.position + new Vector3(Mathf.Cos(i * 90 * Mathf.Deg2Rad) * (Mathf.Abs(velocity.x) + collider.bounds.size.x / 2), 
-											Mathf.Sin(i * 90 * Mathf.Deg2Rad) * (Mathf.Abs(velocity.y) + collider.bounds.size.x / 2), 0), 
-					out hit
-			);
-			
-			if (line){
-				Debug.Log("velocity is " + velocity + " and normal is " + hit.normal);
-				velocity = VectorFunctions.Bounce(velocity, hit.normal);
-				break;
-			}
-		}*/
 	}
 	
-	void LateUpdate () {
-		collidedAt.Clear();
+	void HitWall (RaycastHit hitInfo){
+		
+		if (bouncing){
+			velocity = new Vector2(-velocity.x, velocity.y);
+			return;
+		}
+		
+		Vector2 direction = new Vector2(t.right.x, t.right.y);
+		Vector2 normal = (Vector2) hitInfo.normal;
+		
+		Vector2 newDirection = VectorFunctions.Bounce(direction, normal);		//my vector function provides a bounce given an angle and a normal
+		
+		Vector3 forward = new Vector3(newDirection.x, newDirection.y, 0);
+		
+		t.rotation = VectorFunctions.Look2D(newDirection);		//my new vector function uses Quaternion.LookRotation to make an appropriate look rotation for 2d
 	}
 	
-	void OnCollisionEnter (Collision other){
-		if (collidedAt.Contains(other.contacts[0].normal)) return;
-		velocity = VectorFunctions.Bounce(velocity, other.contacts[0].normal);
+	void OnCollisionEnter (Collision collision){
+		Character charScript = collision.gameObject.GetComponent<Character>();
 		
-		collidedAt.Add(other.contacts[0].normal);
-		
-		if (other.gameObject.GetComponent<Fitz>() != null){
+		if (charScript && !bouncing){
+			Vector2 push = pushVector * (t.position.x > collision.transform.position.x? -1 : 1);
+			bool fitz = charScript.Hurt(this.gameObject, HurtDuration.Medium, push);
+			//start bouncing and no longer be dangerous
+			if (!fitz) return;	//but only if I hit Fitz and not a bully
+			bouncing = true;
 			hasGravity = true;
+			Harmless = true;
+			t.rotation = Quaternion.identity;
+			Jump(initialJumpVelocity);
 		}
-		
-		if (hasGravity){
-			velocity -= new Vector2(velocity.x / 6, velocity.y / 3);
-			if (velocity.y < gravity * 3 && velocity.y > -gravity * 3){
-				disappearing = true;
-				velocity = new Vector2(velocity.x, 0);
-			}
-		}
-		
-		
 	}
+	
+	protected override Vector2 Move (Vector2 curVel, float amount)
+	{
+		float xSpeed = velocity.x;
+		Vector2 result = base.Move(curVel, amount);
+		if (bouncing && (!canMoveLeft || !canMoveRight)){
+			Debug.Log("xSpeed is " + xSpeed);
+			result = new Vector2(-xSpeed, result.y);
+			canMoveLeft = true;
+			canMoveRight = true;
+			Debug.Log(result);
+		}
+		return result;
+	}
+	
 	
 }

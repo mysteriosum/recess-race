@@ -474,10 +474,7 @@ public class Fitz : Platformer {
 		else if (detector == botDetector){
 			
 			Checkpoint checkScript = colEntering.GetComponent<Checkpoint>();
-			if (checkScript != null){
-				checkScript.Enter ();
-				Debug.Log ("There's a checkpoint script.");
-			}
+			
 		}
 		else if (detector == topDetector && currentMotor == mondo){
 			BrickBlock brickScript = colEntering.GetComponent<BrickBlock>();

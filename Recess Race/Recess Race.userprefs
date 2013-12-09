@@ -2,14 +2,19 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\RecessRoot\Scripts\Enemies\Bully.cs">
     <Files>
-      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\BullyInstruction.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Avatar\Otto.cs" Line="42" Column="44" />
-      <File FileName="Assets\RecessRoot\Scripts\Parents\Movable.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Scripts\Controls\Kirby.cs" Line="6" Column="3" />
-      <File FileName="Assets\RecessRoot\Scripts\Enemies\Bully.cs" Line="31" Column="54" />
       <File FileName="Assets\RecessRoot\Scripts\Parents\Character.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\GizmoDad.cs" Line="1" Column="1" />
-      <File FileName="Assets\RecessRoot\Scripts\Controls\Buster.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Ingredients\TennisBall.cs" Line="82" Column="64" />
+      <File FileName="Assets\RecessRoot\VectorFunctions.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Miscellaneous\Checkpoint.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Character\Profile.cs" Line="36" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Character\Follower.cs" Line="4" Column="32" />
+      <File FileName="Assets\RecessRoot\Scripts\Character\Antagoniser.cs" Line="4" Column="35" />
+      <File FileName="Assets\RecessRoot\Scripts\Character\Neutral.cs" Line="4" Column="31" />
+      <File FileName="Assets\RecessRoot\Scripts\Character\Ally.cs" Line="16" Column="1" />
+      <File FileName="Assets\RecessRoot\Scripts\Enemies\Bully.cs" Line="20" Column="22" />
+      <File FileName="Assets\RecessRoot\Scripts\Parents\Movable.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Avatar\Otto.cs" Line="1" Column="1" />
+      <File FileName="Assets\RecessRoot\Avatar\Pinky.cs" Line="4" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

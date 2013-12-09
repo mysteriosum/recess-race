@@ -6,10 +6,11 @@ public class Otto : Character {
 	public float runMaxSpeedModifier;
 	public float sprintMaxspeedModifier;
 	public float jumpHoldGravityMod;
+	public float airAccelMod = 2.0f;
 	
 	protected override float Acceleration {
 		get {
-			return base.Acceleration;
+			return base.Acceleration * (grounded? 1 : airAccelMod);
 		}
 	}
 	
@@ -47,7 +48,7 @@ public class Otto : Character {
 	private bool sprinting;
 	
 	private float pBar = 0;
-	private float pBarRunAt = 0.75f;
+	private float pBarRunAt = 0.65f;
 	
 	private float minFPS = 10;
 	private float maxAnimSpeedMod = 2.0f;

@@ -9,6 +9,8 @@ public class Movable : MonoBehaviour {
 	protected BoxCollider bc;
 	protected GameObject go;
 	
+	protected Vector2 pos;
+	
 	public bool hasGravity = true;
 	public float defaultGravity = 2.5f;
 	public float defaultMaxFallSpeed = -60f;
@@ -20,6 +22,11 @@ public class Movable : MonoBehaviour {
 	public float initialJumpVelocity = 6f;
 	public float runningJumpModifier = 3f;
 	
+	protected bool blinking = false;
+	protected float blinkTimer;
+	protected float blinkOnFor = 0.2f;
+	protected float blinkOffFor = 0.075f;
+	protected bool blinkOn = false;
 	
 	
 				// Overridable Getters & Setters
@@ -79,6 +86,7 @@ public class Movable : MonoBehaviour {
 	public bool canMoveLeft;
 	public bool canMoveRight;
 	private bool canJump;
+	protected bool falling = false;
 	//singleton
 	
 				//events & sheeeit
@@ -94,15 +102,25 @@ public class Movable : MonoBehaviour {
 	private float minInput = 0.01f;
 	private bool started = false;
 	
+	private RaycastHit upHit;
+	private RaycastHit downHit;
+	private RaycastHit sideHit;
+	
 	private Vector3 initPos;
 	protected tk2dSpriteAnimator anim;
+	protected tk2dSprite sprite;
 	
 	
 	public class Raylayers{
 		public readonly int onlyCollisions;
+		public readonly int upRay;
+		public readonly int downRay;
 		
 		public Raylayers(){
 			onlyCollisions = 1 << LayerMask.NameToLayer("Collisions");
+			upRay = 1 << LayerMask.NameToLayer("Collisions") | 1 << LayerMask.NameToLayer("softTop");
+			downRay = 1 << LayerMask.NameToLayer("Collisions") | 1 << LayerMask.NameToLayer("softBottom");
+			
 		}
 	}
 	
@@ -119,6 +137,7 @@ public class Movable : MonoBehaviour {
 		bc = GetComponent<BoxCollider>();
 		rb = rigidbody;
 		anim = GetComponent<tk2dSpriteAnimator>();
+		sprite = GetComponent<tk2dSprite>();
 		
 		if (bc == null){
 			Debug.LogWarning("There's no box collider on " + name);
@@ -139,10 +158,22 @@ public class Movable : MonoBehaviour {
 	virtual protected void Update () {
 		
 		
-		
+		if (blinking){
+			blinkTimer += Time.deltaTime;
+			if (blinkTimer > blinkOnFor && !blinkOn){
+				anim.Sprite.color = Color.clear;
+				blinkOn = true;
+				blinkTimer = 0;
+			}
+			else if (blinkTimer > blinkOffFor && blinkOn){
+				anim.Sprite.color = Color.white;
+				blinkOn = false;
+				blinkTimer = 0;
+			}
+		}
 		
 				//get the right input amount
-			
+		pos = (Vector2) t.position;
 		
 		if (!hasGravity)
 			return;
@@ -151,85 +182,17 @@ public class Movable : MonoBehaviour {
 			velocity = new Vector2(velocity.x, Mathf.Max(MaxFallSpeed, velocity.y - Gravity));
 		}
 		#region checkDown
-		//check my bottom!
-		Vector2 pos = new Vector2(bc.bounds.center.x, bc.bounds.center.y);
-		//Vector2 pos = new Vector2(t.position.x, t.position.y);
-		//float rayLengthV = box.y / 2 + Mathf.Abs(velocity.y * Time.deltaTime);
-		float rayLengthV = box.y / 2 + Mathf.Max(velocity.y * Time.deltaTime * -1, margin);
-		List<Ray> downRays = new List<Ray>();
-		RaycastHit downHit;
 		
-		for (int i = 0; i < rayNumberV; i ++){
-			//offset: how far along the y axis of my collision box am I at this stage of the loop?
-			int offset = i == 0? margin : i == rayNumberV - 1? (int)box.x - margin : i * frequency + margin; 
-			
-			//start position of my ray
-			Vector3 start = new Vector3(pos.x - box.x/2 + offset, pos.y, t.position.z);
-			
-			downRays.Add (new Ray(start, Vector3.down));
+		if (grounded ^ velocity.y < 0){
+			CheckDown();
 		}
 		
-		bool somethingBottom = false;
-		
-		foreach (Ray ray in downRays){
-			somethingBottom = Physics.Raycast(ray, out downHit, rayLengthV, layers.onlyCollisions);
-			
-			if (somethingBottom){
-				if (grounded) break;
-				else {
-					SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
-					grounded = true;
-					velocity = new Vector2(velocity.x, 0);
-					t.Translate(Vector3.down * (downHit.distance - box.y/2));
-					break;
-				}
-			}
-		}
-		
-		if (!somethingBottom){
-			grounded = false;
-		}
 		#endregion
 		
 		#region checkUp
-		float upRayLength = 0;
-		if (grounded)
-			upRayLength = box.y / 2 + margin;
-		else
-			upRayLength = box.y / 2 + (velocity.y > 0? velocity.y : 0) * Time.deltaTime;
-		List<Ray> upRays = new List<Ray>();
-		RaycastHit upHit;
 		
-		for (int i = 0; i < rayNumberV; i ++){
-			//offset: how far along the y axis of my collision box am I at this stage of the loop?
-			float offset = i == 0? margin : i == rayNumberV - 1? box.x - margin : i * frequency + margin; 
-			
-			//start position of my ray
-			Vector3 start = new Vector3(pos.x - box.x/2 + offset, pos.y, t.position.z);
-			
-			upRays.Add (new Ray(start, Vector3.up));
-		}
-		
-		bool somethingTop = false;
-		
-		foreach (Ray ray in upRays){
-			somethingTop = Physics.Raycast(ray, out upHit, upRayLength, layers.onlyCollisions);
-			
-			if (somethingTop){
-				if (grounded) break;
-				else {
-					SendMessage("HitHead", SendMessageOptions.DontRequireReceiver);
-					velocity = new Vector2(velocity.x, -margin);
-					t.Translate(Vector3.up * (upHit.distance - box.y/2));
-					break;
-				}
-			}
-		}
-		if (somethingTop && grounded){
-			canJump = false;
-		}
-		else if (!somethingTop && grounded){
-			canJump = true;
+		if (grounded ^ velocity.y > 0){
+			CheckUp();
 		}
 		#endregion
 	}
@@ -237,13 +200,19 @@ public class Movable : MonoBehaviour {
 	
 	protected virtual void Jump(float speed){
 		velocity = new Vector3(velocity.x, speed, 0);
+		grounded = false;
+		if (anim){
+			if (anim.GetClipByName(A_jump) != null){
+				anim.Play (A_jump);
+			}
+		}
 	}
 	
 	virtual protected Vector2 Move (Vector2 curVel, float amount){
 		
 		
 		//Vector2 pos = new Vector2(t.position.x, t.position.y);
-		Vector2 pos = new Vector2(bc.bounds.center.x, bc.bounds.center.y);
+		pos = new Vector2(bc.bounds.center.x, bc.bounds.center.y);
 		Vector2 vel = curVel;
 		float mod = (Vector3.right * amount).normalized.x;
 		
@@ -278,27 +247,30 @@ public class Movable : MonoBehaviour {
 		float rayLengthH = box.x / 2 + Mathf.Abs(vel.x * Time.deltaTime);
 		
 		List<Ray> rays = new List<Ray>();
-		RaycastHit hit;
+		//RaycastHit hit;
+		
+		Vector3 topPoint = new Vector3(pos.x + ((box.y / 2) * t.up.x), pos.y + ((box.y / 2 - margin) * t.up.y), t.position.z);
+		Vector3 botPoint = new Vector3(pos.x - ((box.x / 2) * t.up.x), pos.y - ((box.x / 2 - margin) * t.up.y), t.position.z);
 		
 		for (int i = 0; i < rayNumberH; i ++){
 			//offset: how far along the y axis of my collision box am I at this stage of the loop?
-			int offset = i == 0? margin : i == rayNumberH - 1? (int)box.y - margin : i * frequency + margin; 
+			//int offset = i == 0? margin : i == rayNumberH - 1? (int)box.y - margin : i * frequency + margin; 
+			Vector3 start = Vector3.Lerp(topPoint, botPoint, i/(rayNumberH-1));
 			
 			//start position of my ray
-			Vector3 start = new Vector3(pos.x, pos.y - box.y/2 + offset, t.position.z);
+			//Vector3 start = new Vector3(pos.x, pos.y - box.y/2 + offset, t.position.z);
 			
-			rays.Add (new Ray(start, Vector3.right * vel.x)); //multiplying the current speed by Vector3.right always gives me the right direction
+			rays.Add (new Ray(start, t.right * vel.x)); //multiplying the current speed by Vector3.right always gives me the right direction
 		}
 		
 		bool connected = false;
-		
+		int index = 0;
 		foreach (Ray ray in rays){
-			connected = Physics.Raycast(ray, out hit, rayLengthH, layers.onlyCollisions);
+			connected = Physics.Raycast(ray, out sideHit, rayLengthH, layers.onlyCollisions);
 			
 			if (connected){		//what do I do when I hit a wall? You decide! ...not really.
-				Vector2 compVec = new Vector2(vel.normalized.x, 0).normalized;
-				vel = new Vector2(compVec.x * (hit.distance - box.x/2), vel.y);
-				SendMessage("HitWall", SendMessageOptions.DontRequireReceiver);
+				Vector2 compVec = new Vector2(vel.normalized.x, 0).normalized;		//comp vec is the angle I'm going to move at (left or right, locally)
+				vel = new Vector2(compVec.x * (sideHit.distance - box.x/2), vel.y);
 				if (vel.x > 0){
 					canMoveRight = false;
 					SendMessage("HitRight", SendMessageOptions.DontRequireReceiver);
@@ -307,8 +279,10 @@ public class Movable : MonoBehaviour {
 					canMoveLeft = false;
 					SendMessage("HitLeft", SendMessageOptions.DontRequireReceiver);
 				}
+				SendMessage("HitWall", sideHit, SendMessageOptions.DontRequireReceiver);
 				break;
 			}
+			index ++;
 		}
 		
 		if (!connected){
@@ -334,6 +308,89 @@ public class Movable : MonoBehaviour {
 		t.Translate(velocity * Time.deltaTime);
 		
 		//rb.velocity = (Vector3)velocity;
+	}
+	
+	protected virtual void CheckDown (){
+		//check my bottom!
+		pos = new Vector2(bc.bounds.center.x, bc.bounds.center.y);
+		//Vector2 pos = new Vector2(t.position.x, t.position.y);
+		//float rayLengthV = box.y / 2 + Mathf.Abs(velocity.y * Time.deltaTime);
+		float rayLengthV = box.y / 2 + Mathf.Max(velocity.y * Time.deltaTime * -1, margin);
+		List<Ray> downRays = new List<Ray>();
+		RaycastHit downHit;
+		
+		for (int i = 0; i < rayNumberV; i ++){
+			//offset: how far along the y axis of my collision box am I at this stage of the loop?
+			int offset = i == 0? margin : i == rayNumberV - 1? (int)box.x - margin : i * frequency + margin; 
+			
+			//start position of my ray
+			Vector3 start = new Vector3(pos.x - box.x/2 + offset, pos.y, t.position.z);
+			
+			downRays.Add (new Ray(start, -t.up));
+		}
+		
+		bool somethingBottom = false;
+		
+		foreach (Ray ray in downRays){
+			somethingBottom = Physics.Raycast(ray, out downHit, rayLengthV, layers.downRay);
+			
+			if (somethingBottom){
+				if (grounded) break;
+				else {
+					SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
+					grounded = true;
+					velocity = new Vector2(velocity.x, 0);
+					t.Translate(Vector3.down * (downHit.distance - box.y/2));
+					break;
+				}
+			}
+		}
+		
+		if (!somethingBottom){
+			grounded = false;
+		}
+	}
+	
+	protected virtual void CheckUp () {
+		float upRayLength = 0;
+		if (grounded)
+			upRayLength = box.y / 2 + margin;
+		else
+			upRayLength = box.y / 2 + (velocity.y > 0? velocity.y : 0) * Time.deltaTime;
+		List<Ray> upRays = new List<Ray>();
+		RaycastHit upHit;
+		
+		for (int i = 0; i < rayNumberV; i ++){
+			//offset: how far along the y axis of my collision box am I at this stage of the loop?
+			float offset = i == 0? margin : i == rayNumberV - 1? box.x - margin : i * frequency + margin; 
+			
+			//start position of my ray
+			Vector3 start = new Vector3(pos.x - box.x/2 + offset, pos.y, t.position.z);
+			
+			upRays.Add (new Ray(start, t.up));
+		}
+		
+		bool somethingTop = false;
+		
+		foreach (Ray ray in upRays){
+			somethingTop = Physics.Raycast(ray, out upHit, upRayLength, layers.upRay);
+			
+			if (somethingTop){
+				if (grounded) break;
+				else {
+					SendMessage("HitHead", SendMessageOptions.DontRequireReceiver);
+					velocity = new Vector2(velocity.x, -margin);
+					t.Translate(Vector3.up * (upHit.distance - box.y/2));
+					break;
+				}
+			}
+		}
+		if (somethingTop && grounded){
+			canJump = false;
+		}
+		else if (!somethingTop && grounded){
+			canJump = true;
+		}
 	}
 	
 	

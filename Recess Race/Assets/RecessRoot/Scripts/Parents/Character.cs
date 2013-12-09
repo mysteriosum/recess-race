@@ -27,10 +27,16 @@ public class Character : Movable {
 		}
 	}
 	
+	private Vector3 initPosition;
+	private Transform currentCheckpoint;
+	
 	private int lastDirection;
 	private int lastInput;
 	private float lastDirectionTime;
 	private float doubleTapLeeway = 0.2f;
+	
+	private bool disabled = false;
+	private float disableDuration = HurtDuration.Short;
 	
 	//LOTS OF DELEGATES! YEAAAAAAAAAAAAAAAAAAAAAAAH
 	public delegate void InputDelegate();
@@ -61,7 +67,7 @@ public class Character : Movable {
 	// Use this for initialization
 	protected void Start () {
 		base.Start();
-		
+		initPosition = t.position;
 		if (anim == null)
 			Debug.Log ("There's no animator on this character, just fyi. Name: " + name);
 		else
@@ -70,17 +76,26 @@ public class Character : Movable {
 	
 	// Update is called once per frame
 	protected void Update () {
+		
+		
 		DoInputs ();
 		
-		if (velocity.y < 0 && !anim.IsPlaying (A_fall)){
+		if (velocity.y < 0 && !anim.IsPlaying (A_fall) && !falling){
 			anim.Play (A_fall);
+			falling = true;
 		}
 		
 		base.Update();
 	}
 	
 	protected virtual void DoInputs() {
+		//if (disabled) return;
+		
 		float input = HorizontalInput;
+		
+		if (disabled){
+			input = 0;
+		}
 		
 		velocity = Move(velocity, input);
 		
@@ -110,10 +125,51 @@ public class Character : Movable {
 			if (JumpInput){
 				//do the jump! Add the last part there to give myself a running jump
 				this.Jump(initialJumpVelocity + Mathf.Abs(velocity.x/runningJumpModifier));
-				anim.Play (A_jump);
 			}
 		}
-		
 	}
 	
+	public void SetCheckpoint (Transform checkpoint){
+		currentCheckpoint = checkpoint;
+	}
+	/// <summary>
+	/// Check if I'm going to respawn (depending on what's calling the function).
+	/// </summary>
+	/// <param name='caller'>
+	/// The script calling the function
+	/// </param>
+	public virtual bool Hurt (GameObject caller, float duration, Vector2 newVelocity){
+		disabled = true;
+		Invoke("RegainControl", duration);
+		blinking = true;
+		velocity = newVelocity;
+		return true;
+	}
+	
+	public virtual bool Hurt (GameObject caller){
+		return Hurt(caller, disableDuration, Vector2.zero);
+	}
+	
+	public virtual bool Hurt (GameObject caller, float duration){
+		return Hurt(caller, duration, Vector2.zero);
+	}
+	
+	public virtual void RegainControl () {
+		disabled = false;
+		anim.Sprite.color = Color.white;
+		blinking = false;
+	}
+	
+}
+
+public static class HurtDuration {
+	public static float Long {
+		get { return 4f; }
+	}
+	public static float Medium {
+		get { return 2.5f; }
+	}
+	public static float Short {
+		get { return 1.5f; }
+	}
 }
