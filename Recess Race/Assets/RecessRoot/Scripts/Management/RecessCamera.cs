@@ -13,7 +13,7 @@ public class RecessCamera : MonoBehaviour {
 	public Transform[] paralaxes;
 	
 	private float lerpAmount = 0.1f;
-	private float maxParalax = 0.6f;
+	private float maxParalax = 0.3f;
 	private float furthestParalaxZ;
 	
 	// Use this for initialization

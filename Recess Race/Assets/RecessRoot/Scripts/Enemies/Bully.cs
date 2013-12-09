@@ -13,6 +13,8 @@ public class Bully : Character {
 	
 	protected int skillModifier = 0;
 	
+	
+	
 	void Start(){
 		base.Start ();
 		
@@ -81,13 +83,13 @@ public class Bully : Character {
 			return 0;
 		}
 	}
-	
-	public override bool Hurt (GameObject caller)
+	public override bool Hurt (GameObject caller, float duration, Vector2 newVelocity)
 	{
 		if (caller.GetComponent<TennisBall>()){
 			return false;
 		}
 		return base.Hurt (caller);
 	}
+	
 	
 } 

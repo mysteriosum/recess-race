@@ -54,6 +54,11 @@ public class Otto : Character {
 	private float maxAnimSpeedMod = 2.0f;
 	private float defaultFPS;
 	
+	void Awake () {
+		base.Awake();
+		this.name = "Fitzwilliam";
+	}
+	
 	// Use this for initialization
 	void Start () {
 		base.Start ();

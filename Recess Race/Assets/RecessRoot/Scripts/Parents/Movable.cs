@@ -127,7 +127,7 @@ public class Movable : MonoBehaviour {
 	public Raylayers layers;
 	
 	// Use this for initialization
-	void Awake () {
+	protected void Awake () {
 		layers = new Raylayers();
 	}
 	
