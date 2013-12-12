@@ -1,0 +1,46 @@
+PHYLLIS: So, Jane. What do you think of this whole 'recess race' business?
+JANE: It's great! The school yard is already looking cleaner.
+PHYLLIS: Don't you think it's a little ... I don't know, manipulative? Getting the kids to pick up garbage off the ground?
+JANE: Not at all! This sort of activity which rewards them for being productive will have an overall positive influence. Mr. Bennett is a very smart man.
+PHYLLIS: Of course you think so, he's your father. I just wish it weren't so dangerous. What if one of them falls and tears their knees open? We'll never hear the end of it.
+JANE: Oh Phyl, it's all right. They're always running around, it's no different.
+PHYLLIS: They're not always jumping over each other…
+JANE: That's true, but Mr. Lucas gave them ample equipment to protect themselves from falling damage.
+PHYLLIS: Yes, you're right, of course. 
+JANE: And look at it this way. Enforcing these rules is much less hassle than breaking up fights and arguments over toys and the like.
+PHYLLIS: Indeed it is! Yes, indeed. Yes….
+PAUSE: 55
+PHYLLIS: Jane, I … oh, never mind.
+JANE: All right.
+PAUSE: 15
+JANE: Are you well? You seem troubled. 
+PHYLLIS: I - yes, I … I am not. 
+JANE: Troubled?
+PHYLLIS: Well! I'm … I'm all fucked up.
+JANE: Phyl, language…
+PHYLLIS: Oh, whatever. Listen, I need to tell you something. It's been weighing on me for weeks.
+PHYLLIS: Just a second…
+CONDITION: Alone
+PHYLLIS: Do you remember when Carol had to go the hospital?
+JANE: How could I forget? There was a huge spider in her bag! 
+PHYLLIS: I know. I put it there.
+JANE: You… Phyllis! You could get fired for that!
+PHYLLIS: I know! I know, okay. I just… I couldn't help it.
+JANE: Why?
+PHYLLIS: Well! You remember how she was acting that week. She … well I thought she deserved it. I didn't expect her to go into shock…
+JANE: I imagine not. Phyllis, you can't just do that to people!
+PHYLLIS: It's just her! She drives me crazy. She's always on about how fucking poor I am. You know what she said to me that day? We just got the news about our pay upgrade, and she said, “Maybe now you can afford a vacation as far as Tremblant!” The nerve of that woman! Why does she even work here if her father is so fucking rich?
+JANE: Phyllis, calm down. You don't want someone to over hear you swearing like that.
+PHYLLIS: I'm sorry. I just… I feel awful. I don't know why, I'm sure she deserved it, but I can't shake this guilty feeling.
+JANE: Well, it's really awful how it turned out. Listen, what if she did deserve it? Does that make it okay to pull a nasty prank on her?
+PHYLLIS: I… I don't know.
+JANE: I can't tell you the answer. You have to decide for yourself. But I always like to see the good in people, even Carol. The thing is, we have no idea what it's like to be her. Her father puts a lot of pressure on her, that's why she works here. She's just taking it out on you. It's not fair to you, but that's how it is for her. What it does give you is the chance to be the better person. If she says something really awful to you, and you don't let it bother you, then you win. Getting back at her is just going to make the situation worse.
+PAUSE: 5
+PHYLLIS: Yes… you're right. Thank you. I … should I tell Mrs. de Bourgh? 
+JANE: I… I think we can leave this little mystery unsolved.
+PHYLLIS: You think?
+JANE: Yes. Remember, we're still not sure if she deserved it!
+PHYLLIS: Hah, yes.
+JANE: But I think that's the last rogue spider we'll be seeing for a while.
+PHYLLIS: Hm. Yes. Thank you so much, Jane.
+JANE: Say no more. It's our little secret.
