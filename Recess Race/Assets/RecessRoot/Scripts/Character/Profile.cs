@@ -5,9 +5,10 @@ using System.Collections.Generic;
 
 public class Profile : MonoBehaviour {
 	
+	public static List<Profile> allCharacters = new List<Profile>();
 	
 	public bool rightHandBubble = true;
-	public Vector3 offsetVector = new Vector3(16, 16, 0);
+	private Vector3 offsetVector = new Vector3(16, 24, -20);
 	protected UnityEngine.Object speechObject;
 	protected SpeechBubble currentSpeech;
 	protected Conversation myConvo;
@@ -20,8 +21,9 @@ public class Profile : MonoBehaviour {
 	
 	private int maxBubbleLength;
 	
-	private String[] queue;
-	private int currentIndex = 0;
+	
+	protected String[] queue;
+	protected int currentIndex = 0;
 	
 	private int bubbleLeeway = 5;
 	
@@ -46,6 +48,9 @@ public class Profile : MonoBehaviour {
 		"I believe in you!",
 		"Don't forget the tennis balls!",
 	};
+	
+	
+	
 	// Use this for initialization
 	protected void Start () {
 		speechObject = Resources.Load ("res_speechBubble");
@@ -60,7 +65,7 @@ public class Profile : MonoBehaviour {
 		}
 		
 		currentSpeech.transform.position += offsetVector;
-		
+		currentSpeech.transform.parent = transform;
 		
 		if (transform.parent){
 			myConvo = transform.parent.GetComponent<Conversation>();
@@ -98,6 +103,18 @@ public class Profile : MonoBehaviour {
 		
 	}
 	
+	public virtual void Speak (String speech){
+		queue = new String[] { speech };
+		currentIndex = 0;
+		Speak();
+	}
+	
+	public virtual void Speak (String[] queue){
+		this.queue = queue;
+		currentIndex = 0;
+		Speak();
+	}
+	
 	public virtual void ContinueToNextInQueue(){
 		
 		if (currentIndex < queue.Length){
@@ -107,7 +124,8 @@ public class Profile : MonoBehaviour {
 		else{
 			Debug.Log ("Going to the next line now because my index is " + currentIndex );
 			Invoke ("DeactivateSpeechObject", speakTimer);
-			myConvo.Invoke ("NextLine", speakTimer);
+			if (myConvo != null)
+				myConvo.Invoke ("NextLine", speakTimer);
 		}
 	}
 	
@@ -115,5 +133,20 @@ public class Profile : MonoBehaviour {
 		currentSpeech.Active = false;
 	}
 	
+	
+}
+public class Chars {
+	//main character
+	public static Fitz fitz;
+	//other racers
+	public static Brandon brandon;
+	public static Ashley ashley;
+	public static Romney romney;
+	
+	//monitors
+	public static Hill hill;
+	public static Carol carol;
+	public static Jane jane;
+	public static Phyllis phyllis;
 	
 }

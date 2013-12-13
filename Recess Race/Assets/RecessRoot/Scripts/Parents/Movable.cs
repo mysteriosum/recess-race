@@ -220,7 +220,8 @@ public class Movable : MonoBehaviour {
 			mod *= skidMultiplier;
 		}
 		
-		if ((amount < 0 && canMoveLeft) || (amount > 0 && canMoveRight)){
+		//if ((amount < 0 && canMoveLeft) || (amount > 0 && canMoveRight)){
+		if (amount != 0){
 			vel = new Vector2(Mathf.Clamp(vel.x + mod * Acceleration, -MaxSpeed, MaxSpeed), vel.y);
 			if (anim){
 				if (!anim.IsPlaying (anim.GetClipByName(A_walk)) && grounded){
@@ -272,11 +273,11 @@ public class Movable : MonoBehaviour {
 				Vector2 compVec = new Vector2(vel.normalized.x, 0).normalized;		//comp vec is the angle I'm going to move at (left or right, locally)
 				vel = new Vector2(compVec.x * (sideHit.distance - box.x/2), vel.y);
 				if (vel.x > 0){
-					canMoveRight = false;
+					//canMoveRight = false;
 					SendMessage("HitRight", SendMessageOptions.DontRequireReceiver);
 				}
 				if (vel.x < 0){
-					canMoveLeft = false;
+					//canMoveLeft = false;
 					SendMessage("HitLeft", SendMessageOptions.DontRequireReceiver);
 				}
 				SendMessage("HitWall", sideHit, SendMessageOptions.DontRequireReceiver);
@@ -284,11 +285,11 @@ public class Movable : MonoBehaviour {
 			}
 			index ++;
 		}
-		
+		/*
 		if (!connected){
 			canMoveLeft = true;
 			canMoveRight = true;
-		}
+		}*/
 		return vel;
 	}
 	
@@ -339,6 +340,7 @@ public class Movable : MonoBehaviour {
 				else {
 					SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
 					grounded = true;
+					falling = false;
 					velocity = new Vector2(velocity.x, 0);
 					t.Translate(Vector3.down * (downHit.distance - box.y/2));
 					break;
@@ -347,7 +349,11 @@ public class Movable : MonoBehaviour {
 		}
 		
 		if (!somethingBottom){
+			if (anim && grounded){
+				anim.Play(A_fall);
+			}
 			grounded = false;
+			
 		}
 	}
 	

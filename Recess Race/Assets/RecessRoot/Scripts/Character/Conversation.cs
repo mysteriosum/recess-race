@@ -27,7 +27,6 @@ public class Conversation : MonoBehaviour {
 	void Start () {
 		
 		
-		lines = Textf.ParseScript(this.script, this.charNames);
 		
 		List<String> tempNames = new List<String>();
 		
@@ -35,13 +34,13 @@ public class Conversation : MonoBehaviour {
 		foreach (Profile t in characters){
 			tempNames.Add (t.name.ToUpper ());
 			tags.Add (tempNames[tempNames.Count -1] + ": ");
-			
 		}
 		
 		tags.Add ("PAUSE: ");
 		tags.Add ("CONDITION: ");
 		
 		charNames = tempNames.ToArray();
+		lines = Textf.ParseScript(this.script);
 		
 		Invoke ("NextLine", defaultPause);
 	}
@@ -71,6 +70,9 @@ public class Conversation : MonoBehaviour {
 //		Debug.Log (nowLine);
 		characters[counter].ProcessSpeech (nowLine);
 		convoIndex++;
+		if (convoIndex == lines.Length){
+			Destroy (this);
+		}
 		//Invoke ("NextLine", defaultPause);
 	}
 }

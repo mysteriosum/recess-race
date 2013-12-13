@@ -26,10 +26,9 @@ public class BullyInstruction : MonoBehaviour {
 	public DifficultyEnum jumpDifficulty = DifficultyEnum.assured;
 	
 	private Couleur myColour;
-	
 	// Use this for initialization
 	void Start () {
-	
+		
 	}
 	
 	// Update is called once per frame

@@ -20,7 +20,7 @@ PHYLLIS: Well! I'm … I'm all fucked up.
 JANE: Phyl, language…
 PHYLLIS: Oh, whatever. Listen, I need to tell you something. It's been weighing on me for weeks.
 PHYLLIS: Just a second…
-CONDITION: Alone
+PAUSE: 2.1
 PHYLLIS: Do you remember when Carol had to go the hospital?
 JANE: How could I forget? There was a huge spider in her bag! 
 PHYLLIS: I know. I put it there.

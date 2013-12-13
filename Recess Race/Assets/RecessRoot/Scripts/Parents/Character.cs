@@ -5,7 +5,7 @@ public class Character : Movable {
 	
 	protected float minimumAxisInput = 0.15f;
 	
-	private float maxPress2Jump = 0.25f;
+	protected float maxPress2Jump = 0.1f;
 	private float jumpTimer = 0;
 	
 	protected virtual float HorizontalInput {
@@ -35,8 +35,9 @@ public class Character : Movable {
 	private float lastDirectionTime;
 	private float doubleTapLeeway = 0.2f;
 	
-	private bool disabled = false;
+	protected bool disabled = false;
 	private float disableDuration = HurtDuration.Short;
+	
 	
 	//LOTS OF DELEGATES! YEAAAAAAAAAAAAAAAAAAAAAAAH
 	public delegate void InputDelegate();
@@ -80,12 +81,20 @@ public class Character : Movable {
 		
 		DoInputs ();
 		
-		if (velocity.y < 0 && !anim.IsPlaying (A_fall) && !falling){
+		if (velocity.y <= 0 && !falling && !grounded){
 			anim.Play (A_fall);
 			falling = true;
 		}
 		
 		base.Update();
+	}
+	
+	protected virtual void OnTriggerEnter (Collider other){
+		Collectible col = other.GetComponent<Collectible>();
+		
+		if (col != null){
+			col.Collected = true;
+		}
 	}
 	
 	protected virtual void DoInputs() {
@@ -99,12 +108,14 @@ public class Character : Movable {
 		
 		velocity = Move(velocity, input);
 		
-		int nowInput = (int) input;
+		int nowInput = (int) input;			//figure out whether the player is double tapping
 		
 		if (lastInput == 0 && nowInput != 0){
 			
 			if (nowInput == lastDirection && Time.time - lastDirectionTime < doubleTapLeeway){
-				Debug.Log ("Double tap!");
+				if (doubleTap != null){
+					doubleTap();
+				}
 			}
 			
 			lastDirection = nowInput;
@@ -122,9 +133,10 @@ public class Character : Movable {
 		}
 		
 		if (grounded){						//whether I should jump
-			if (JumpInput){
+			if (JumpInput && !disabled){
 				//do the jump! Add the last part there to give myself a running jump
 				this.Jump(initialJumpVelocity + Mathf.Abs(velocity.x/runningJumpModifier));
+				jumpTimer += 10; //magic number!
 			}
 		}
 	}

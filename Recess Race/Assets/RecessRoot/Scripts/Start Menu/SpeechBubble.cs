@@ -53,7 +53,7 @@ public class SpeechBubble : MonoBehaviour {
 	void Start () {
 		tmesh = GetComponentInChildren<tk2dTextMesh>();
 		bubble = GetComponentInChildren<tk2dSprite>();
-		
+		//collider.enabled = false;
 	}
 		
 	// Update is called once per frame
@@ -82,5 +82,7 @@ public class SpeechBubble : MonoBehaviour {
 	public void SetSpeaker (Profile speaker){
 		this.speaker = speaker;
 	}
+	
+
 	
 }

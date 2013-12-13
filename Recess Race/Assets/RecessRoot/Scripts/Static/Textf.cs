@@ -50,12 +50,12 @@ static public class Textf {
 	/// <param name='characters'>
 	/// Characters.
 	/// </param>
-	public static String[] ParseScript (TextAsset script, String[] characters){
-		String[] delimitors = new String[] { Environment.NewLine };
+	public static String[] ParseScript (TextAsset script){
+		String[] delimitors = new String[] { Environment.NewLine, "\n" };
 		string wholeScript = script.text;
-		
+		Debug.Log("New line is silly because " + Environment.NewLine + " I mean look!");
 		String[] lines = wholeScript.Split(delimitors, StringSplitOptions.RemoveEmptyEntries);
-		
+		Debug.Log("First line is " + lines[0]);
 		return lines;
 	}
 	
