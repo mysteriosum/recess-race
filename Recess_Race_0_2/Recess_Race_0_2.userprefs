@@ -1,0 +1,22 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Recess Root\Scripts\Characters\Bully.cs">
+    <Files>
+      <File FileName="Assets\Recess Root\Scripts\Dev\GridMaker.cs" Line="32" Column="26" />
+      <File FileName="Assets\Recess Root\Scripts\Dev\DevBallFader.cs" Line="25" Column="1" />
+      <File FileName="Assets\Recess Root\Scripts\Avatar\Fitz.cs" Line="1" Column="1" />
+      <File FileName="Assets\Recess Root\Scripts\Independent\Controller.cs" Line="70" Column="39" />
+      <File FileName="Assets\Recess Root\Scripts\Items\Lolly.cs" Line="19" Column="9" />
+      <File FileName="Assets\Recess Root\Scripts\Items\BowTie.cs" Line="5" Column="2" />
+      <File FileName="Assets\Recess Root\Scripts\Items\Roulette.cs" Line="90" Column="3" />
+      <File FileName="Assets\Recess Root\Scripts\Items\QuestionMark.cs" Line="18" Column="22" />
+      <File FileName="Assets\Recess Root\Scripts\Base\Movable.cs" Line="116" Column="4" />
+      <File FileName="Assets\Recess Root\Scripts\Characters\Bully.cs" Line="141" Column="29" />
+      <File FileName="Assets\Recess Root\Scripts\BullyInstruction.cs" Line="48" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
