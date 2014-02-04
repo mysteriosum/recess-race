@@ -24,6 +24,9 @@ public class Movable : MonoBehaviour {
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
+	//angles and slopes
+	float angleLeeway = 5f;
+	
 	//------------------------------------------------------\\
 	//--------------------Rays and such---------------------\\
 	//------------------------------------------------------\\
@@ -166,14 +169,19 @@ public class Movable : MonoBehaviour {
 
 			bool connectedDown = false;
 			int lastConnection = 0;
-			Vector2 min = new Vector2(box.xMin + margin, box.center.y);
-			Vector2 max = new Vector2(box.xMax - margin, box.center.y);
+			Vector2 min = new Vector2(box.xMin, box.center.y);
+			Vector2 max = new Vector2(box.xMax, box.center.y);
 
 			for (int i = 0; i < verticalRays; i ++){
 				Vector2 start = Vector2.Lerp(min, max, (float)i / (float) verticalRays);
 				Vector2 end = start + -Vector2.up * (downRayLength + box.height/2);
 				downRays[i] = Physics2D.Linecast(start, end, Raylayers.downRay);
 				if (downRays[i].fraction > 0){
+					float angle = Mathf.Abs(Vector2.Angle(Vector2.right, downRays[i].normal));
+					if (Mathf.Abs(angle - 180) < angleLeeway || angle < angleLeeway){
+						Debug.Log("Yeah dude");
+						continue;
+					}
 					connectedDown = true;
 					lastConnection = i;
 				}
@@ -225,6 +233,9 @@ public class Movable : MonoBehaviour {
 			}
 		}
 		
+		
+		t.Translate(velocity * Time.deltaTime + extraMove);
+		extraMove = Vector2.zero;
 	}
 
 	//------------------------------------------------------\\
@@ -288,8 +299,7 @@ public class Movable : MonoBehaviour {
 	
 
 	protected void LateUpdate() {
-		t.Translate(velocity * Time.deltaTime + extraMove);
-		extraMove = Vector2.zero;
+		
 	}
 	
 	

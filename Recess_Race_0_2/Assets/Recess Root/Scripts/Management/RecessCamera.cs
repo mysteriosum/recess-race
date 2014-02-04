@@ -43,7 +43,7 @@ public class RecessCamera : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		Vector3 forepos = t.position;
 		if (fitzNode != null){
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , t.position.z);

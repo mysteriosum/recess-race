@@ -33,7 +33,6 @@ public class Fitz : Movable {
 	private float wallJumpInput						= 0;
 	private float wallJumpTimePenalty				= 0.5f;
 	
-	
 	private bool otto								= false;
 	//protected bool tailFalling						= false;
 	private float tailFallMod						= 0.25f;
@@ -144,17 +143,24 @@ public class Fitz : Movable {
 	//--------------------------------------------------------------------------\\
 	
 	protected override void FixedUpdate () {
-		base.FixedUpdate();
-		
 		controller.GetInputs();
-		
-		velocity = Move(velocity, HorizontalInput);
 		
 		if (grounded && controller.getJumpDown){
 			velocity = Jump(velocity, JumpImpulse);
-			//DEV
+			grounded = false;
 			jumpTimer = 0;
+			if (leaveBalls){
+				GameObject newThing = Instantiate(ball, new Vector3(box.center.x, box.yMin, t.position.z), t.rotation) as GameObject;
+				ballDropTimer = 0;
+				newThing.SendMessage("ChangeColour", Couleur.black);
+			}
 		}
+		
+		base.FixedUpdate();
+		
+		
+		velocity = Move(velocity, HorizontalInput);
+		
 		#region devTime
 //		if (!grounded){
 //			if (controller.getJumpUp)
