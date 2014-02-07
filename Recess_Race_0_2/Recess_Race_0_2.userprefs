@@ -1,19 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Recess Root\Scripts\Avatar\Fitz.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Editor\MapLoading\MapLoader.cs">
     <Files>
-      <File FileName="Assets\Recess Root\Scripts\Dev\GridMaker.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Dev\DevBallFader.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Avatar\Fitz.cs" Line="228" Column="4" />
-      <File FileName="Assets\Recess Root\Scripts\Independent\Controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Items\Lolly.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Items\BowTie.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Items\Roulette.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Items\QuestionMark.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Base\Movable.cs" Line="245" Column="2" />
-      <File FileName="Assets\Recess Root\Scripts\Characters\Bully.cs" Line="141" Column="29" />
-      <File FileName="Assets\Recess Root\Scripts\BullyInstruction.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Management\RecessCamera.cs" Line="37" Column="3" />
+      <File FileName="Assets\Editor\MapLoading\MapLoaderEditor.cs" Line="23" Column="5" />
+      <File FileName="Assets\Editor\MapLoading\MapLoader.cs" Line="6" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
