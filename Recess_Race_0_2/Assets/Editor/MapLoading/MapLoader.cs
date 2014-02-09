@@ -15,13 +15,17 @@ public class MapLoader {
 
 
     private string[] lines;
-
+	private Sprite[] sprites;
+	private GameObject worldRootGameObject;
+	private GameObject tilePrefab;
 
 
     private void load(string mapText)
-    {
-        GameObject.crea
-        lines = mapText.Split(new string[] { "\n\r", "\n", "\r" }, StringSplitOptions.None);
+    {	
+		loadAssets ();
+		createEmptyWorld ();
+
+		lines = mapText.Split(new string[] { "\n\r", "\r\n", "\n", "\r" }, StringSplitOptions.None);
         if (lines[0].StartsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
             readLines();
         } else {
@@ -29,25 +33,44 @@ public class MapLoader {
         }
 	}
 
-    private void readLines() {
-        int lineIndex = getNextLayerLineIndex(0);
-        if (lineIndex != -1) {
-            Vector2 dimension = getLayerDimension(lines[lineIndex]);
-            lineIndex += 2;
-            int layerLineIndex = 0;
-            for (int fileLayerLineIndex = 0; fileLayerLineIndex < dimension.y; fileLayerLineIndex++) {
-                loadLayerLine(layerLineIndex, lines[fileLayerLineIndex]);
-                lineIndex++;
-                layerLineIndex++;
-            }
+	private void loadAssets(){
+		sprites = Resources.LoadAll<Sprite> ("tileSets/testTileSet");
+		tilePrefab = Resources.Load<GameObject> ("BasicTile");
+	}
+	private void createEmptyWorld(){
+		worldRootGameObject = new GameObject();
+		worldRootGameObject.name = "World";
+	}
 
-            Debug.Log(lineIndex);
+    private void readLines() {
+		int fileLayerLineIndex = getNextLayerLineIndex(0);
+		if (fileLayerLineIndex!= -1) {
+            Vector2 dimension = getLayerDimension(lines[fileLayerLineIndex]);
+            fileLayerLineIndex += 2;
+			Debug.Log(dimension);
+			for (int y = (int)(dimension.y -1); y >=0; y--) {
+                loadLayerLine(y, lines[fileLayerLineIndex]);
+                fileLayerLineIndex++;
+            }
         }
     }
 
-    private void loadLayerLine(int layerLineIndex, string p)
+    private void loadLayerLine(int layerLineIndex, string tileLine)
     {
-        throw new NotImplementedException();
+		string[] tiles = tileLine.Split(new char[] { ',' }, StringSplitOptions.None);
+		int colIndex = 0;
+		foreach (string tileId in tiles) {
+
+			if(tileId.Equals("0") || tileId.Equals("") || tileId == null){
+
+			}else{
+				GameObject newTile = (GameObject)GameObject.Instantiate (this.tilePrefab);
+				newTile.transform.parent = this.worldRootGameObject.transform;
+				newTile.transform.Translate (colIndex,layerLineIndex,0);
+			}
+			colIndex++;
+		}
+
     }
 
     private Vector2 getLayerDimension(string p)
