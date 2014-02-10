@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Xml.Linq;
+using System.Linq;
 
-public class BullyInstructionGenerator : MonoBehaviour {
+public class BullyInstructionGenerator {
 
 	private List<Plateform> plateforms;
 
-	private GameObject tileHover;
+	private GameObject tileHoverPrefab;
+	private GameObject bullyInstructionPrefab;
 
 	private Transform parent;
 
@@ -16,7 +20,7 @@ public class BullyInstructionGenerator : MonoBehaviour {
 	private int tileY;
 
 	public BullyInstructionGenerator(){
-		tileHover = Resources.Load<GameObject> ("TileHover");
+		tileHoverPrefab = Resources.Load<GameObject> ("TilePlateformHover");
 		plateforms = new List<Plateform> ();
 	}
 
@@ -44,8 +48,16 @@ public class BullyInstructionGenerator : MonoBehaviour {
 		}
 	}
 
+	
+	public void doneLoadingTiles(){
+		addTileHover ();
+		removeUselessPlateform ();
+	}
+
+
 	private void addTileHover(){
-		GameObject newTileHover = (GameObject)GameObject.Instantiate (this.tileHover);
+		GameObject newTileHover = (GameObject)GameObject.Instantiate (this.tileHoverPrefab);
+		newTileHover.name = "Plateform";
 		newTileHover.transform.parent = parent;
 		float width = tileMaxX - tileMinX;
 		float center = width/2;
@@ -55,11 +67,6 @@ public class BullyInstructionGenerator : MonoBehaviour {
 		Bounds bound = ((SpriteRenderer)newTileHover.GetComponent<SpriteRenderer> ()).bounds;
 		Plateform plateform = new Plateform (newTileHover.transform, bound);
 		this.plateforms.Add (plateform);
-	}
-
-	public void done(){
-		addTileHover ();
-		removeUselessPlateform ();
 	}
 
 	
@@ -95,5 +102,29 @@ public class BullyInstructionGenerator : MonoBehaviour {
 			}
 		}
 		return true;
+	}
+
+
+	public void loadWaypoints(XElement waypoints){
+		var objects = waypoints.Elements ();
+		foreach (var item in objects) {
+			int x = Int32.Parse(item.Attribute("x").Value) / 8;
+			int y = 100 - Int32.Parse(item.Attribute("y").Value) / 8 - 2;
+			var propertyId = item.Descendants().First (e => e.Name == "property" && e.Attribute("name").Value == "id");
+			int id = Int32.Parse(propertyId.Attribute("value").Value);
+			createWaypoint(x, y, id, objects.Count());
+		}
+
+	}
+
+	private void createWaypoint(int x, int y, int id, int nbWayPoints){
+		foreach (var plateform in this.plateforms) {
+			Bounds bound = new Bounds(new Vector3(x,y,0), new Vector3(2,2,0));
+			if(bound.Intersects(plateform.bound)){
+				var spriteRenderer = plateform.transform.gameObject.GetComponent<SpriteRenderer>();
+				plateform.transform.gameObject.name = "Plateform (wp #" + id + ")";
+				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
+			}
+		}
 	}
 }

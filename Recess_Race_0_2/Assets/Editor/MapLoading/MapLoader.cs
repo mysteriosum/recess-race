@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
+using System.Xml.Linq;
+using System.Linq;
 
 public class MapLoader {
 
@@ -13,8 +16,6 @@ public class MapLoader {
         instance.load(text);
     }
 
-
-    private string[] lines;
 	private Sprite[] sprites;
 	private GameObject worldRootGameObject;
 	private GameObject tilesGameObject;
@@ -31,13 +32,14 @@ public class MapLoader {
 		loadAssets ();
 		createEmptyWorld ();
 
-		lines = mapText.Split(new string[] { "\n\r", "\r\n", "\n", "\r" }, StringSplitOptions.None);
-        if (lines[0].StartsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
-            readLines();
-        } else {
-            Debug.LogError("Invalide File");
-        }
-		bullyInstructionGenerator.done ();
+		XDocument document = XDocument.Parse (mapText);
+
+		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
+		XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
+
+		loadTiles (tilesLayer);
+		bullyInstructionGenerator.doneLoadingTiles ();
+		bullyInstructionGenerator.loadWaypoints (waypoints);
 	}
 
 	private void loadAssets(){
@@ -59,17 +61,17 @@ public class MapLoader {
 		bullyInstructionGenerator.setGameObjectParent (bullyInstructionGameObject.transform);
 	}
 
-    private void readLines() {
-		int fileLayerLineIndex = getNextLayerLineIndex(0);
-		if (fileLayerLineIndex!= -1) {
-            Vector2 dimension = getLayerDimension(lines[fileLayerLineIndex]);
-            fileLayerLineIndex += 2;
-			for (int y = (int)(dimension.y -1); y >=0; y--) {
-                loadLayerLine(y, lines[fileLayerLineIndex]);
-                fileLayerLineIndex++;
-            }
-        }
-    }
+	private void loadTiles(XElement layer){
+		string tilesCSV = layer.Elements ().First ().Value;
+		int height = Int32.Parse(layer.Attribute("height").Value);
+		string[] tilesLines = tilesCSV.Split(new string[] { "\n\r", "\r\n", "\n", "\r" }, StringSplitOptions.None);
+
+		int y = height;
+		for (int i = 0; i < height; i++) {
+			y--;
+			loadLayerLine(y, tilesLines[i]);
+		}
+	}
 
     private void loadLayerLine(int y, string tileLine)
     {
@@ -92,31 +94,4 @@ public class MapLoader {
 		}
 
     }
-
-    private Vector2 getLayerDimension(string p)
-    {
-        int widthTextStart = p.IndexOf("width=");
-        int widthTextEnd = widthTextStart + 7;
-        int heightTextStart = p.IndexOf("height=");
-        int heightTextEnd = heightTextStart + 8;
-        int lineTextEnd = p.Length - 2;
-        int width = Int32.Parse(p.Substring(widthTextEnd, heightTextStart - 2 - widthTextEnd));
-        int height = Int32.Parse(p.Substring(heightTextEnd, lineTextEnd - heightTextEnd));
-        return new Vector2(width, height);
-    }
-
-    private int getNextLayerLineIndex(int startingIndex)
-    {
-        int index = startingIndex;
-        while (index < lines.Length) {
-            if (lines[index].StartsWith(" <layer name=")){
-                return index;
-            } else {
-                index++;
-            }
-            
-        }
-        return -1;
-    }
-
 }
