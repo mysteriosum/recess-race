@@ -63,6 +63,7 @@
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Raylayers.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Textf.cs" />
+     <Compile Include="Assets\fellow.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">

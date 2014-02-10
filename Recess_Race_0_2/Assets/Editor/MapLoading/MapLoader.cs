@@ -17,11 +17,17 @@ public class MapLoader {
     private string[] lines;
 	private Sprite[] sprites;
 	private GameObject worldRootGameObject;
+	private GameObject tilesGameObject;
+	private GameObject bullyInstructionGameObject;
+
 	private GameObject tilePrefab;
+
+	private BullyInstructionGenerator bullyInstructionGenerator;
 
 
     private void load(string mapText)
-    {	
+	{	
+		bullyInstructionGenerator = new BullyInstructionGenerator ();
 		loadAssets ();
 		createEmptyWorld ();
 
@@ -31,15 +37,26 @@ public class MapLoader {
         } else {
             Debug.LogError("Invalide File");
         }
+		bullyInstructionGenerator.done ();
 	}
 
 	private void loadAssets(){
 		sprites = Resources.LoadAll<Sprite> ("tileSets/testTileSet");
 		tilePrefab = Resources.Load<GameObject> ("BasicTile");
 	}
+
 	private void createEmptyWorld(){
 		worldRootGameObject = new GameObject();
 		worldRootGameObject.name = "World";
+		
+		tilesGameObject = new GameObject();
+		tilesGameObject.name = "Tiles";
+		tilesGameObject.transform.parent = worldRootGameObject.transform;
+		
+		bullyInstructionGameObject = new GameObject();
+		bullyInstructionGameObject.name = "Bully Instructions";
+		bullyInstructionGameObject.transform.parent = worldRootGameObject.transform;
+		bullyInstructionGenerator.setGameObjectParent (bullyInstructionGameObject.transform);
 	}
 
     private void readLines() {
@@ -47,7 +64,6 @@ public class MapLoader {
 		if (fileLayerLineIndex!= -1) {
             Vector2 dimension = getLayerDimension(lines[fileLayerLineIndex]);
             fileLayerLineIndex += 2;
-			Debug.Log(dimension);
 			for (int y = (int)(dimension.y -1); y >=0; y--) {
                 loadLayerLine(y, lines[fileLayerLineIndex]);
                 fileLayerLineIndex++;
@@ -55,20 +71,24 @@ public class MapLoader {
         }
     }
 
-    private void loadLayerLine(int layerLineIndex, string tileLine)
+    private void loadLayerLine(int y, string tileLine)
     {
 		string[] tiles = tileLine.Split(new char[] { ',' }, StringSplitOptions.None);
-		int colIndex = 0;
+		int x = 0;
 		foreach (string tileId in tiles) {
 
 			if(tileId.Equals("0") || tileId.Equals("") || tileId == null){
 
-			}else{
+			} else {
+				int id = Int32.Parse(tileId) - 1;
 				GameObject newTile = (GameObject)GameObject.Instantiate (this.tilePrefab);
-				newTile.transform.parent = this.worldRootGameObject.transform;
-				newTile.transform.Translate (colIndex,layerLineIndex,0);
+				SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
+				spriteRenderer.sprite = this.sprites[id];
+				newTile.transform.parent = this.tilesGameObject.transform;
+				newTile.transform.Translate (x, y, 0);
+				bullyInstructionGenerator.addTile(x,y,id);
 			}
-			colIndex++;
+			x++;
 		}
 
     }

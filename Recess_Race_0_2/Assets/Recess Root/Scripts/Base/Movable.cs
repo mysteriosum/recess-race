@@ -12,15 +12,15 @@ public class Movable : MonoBehaviour {
 
 	protected float defaultGravity						= 9.8f;
 	protected float holdGravityModifier					= 0.7f;
-	protected float maxFallSpeed						= -220f;
+	protected float maxFallSpeed						= -220f/8;
 	
 	protected float lerpAccel							= 0.0375f;
-	protected float lerpTargetAdd						= 4f;
-	protected float baseDecel							= 11f;
+	protected float lerpTargetAdd						= 4f/8;
+	protected float baseDecel							= 11f/8;
 	
-	protected float maxSpeed							= 150f;
-	protected float jumpImpulse							= 220f;
-	protected float extraImpulseFromRun					= 36f;
+	protected float maxSpeed							= 150f/8;
+	protected float jumpImpulse							= 220f/8;
+	protected float extraImpulseFromRun					= 36f/8;
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
