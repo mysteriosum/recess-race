@@ -10,7 +10,8 @@ public class Movable : MonoBehaviour {
 	//------------------------------------------------------\\
 	//evething is in pixels/second
 
-	protected float defaultGravity						= 9.8f;
+
+	protected float defaultGravity						= 9.8f/8;
 	protected float holdGravityModifier					= 0.7f;
 	protected float maxFallSpeed						= -220f/8;
 	
@@ -33,7 +34,7 @@ public class Movable : MonoBehaviour {
 
 	protected int horizontalRays						= 5;
 	protected int verticalRays							= 4;
-	protected float margin								= 3.5f;
+	protected float margin								= 3.5f/8;
 	#region declaringRays
 	protected RaycastHit2D[] downRays = new RaycastHit2D[] {
 		new RaycastHit2D(),

@@ -19,9 +19,12 @@ public class BullyInstructionGenerator {
 	private int tileMinX;
 	private int tileY;
 
-	public BullyInstructionGenerator(){
+	private bool[,] pathingMap;
+
+	public BullyInstructionGenerator(Dimension mapDimension){
 		tileHoverPrefab = Resources.Load<GameObject> ("TilePlateformHover");
 		plateforms = new List<Plateform> ();
+		pathingMap = new bool[mapDimension.width,mapDimension.height];
 	}
 
 	public void setGameObjectParent(Transform parent){
@@ -29,6 +32,7 @@ public class BullyInstructionGenerator {
 	}
 
 	public void addTile(int x, int y, int id){
+		this.pathingMap [x, y] = true;
 		if (!workingOnATile) {
 			this.tileMinX = x;
 			this.tileMaxX = x;
@@ -64,8 +68,7 @@ public class BullyInstructionGenerator {
 		newTileHover.transform.Translate (tileMinX + center, tileY, 0);
 		newTileHover.transform.localScale = new Vector3(width + 1, 1, 0);
 
-		Bounds bound = ((SpriteRenderer)newTileHover.GetComponent<SpriteRenderer> ()).bounds;
-		Plateform plateform = new Plateform (newTileHover.transform, bound);
+		Plateform plateform = newTileHover.GetComponent<Plateform> ();
 		this.plateforms.Add (plateform);
 	}
 
@@ -92,12 +95,14 @@ public class BullyInstructionGenerator {
 
 	private bool isPlateformCompletlyCovered(Plateform p1, Plateform p2){
 		//Debug.Log ("--");
-		for (float x = p1.bound.min.x; x <= p1.bound.max.x; x++) {
+		Bounds b1 = p1.getBound ();
+		Bounds b2 = p2.getBound ();
+		for (float x = b1.min.x; x <= b1.max.x; x++) {
 
 			float yOver = p1.transform.position.y + 0.5f;
 			//Debug.Log (x + "," + yOver);
 			Bounds bound = new Bounds (new Vector3(x, yOver, 0), Vector3.one);			
-			if(!bound.Intersects(p2.bound)){
+			if(!bound.Intersects(b2)){
 				return false;
 			}
 		}
@@ -105,11 +110,12 @@ public class BullyInstructionGenerator {
 	}
 
 
-	public void loadWaypoints(XElement waypoints){
+	public void loadWaypoints(XElement waypoints, Map map){
 		var objects = waypoints.Elements ();
+		int tileHeight = map.tileDimension.height;
 		foreach (var item in objects) {
-			int x = Int32.Parse(item.Attribute("x").Value) / 8;
-			int y = 100 - Int32.Parse(item.Attribute("y").Value) / 8 - 2;
+			int x = Int32.Parse(item.Attribute("x").Value) / tileHeight;
+			int y = map.mapDimension.height - Int32.Parse(item.Attribute("y").Value) / tileHeight - 2;
 			var propertyId = item.Descendants().First (e => e.Name == "property" && e.Attribute("name").Value == "id");
 			int id = Int32.Parse(propertyId.Attribute("value").Value);
 			createWaypoint(x, y, id, objects.Count());
@@ -120,11 +126,20 @@ public class BullyInstructionGenerator {
 	private void createWaypoint(int x, int y, int id, int nbWayPoints){
 		foreach (var plateform in this.plateforms) {
 			Bounds bound = new Bounds(new Vector3(x,y,0), new Vector3(2,2,0));
-			if(bound.Intersects(plateform.bound)){
+			Bounds plateformBound = plateform.getBound();
+			if(bound.Intersects(plateformBound)){
 				var spriteRenderer = plateform.transform.gameObject.GetComponent<SpriteRenderer>();
 				plateform.transform.gameObject.name = "Plateform (wp #" + id + ")";
 				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
 			}
 		}
 	}
+
+
+	public void linkPlateforms(){
+		foreach (var plateform in this.plateforms) {
+
+		}
+	}
+
 }

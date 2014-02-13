@@ -9,7 +9,14 @@ public class Bully : Movable {
 	
 	float minJump = 0;
 	float maxJump = 1.52f;
-	
+	public float myMaxSpeed;
+	protected override float MaxSpeed {
+		get {
+			return myMaxSpeed;
+		}
+	}
+
+
 	public int talent = 10;
 	
 	private class NextJump {

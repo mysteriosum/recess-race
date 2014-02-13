@@ -50,7 +50,6 @@
      <Compile Include="Assets\Editor\MapLoading\BullyInstructionGenerator.cs" />
      <Compile Include="Assets\Editor\MapLoading\MapLoader.cs" />
      <Compile Include="Assets\Editor\MapLoading\MapLoaderEditor.cs" />
-     <Compile Include="Assets\Editor\MapLoading\Plateform.cs" />
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:\Programs\Unity\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
  </Reference>

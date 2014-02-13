@@ -18,6 +18,7 @@ public class MapLoader {
 
 	private Sprite[] sprites;
 	private GameObject worldRootGameObject;
+	private Map map;
 	private GameObject tilesGameObject;
 	private GameObject bullyInstructionGameObject;
 
@@ -28,18 +29,20 @@ public class MapLoader {
 
     private void load(string mapText)
 	{	
-		bullyInstructionGenerator = new BullyInstructionGenerator ();
-		loadAssets ();
-		createEmptyWorld ();
-
 		XDocument document = XDocument.Parse (mapText);
-
+		XElement mapElement = document.Elements ().First();
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
 		XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
 
+		loadMapSettings (mapElement);
+		bullyInstructionGenerator = new BullyInstructionGenerator (this.map.mapDimension);
+
+		loadAssets ();
+		createEmptyWorld ();
 		loadTiles (tilesLayer);
 		bullyInstructionGenerator.doneLoadingTiles ();
-		bullyInstructionGenerator.loadWaypoints (waypoints);
+		bullyInstructionGenerator.loadWaypoints (waypoints, this.map);
+		bullyInstructionGenerator.linkPlateforms ();
 	}
 
 	private void loadAssets(){
@@ -50,6 +53,8 @@ public class MapLoader {
 	private void createEmptyWorld(){
 		worldRootGameObject = new GameObject();
 		worldRootGameObject.name = "World";
+		worldRootGameObject.AddComponent<Map> ();
+		this.map = worldRootGameObject.GetComponent<Map> ();
 		
 		tilesGameObject = new GameObject();
 		tilesGameObject.name = "Tiles";
@@ -60,6 +65,18 @@ public class MapLoader {
 		bullyInstructionGameObject.transform.parent = worldRootGameObject.transform;
 		bullyInstructionGenerator.setGameObjectParent (bullyInstructionGameObject.transform);
 	}
+
+
+	public void loadMapSettings(XElement mapElement){
+//		Debug.Log (mapElement.Name);
+		int width = Int32.Parse(mapElement.Attribute ("width").Value);
+		int height = Int32.Parse(mapElement.Attribute ("height").Value);
+		int tileWidth = Int32.Parse(mapElement.Attribute ("tilewidth").Value);
+		int tileHeight = Int32.Parse(mapElement.Attribute ("tileheight").Value);
+		this.map.mapDimension = new Dimension (width,height);
+		this.map.tileDimension = new Dimension (tileWidth,tileHeight);
+	}
+
 
 	private void loadTiles(XElement layer){
 		string tilesCSV = layer.Elements ().First ().Value;

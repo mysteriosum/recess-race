@@ -61,7 +61,9 @@
      <Compile Include="Assets\Recess Root\Scripts\Items\QuestionMark.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Roulette.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Map\Map.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Plateform.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Static\Dimension.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Raylayers.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Textf.cs" />
      <Compile Include="Assets\fellow.cs" />

@@ -50,7 +50,6 @@
      <Compile Include="Assets\Editor\MapLoading\BullyInstructionGenerator.cs" />
      <Compile Include="Assets\Editor\MapLoading\MapLoader.cs" />
      <Compile Include="Assets\Editor\MapLoading\MapLoaderEditor.cs" />
-     <Compile Include="Assets\Editor\MapLoading\Plateform.cs" />
  <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
