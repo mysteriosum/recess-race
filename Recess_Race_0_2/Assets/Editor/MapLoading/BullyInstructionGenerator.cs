@@ -137,9 +137,9 @@ public class BullyInstructionGenerator {
 
 
 	public void linkPlateforms(){
-		foreach (var plateform in this.plateforms) {
+		/*foreach (var plateform in this.plateforms) {
 
-		}
+		}*/
 	}
 
 }
