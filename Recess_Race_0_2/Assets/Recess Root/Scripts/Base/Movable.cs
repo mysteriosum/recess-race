@@ -11,17 +11,17 @@ public class Movable : MonoBehaviour {
 	//evething is in pixels/second
 
 
-	protected float defaultGravity						= 9.8f/8;
-	protected float holdGravityModifier					= 0.7f;
-	protected float maxFallSpeed						= -220f/8;
+	protected float defaultGravity						= 8.5f/TileProperties.tileDimension;
+	protected float holdGravityModifier					= 0.68f;
+	protected float maxFallSpeed						= -250f/TileProperties.tileDimension;
 	
 	protected float lerpAccel							= 0.0375f;
-	protected float lerpTargetAdd						= 4f/8;
-	protected float baseDecel							= 11f/8;
+	protected float lerpTargetAdd						= 4f/TileProperties.tileDimension;
+	protected float baseDecel							= 11f/TileProperties.tileDimension;
 	
-	protected float maxSpeed							= 150f/8;
-	protected float jumpImpulse							= 220f/8;
-	protected float extraImpulseFromRun					= 36f/8;
+	protected float maxSpeed							= 130f/TileProperties.tileDimension;
+	protected float jumpImpulse							= 230f/TileProperties.tileDimension;
+	protected float extraImpulseFromRun					= 20f/TileProperties.tileDimension;
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
@@ -34,7 +34,7 @@ public class Movable : MonoBehaviour {
 
 	protected int horizontalRays						= 5;
 	protected int verticalRays							= 4;
-	protected float margin								= 3.5f/8;
+	protected float margin								= 3.5f/TileProperties.tileDimension;
 	#region declaringRays
 	protected RaycastHit2D[] downRays = new RaycastHit2D[] {
 		new RaycastHit2D(),
@@ -99,7 +99,7 @@ public class Movable : MonoBehaviour {
 	//------------------------------------------------------\\
 	
 	protected virtual float Gravity {
-		get { return defaultGravity * (controller.getJump? holdGravityModifier : 1); }
+		get { return defaultGravity * (controller.getJump && !falling? holdGravityModifier : 1); }
 	}
 	protected virtual float MaxFallSpeed {
 		get { return maxFallSpeed; }
@@ -147,8 +147,7 @@ public class Movable : MonoBehaviour {
 			activated = true;
 			return;
 		}
-		pos = (Vector2) t.position;
-		box = new Rect(t.position.x - bc.size.x/2, t.position.y - bc.size.y/2, bc.size.x, bc.size.y);
+		UpdatePosAndBox();
 
 	//------------------------------------------------------\\
 	//------------------------Gravity-----------------------\\
@@ -237,6 +236,11 @@ public class Movable : MonoBehaviour {
 		
 		t.Translate(velocity * Time.deltaTime + extraMove);
 		extraMove = Vector2.zero;
+	}
+	
+	protected virtual void UpdatePosAndBox (){
+		pos = (Vector2) t.position;
+		box = new Rect(t.position.x - bc.size.x/2, t.position.y - bc.size.y/2, bc.size.x, bc.size.y);
 	}
 
 	//------------------------------------------------------\\
