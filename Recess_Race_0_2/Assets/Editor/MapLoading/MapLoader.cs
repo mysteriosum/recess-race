@@ -29,6 +29,9 @@ public class MapLoader {
 
     private void load(string mapText)
 	{	
+		loadAssets ();
+		createEmptyWorld ();
+
 		XDocument document = XDocument.Parse (mapText);
 		XElement mapElement = document.Elements ().First();
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
@@ -36,9 +39,8 @@ public class MapLoader {
 
 		loadMapSettings (mapElement);
 		bullyInstructionGenerator = new BullyInstructionGenerator (this.map.mapDimension);
+		bullyInstructionGenerator.setGameObjectParent (bullyInstructionGameObject.transform);
 
-		loadAssets ();
-		createEmptyWorld ();
 		loadTiles (tilesLayer);
 		bullyInstructionGenerator.doneLoadingTiles ();
 		bullyInstructionGenerator.loadWaypoints (waypoints, this.map);
@@ -63,7 +65,6 @@ public class MapLoader {
 		bullyInstructionGameObject = new GameObject();
 		bullyInstructionGameObject.name = "Bully Instructions";
 		bullyInstructionGameObject.transform.parent = worldRootGameObject.transform;
-		bullyInstructionGenerator.setGameObjectParent (bullyInstructionGameObject.transform);
 	}
 
 

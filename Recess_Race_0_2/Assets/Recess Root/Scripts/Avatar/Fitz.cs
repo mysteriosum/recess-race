@@ -104,7 +104,7 @@ public class Fitz : Movable {
 	
 	private float HorizontalInput{
 		get {
-			if (boogerBoy && wallJumpLockTimer > 0)
+			if (!canControl || (boogerBoy && wallJumpLockTimer > 0))
 				return 0;
 			
 			return controller.hAxis;
@@ -119,6 +119,17 @@ public class Fitz : Movable {
 	}
 	
 	
+	
+	//--------------------------------------------------------------------------\\
+	//-----------------------------Stunning/Damage------------------------------\\
+	//--------------------------------------------------------------------------\\
+	
+	private bool canControl = true;
+	private float stunTimer = 0;
+	private float showFor = 0.1f;
+	private float hideFor = 0.05f;
+	private float blinkTimer = 0;
+	private bool spriteShowing = true;
 	
 	//debug things
 	private float ballDropRate = 0.1f;
@@ -145,7 +156,7 @@ public class Fitz : Movable {
 	protected override void FixedUpdate () {
 		controller.GetInputs();
 		
-		if (grounded && controller.getJumpDown){
+		if (grounded && controller.getJumpDown && canControl){
 			velocity = Jump(velocity, JumpImpulse);
 			grounded = false;
 			jumpTimer = 0;
@@ -227,6 +238,32 @@ public class Fitz : Movable {
 			}
 			
 		}
+		
+		
+	//--------------------------------------------------------------------------\\
+	//-----------------------------hurt & blinking------------------------------\\
+	//--------------------------------------------------------------------------\\
+		
+		if (!canControl){
+			stunTimer -= Time.deltaTime;
+			blinkTimer += Time.deltaTime;
+			if (blinkTimer > showFor && spriteShowing){
+				spriteShowing = false;
+				r.material.color = Color.clear;
+				blinkTimer = 0;
+			}else if(blinkTimer > hideFor && !spriteShowing){
+				spriteShowing = true;
+				r.material.color = Color.white;
+				blinkTimer = 0;
+			}
+			
+			if (stunTimer <= 0){
+				canControl = true;
+				blinkTimer = 0;
+				r.material.color = Color.white;
+			}
+		}
+		
 	}
 	
 	void ChangeToPinky(){
@@ -317,5 +354,14 @@ public class Fitz : Movable {
 		}
 		return false;
 	}
-
+	
+	
+	void OnTriggerEnter2D (Collider2D other){
+		DamageScript dmgScript = other.GetComponent<DamageScript>();
+		
+		if (dmgScript){
+			canControl = false;
+			stunTimer = dmgScript.StunDuration;
+		}
+	}
 }
