@@ -52,7 +52,6 @@ public class Roulette : MonoBehaviour {
 	void Update () {
 		
 		if (currentItem != null && Input.GetButtonDown("Run")){
-			Debug.Log("Youse");
 			currentItem.Activate();
 			currentItem = null;
 			display.sprite = null;
@@ -67,12 +66,10 @@ public class Roulette : MonoBehaviour {
 		spinTimer += Time.deltaTime;
 		
 		if (rouletteTimer > rouletteTiming){
-			Debug.Log("Choose: " + index);
 			currentItem = items[index];
 		}
 		else if (spinTimer > currentTiming){
 			index = NextIndex(index, items.Length);
-			Debug.Log("Change to " + index + "! at " + Time.time);
 			if (rouletteTimer > mediumAt)
 				currentTiming = displayTimingMedium;
 			if (rouletteTimer > longAt)
