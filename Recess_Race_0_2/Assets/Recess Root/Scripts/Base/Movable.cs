@@ -17,7 +17,8 @@ public class Movable : MonoBehaviour {
 	
 	protected float lerpAccel							= 0.0375f;
 	protected float lerpTargetAdd						= 4f/TileProperties.tileDimension;
-	protected float baseDecel							= 11f/TileProperties.tileDimension;
+	protected float baseDecel							= 6f/TileProperties.tileDimension;
+	protected float secondsToMax						= 0.8f;
 	
 	protected float maxSpeed							= 130f/TileProperties.tileDimension;
 	protected float jumpImpulse							= 230f/TileProperties.tileDimension;
@@ -124,12 +125,16 @@ public class Movable : MonoBehaviour {
 			return headHitVelocityMod;
 		}
 	}
+	protected virtual float SecondsToMax {
+		get { return secondsToMax; }
+	}
 
 	//------------------------------------------------------\\
 	//----------------------Debugging-----------------------\\
 	//------------------------------------------------------\\
 
 	bool running = false;
+	public bool debug = false;
 
 	protected virtual void Start () {
 		t = transform;
@@ -143,6 +148,8 @@ public class Movable : MonoBehaviour {
 	}
 	
 	protected virtual void FixedUpdate () {
+	
+		
 		if (!activated){	//so I don't fall a million metres in the first frame because it took so long to load v_v;
 			activated = true;
 			return;
@@ -250,7 +257,13 @@ public class Movable : MonoBehaviour {
 
 	protected virtual Vector2 Move(Vector2 currentVelocity, float input){
 		Vector2 vel = currentVelocity;
-		float newX = Accelerate(input);
+		float newX = vel.x;
+		
+		if (input != 0){
+			newX = Accelerate(input);
+		}
+		
+		//additional deceleration if the input doesn't match current speed
 		if ((vel.x > 0 && input <= 0) || (vel.x < 0 && input >= 0)){
 			
 			int modifier = vel.x > 0? 1 : -1;
@@ -285,14 +298,16 @@ public class Movable : MonoBehaviour {
 				//t.position = new Vector2(sideRays[lastConnection].point.x - (box.width/2 * modifier), t.position.y);
 				extraMove += new Vector2(sideRays[lastConnection].point.x - (t.position.x + box.width/2 * modifier), 0);
 				newX = 0;
+				//Debug.Log(name + " connected!");
 			}
+			
 		}
 		//Debug.Log("newX = " + newX);
 		return new Vector2(newX, currentVelocity.y);
 	}
 	
 	protected virtual float Accelerate(float input){
-		float newX = Mathf.Lerp(velocity.x, (MaxSpeed + lerpTargetAdd) * input, LerpAccel);
+		float newX = velocity.x + input * (MaxSpeed / (SecondsToMax)) * Time.deltaTime;
 		newX = Mathf.Clamp(newX, -MaxSpeed, MaxSpeed);
 		return newX;
 	}
@@ -314,11 +329,3 @@ public class Movable : MonoBehaviour {
 		}
 	}
 }
-
-
-
-
-
-
-
-

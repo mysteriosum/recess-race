@@ -9,21 +9,35 @@ public class TennisBall : Movable {
 	
 	protected override float Gravity {
 		get {
-			return hasGravity? base.Gravity : 0;
+			return hasGravity? defaultGravity * gravityScale : 0;
+		}
+	}
+	
+	protected override float Deceleration {
+		get {
+			return deceleration;
 		}
 	}
 	
 	private bool hasGravity = false;
 	
 	//public inspector fields
-	public float speed;
+	public float speed = 3f;
 	public DirectionsEnum direction = DirectionsEnum.up;
 	
 	private CircleCollider2D circle;
 	
+	private Vector2 collideVelocity = new Vector2(80, 150)/TileProperties.tileDimension;
+	private float bounceRetentionPercentage = 0.4f;
+	private float MinimumBounce{
+		get { return bounceRetentionPercentage * 2; }
+	}
+	private float deceleration = 0.0125f;
+	private float gravityScale = 0.75f;
 	
 	void Start () {
 		base.Start();
+		
 		
 		switch (direction){
 		case DirectionsEnum.up:
@@ -77,8 +91,25 @@ public class TennisBall : Movable {
 			}
 		}
 		else{
+			float lastYVelocity = velocity.y;
+			float lastXVelocity = velocity.x;
 			base.FixedUpdate();
 			
+			if (velocity.x != 0){
+				velocity = Move(velocity, 0);
+				if (velocity.x == 0 && Mathf.Abs(lastXVelocity) > deceleration){
+					velocity = new Vector2(-lastXVelocity * bounceRetentionPercentage, velocity.y);
+				}
+			}
+			
+			
+			if (grounded && lastYVelocity < 0 && Mathf.Abs(lastYVelocity) > bounceRetentionPercentage){
+				float amount = Mathf.Abs(lastYVelocity) * bounceRetentionPercentage;
+				Debug.Log("Amount is " + amount);
+				if (amount > MinimumBounce){
+					velocity = Jump(velocity, Mathf.Abs(lastYVelocity) * bounceRetentionPercentage);
+				}
+			}
 		}
 		
 		t.Translate(velocity * Time.deltaTime, Space.World);
@@ -87,10 +118,22 @@ public class TennisBall : Movable {
 			extraMove = Vector2.zero;
 		}
 	}
+	protected override float Accelerate (float input)
+	{
+		
+		return velocity.x;
+	}
 	 
 	protected override void UpdatePosAndBox ()
 	{
 		pos = (Vector2) t.position;
 		box = new Rect(t.position.x - circle.radius, t.position.y - circle.radius, circle.radius * 2, circle.radius * 2);
+	}
+	
+	void CollideWithFitz(Transform fitz){
+		hasGravity = true;
+		velocity = new Vector2(collideVelocity.x * (fitz.position.x > t.position.x? -1 : 1), collideVelocity.y);
+		DamageScript dmg = GetComponent<DamageScript>();
+		dmg.enabled = false;
 	}
 }

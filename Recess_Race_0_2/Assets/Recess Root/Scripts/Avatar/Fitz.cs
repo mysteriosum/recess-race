@@ -15,20 +15,20 @@ public class Fitz : Movable {
 	private bool dashing							= false;
 	private float dashingLerp						= 0.1f;
 	private bool propelling							= false;
-	private float propelGravMod						= -1f;
+	private float propelGravMod						= -1.35f;
 	private bool spinFalling						= false;
 	private float spinFallMod						= 0.5f;
-	private float spinFallMoveMod					= 0.3f;
+	private float spinFallMoveMod					= 0.70f;
 	readonly private float propelTiming				= 0.3f;
 	private float propelTimer						= 0f;
 	private float propellerTimePenalty				= 0.25f;
 	
 	private bool boogerBoy							= false;
-	private float boogerBoyAccel					= 10f;
+	private float boogerBoySecToMax					= 0.158f;
 	private float boogerBoyTiming					= 18f;
 	private bool wallHanging						= false;
 	private float wallHangFallMod					= 0.15f;
-	private float wallJumpLockTiming				= 0.3f;
+	private float wallJumpLockTiming				= 0.15f;
 	private float wallJumpLockTimer					= 0;
 	private float wallJumpInput						= 0;
 	private float wallJumpTimePenalty				= 0.5f;
@@ -46,7 +46,7 @@ public class Fitz : Movable {
 	protected override float Gravity {
 		get {
 			if (pinky){
-				return base.Gravity * (propelling? propelGravMod : holdGravityModifier);
+				return base.Gravity * (propelling? propelGravMod : 1);
 			}
 			return base.Gravity;
 		}
@@ -98,6 +98,15 @@ public class Fitz : Movable {
 		}
 	}
 	
+	protected override float SecondsToMax {
+		get {
+			if (boogerBoy){
+				return boogerBoySecToMax;
+			}
+			return base.SecondsToMax;
+		}
+	}
+	
 	//--------------------------------------------------------------------------\\
 	//--------------------------Miscellaneous properties------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -136,6 +145,7 @@ public class Fitz : Movable {
 	private float ballDropTimer = 0;
 	private Object ball;
 	public bool leaveBalls = true;
+	private Vector2 recoilVelocity = new Vector2(140, 0) / TileProperties.tileDimension;
 	
 	private float jumpTimer = 0;
 	
@@ -155,6 +165,26 @@ public class Fitz : Movable {
 	
 	protected override void FixedUpdate () {
 		controller.GetInputs();
+	//------------------------------------------------------\\
+	//------------------TEST AND HACK-----------------------\\
+	//------------------------------------------------------\\
+		
+		if (Input.GetKey(KeyCode.Alpha1)){
+			ChangeToOtto();
+		}
+		
+		if (Input.GetKey(KeyCode.Alpha2)){
+			ChangeToPinky();
+		}
+		
+		if (Input.GetKey(KeyCode.Alpha3)){
+			ChangeToBoogerBoy();
+		}
+		
+	//------------------------------------------------------\\
+	//------------------Handling Inputs---------------------\\
+	//------------------------------------------------------\\
+		
 		
 		if (grounded && controller.getJumpDown && canControl){
 			velocity = Jump(velocity, JumpImpulse);
@@ -267,6 +297,7 @@ public class Fitz : Movable {
 	}
 	
 	void ChangeToPinky(){
+		CancelInvoke("ChangeToFitz");
 		pinky = true;
 		otto = false;
 		boogerBoy = false;
@@ -276,6 +307,7 @@ public class Fitz : Movable {
 	}
 	
 	void ChangeToBoogerBoy(){
+		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
 		boogerBoy = true;
@@ -284,6 +316,7 @@ public class Fitz : Movable {
 	}
 	
 	void ChangeToOtto(){
+		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = true;
 		boogerBoy = false;
@@ -318,11 +351,12 @@ public class Fitz : Movable {
 	
 	protected override float Accelerate (float input)
 	{
+		/*
 		if (boogerBoy){
 			float newX = velocity.x + boogerBoyAccel * input;
 			newX = Mathf.Clamp(newX, -MaxSpeed, MaxSpeed);
 			return newX;
-		}
+		}*/
 		return base.Accelerate (input);
 	}
 	
@@ -359,9 +393,11 @@ public class Fitz : Movable {
 	void OnTriggerEnter2D (Collider2D other){
 		DamageScript dmgScript = other.GetComponent<DamageScript>();
 		
-		if (dmgScript){
+		if (dmgScript && dmgScript.enabled){
 			canControl = false;
 			stunTimer = dmgScript.StunDuration;
+			dmgScript.SendMessage("CollideWithFitz", t);
+			velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 		}
 	}
 }
