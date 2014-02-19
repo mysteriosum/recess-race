@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Plateform : MonoBehaviour {
+public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
 	public List<Plateform> linkedPlateform;
 
-	// Use this for initialization
+    public int id;
+
+    private static int nextId = 0;
+    
+    public Plateform(){
+        id = nextId++;
+    }
+
+
 	void Start () {
 	
 	}
 	
-	// Update is called once per frame
+
 	void Update () {
 	
 	}
@@ -28,4 +37,9 @@ public class Plateform : MonoBehaviour {
 		//BoxCollider2D b = this.GetComponent<BoxCollider2D> ();
 		//return b.renderer.bounds;
 	}
+
+    public int CompareTo(Plateform other)
+    {
+        return this.id - other.id;
+    }
 }

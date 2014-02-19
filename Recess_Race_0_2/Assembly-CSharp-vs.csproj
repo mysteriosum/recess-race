@@ -39,14 +39,15 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>C:/Programs/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>D:/Programs/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>C:/Programs/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>D:/Programs/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Recess Root\Scripts\Avatar\Fitz.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Base\DamageScript.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Base\Movable.cs" />
      <Compile Include="Assets\Recess Root\Scripts\BullyInstruction.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Characters\Bully.cs" />
@@ -60,12 +61,15 @@
      <Compile Include="Assets\Recess Root\Scripts\Items\Lolly.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\QuestionMark.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Roulette.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Items\TennisBall.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Map.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Plateform.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Dimension.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Raylayers.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Textf.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Static\TileProperties.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Static\VectorFunctions.cs" />
      <Compile Include="Assets\fellow.cs" />
  <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>

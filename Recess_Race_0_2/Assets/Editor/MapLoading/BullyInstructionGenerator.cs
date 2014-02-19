@@ -20,9 +20,12 @@ public class BullyInstructionGenerator {
 	private int tileY;
 
 	private bool[,] pathingMap;
+    private Dimension mapDimension;
 
 	public BullyInstructionGenerator(Dimension mapDimension){
-		tileHoverPrefab = Resources.Load<GameObject> ("TilePlateformHover");
+        this.mapDimension = mapDimension;
+        tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
+        bullyInstructionPrefab = Resources.Load<GameObject>("BullyInstruction");
 		plateforms = new List<Plateform> ();
 		pathingMap = new bool[mapDimension.width,mapDimension.height];
 	}
@@ -32,34 +35,52 @@ public class BullyInstructionGenerator {
 	}
 
 	public void addTile(int x, int y, int id){
-		this.pathingMap [x, y] = true;
+        this.pathingMap[x, y] = true;
+
 		if (!workingOnATile) {
-			this.tileMinX = x;
-			this.tileMaxX = x;
-			this.tileY = y;
-			this.workingOnATile = true;
+            prepareNextTile(x, y);
 		} else if (tileMaxX + 1 == x) { //right after where we are
-			tileMaxX ++;
-		} else {
-			this.workingOnATile = false;
-
-			addTileHover();
-
-			this.tileMinX = x;
-			this.tileMaxX = x;
-			this.tileY = y;
-			this.workingOnATile = true;
+            if (tileOver(x, y)) {
+                addTileHover();
+                prepareNextTile(x, y);
+            } else {
+                tileMaxX++;
+            }
+        } else {
+            addTileHover();
+            prepareNextTile(x, y);
 		}
 	}
 
+    private bool tileOver(int x, int y)
+    {
+        return y != mapDimension.height-1 && pathingMap[x, y + 1];
+    }
+
+    private void prepareNextTile(int x, int y)
+    {
+        if (tileOver(x, y)) {
+            this.workingOnATile = false;
+        } else {
+            this.tileMinX = x;
+            this.tileMaxX = x;
+            this.tileY = y;
+            this.workingOnATile = true;
+        }
+    }
+
 	
 	public void doneLoadingTiles(){
-		addTileHover ();
+        addTileHover();
+        Debug.Log("Generated " + this.plateforms.Count + " plateforms.");
 		removeUselessPlateform ();
+        Debug.Log("Finale " + this.plateforms.Count + " plateforms.");
 	}
 
 
-	private void addTileHover(){
+    private void addTileHover()
+    {
+        if (!workingOnATile) return;
 		GameObject newTileHover = (GameObject)GameObject.Instantiate (this.tileHoverPrefab);
 		newTileHover.name = "Plateform";
 		newTileHover.transform.parent = parent;
@@ -85,10 +106,11 @@ public class BullyInstructionGenerator {
 				}else{
 					break;
 				}
-			}		
-		}
+			}
+        }
+        Debug.Log("To remove " + plateformsToRemove.Count + " plateforms.");
 		foreach (Plateform p in plateformsToRemove) {
-			this.plateforms.Remove(p);
+            this.plateforms.RemoveAll(item => item.id == p.id);
 			GameObject.DestroyImmediate(p.transform.gameObject);
 		}
 	}
@@ -137,9 +159,22 @@ public class BullyInstructionGenerator {
 
 
 	public void linkPlateforms(){
-		/*foreach (var plateform in this.plateforms) {
-
-		}*/
+		foreach (var plateform in this.plateforms) {
+            BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
+            generateInstructionOnRight(con, plateform);
+		}
 	}
+
+    private void generateInstructionOnRight(BullyInstructionConfiguration configuration, Plateform plateform)
+    {
+        GameObject newInstruction = (GameObject)GameObject.Instantiate(bullyInstructionPrefab);
+        BullyInstruction bullyInstruction = (BullyInstruction)newInstruction.GetComponent<BullyInstruction>();
+        bullyInstruction.transform.parent = parent;
+
+        Bounds bound =  plateform.getBound();
+        bullyInstruction.transform.Translate(bound.max.x - 0.5f, bound.center.y + 1, bound.center.z);
+        bullyInstruction.setTo(configuration);
+
+    }
 
 }
