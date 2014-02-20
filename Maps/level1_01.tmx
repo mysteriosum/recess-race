@@ -53,6 +53,11 @@
     <property name="id" value="3"/>
    </properties>
   </object>
+  <object x="864" y="155">
+   <properties>
+    <property name="id" value="3"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="QuestionMarks" width="900" height="40">
   <properties>

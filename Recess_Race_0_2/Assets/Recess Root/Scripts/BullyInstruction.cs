@@ -20,7 +20,13 @@ public enum DifficultyEnum{
 	crazy = 40,
 }
 
+[System.Serializable]
 public class BullyInstructionConfiguration{
+
+    private float maxHold = 1.5f;
+    private float minHold = 0;
+    private float mediumHold = 0.5f;
+
     public LengthEnum jumpLength = LengthEnum.none;
     public CommandEnum moveDirection = CommandEnum.middle;
     public DifficultyEnum jumpDifficulty = DifficultyEnum.assured;
@@ -35,12 +41,55 @@ public class BullyInstructionConfiguration{
     {
         
     }
+
+	public bool isAJump(){
+		return !jumpLength.Equals (LengthEnum.none);
+	}
+
+    public float getDirection() {
+        switch (moveDirection) {
+            case CommandEnum.left: 
+                return -1f;
+            case CommandEnum.right:
+                return 1f;
+            default:
+                return 0;
+        }
+    }
+
+    public float getTarget() {
+        switch (jumpLength) {
+            case LengthEnum.medium:
+                return mediumHold;
+            case LengthEnum.hold:
+                return maxHold;
+            case LengthEnum.tap:
+                return minHold;
+            default:
+                return 0;
+        }
+   
+    }
+
+    public int getTargetPercentile(){
+    switch (jumpLength){
+		case LengthEnum.medium:
+			return (int) (mediumHold / maxHold * 100);
+		case LengthEnum.hold:
+			return 99;
+		case LengthEnum.tap:
+			return 0;
+        default:
+            return 0;
+		}
+    }
 }
 
 
 
 public class BullyInstruction : MonoBehaviour {
-	
+
+	public BullyInstructionConfiguration configuration;
 	public LengthEnum jumpLength = LengthEnum.none;
 	public CommandEnum moveDirection = CommandEnum.middle;
 	public DifficultyEnum jumpDifficulty = DifficultyEnum.assured;
@@ -176,4 +225,5 @@ public class BullyInstruction : MonoBehaviour {
 		Gizmos.color = myColor;
 		Gizmos.DrawCube (t.position, size);
 	}
+
 }
