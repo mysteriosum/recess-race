@@ -70,7 +70,7 @@
      <Compile Include="Assets\Recess Root\Scripts\Static\Textf.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\TileProperties.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\VectorFunctions.cs" />
-     <Compile Include="Assets\fellow.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\fellow.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">

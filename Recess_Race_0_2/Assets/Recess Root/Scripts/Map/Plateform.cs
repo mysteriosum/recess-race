@@ -33,6 +33,10 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 		return (v2.y > v1.y) || (v1.y == v2.y && (v2.x < v1.x));
 	}
 
+	public bool isLeftOf(Plateform p2){
+		return this.transform.position.x < p2.transform.position.x;
+	}
+
 	public Bounds getBound(){
 		return this.renderer.bounds;
 	}
@@ -41,4 +45,26 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     {
         return this.id - other.id;
     }
+
+	void OnDrawGizmos(){
+		foreach (var plateform in linkedPlateform) {
+			if(!plateform) continue;
+			Vector3 v1,v2;
+			if(this.isLeftOf(plateform)){
+				v1 = this.getRightCornerPosition();
+				v2 = plateform.getLeftCornerPosition();
+			}else{
+				v1 = this.getLeftCornerPosition();
+				v2 = plateform.getRightCornerPosition();
+			}	
+			Gizmos.DrawLine (v1, v2);
+		}
+	}
+
+	public Vector3 getRightCornerPosition(){
+		return this.transform.position + this.transform.localScale/2 - new Vector3(0.5f,0.5f,0);
+	}
+	public Vector3 getLeftCornerPosition(){
+		return this.transform.position - this.transform.localScale/2 + new Vector3(0.5f,0.5f,0);
+	}
 }

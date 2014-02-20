@@ -20,6 +20,7 @@ public enum DifficultyEnum{
 	crazy = 40,
 }
 
+[System.Serializable]
 public class BullyInstructionConfiguration{
     public LengthEnum jumpLength = LengthEnum.none;
     public CommandEnum moveDirection = CommandEnum.middle;
@@ -35,12 +36,17 @@ public class BullyInstructionConfiguration{
     {
         
     }
+
+	public bool isAJump(){
+		return !jumpLength.Equals (LengthEnum.none);
+	}
 }
 
 
 
 public class BullyInstruction : MonoBehaviour {
-	
+
+	public BullyInstructionConfiguration configuration;
 	public LengthEnum jumpLength = LengthEnum.none;
 	public CommandEnum moveDirection = CommandEnum.middle;
 	public DifficultyEnum jumpDifficulty = DifficultyEnum.assured;

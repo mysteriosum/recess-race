@@ -70,53 +70,56 @@ public class Bully : Movable {
 	
 	void OnTriggerEnter2D (Collider2D other){
 		BullyInstruction instruction = other.GetComponent<BullyInstruction>();
-		
-		if (instruction){
-			Debug.Log("found an instruction");
-			if (!instruction.IsAJumpCommand){
-				controller.hAxis = instruction.Direction;
-				Debug.Log("Not a jump");
+
+		if (!instruction) return;
+
+		Debug.Log("found an instruction");
+		handleInstruction (instruction);
+	}
+
+	private void handleInstruction(){
+		if (!instruction.IsAJumpCommand){
+			controller.hAxis = instruction.Direction;
+			Debug.Log("Not a jump");
+		} else if (instruction.Direction == controller.hAxis && nextJump == null) {
+			float target = instruction.MyTarget;
+			int targetPercentile = instruction.MyPercentile;
+			int minPercentile = targetPercentile - 50;
+			int maxPercentile = targetPercentile + 50;
+			int roll = Random.Range(minPercentile, maxPercentile);
+			int result;
+			Debug.Log("My roll starts out as " + roll);
+			if (roll == targetPercentile){
+				nextJump = new NextJump(instruction, target);
 			}
-			else if (instruction.Direction == controller.hAxis && nextJump == null){
-				float target = instruction.MyTarget;
-				int targetPercentile = instruction.MyPercentile;
-				int minPercentile = targetPercentile - 50;
-				int maxPercentile = targetPercentile + 50;
-				int roll = Random.Range(minPercentile, maxPercentile);
-				int result;
-				Debug.Log("My roll starts out as " + roll);
-				if (roll == targetPercentile){
+			else{
+				int multiplier = roll < targetPercentile? 1 : -1;
+				Debug.Log("Calculating modifier. Multiplier: " + multiplier + ", talent: " + talent + " and difficulty " + instruction.Difficulty);
+				int modifier = multiplier * (talent - instruction.Difficulty);
+				result = roll + modifier;
+				
+				if ((roll > targetPercentile && result < targetPercentile) || (roll < targetPercentile && result > targetPercentile)){
+					Debug.Log("perfect!");
+					result = targetPercentile;
 					nextJump = new NextJump(instruction, target);
 				}
 				else{
-					int multiplier = roll < targetPercentile? 1 : -1;
-					Debug.Log("Calculating modifier. Multiplier: " + multiplier + ", talent: " + talent + " and difficulty " + instruction.Difficulty);
-					int modifier = multiplier * (talent - instruction.Difficulty);
-					result = roll + modifier;
+					Debug.Log("Result is " + result);
+					float holdTime = Mathf.Lerp(minJump, maxJump, (float) result/100);
+					bool centre = result < 100 && result >= 0;
+					Debug.Log("jump in centre: " + centre);
+					bool onExit = result >= 100;
+					bool onEnter = result < 0;
 					
-					if ((roll > targetPercentile && result < targetPercentile) || (roll < targetPercentile && result > targetPercentile)){
-						Debug.Log("perfect!");
-						result = targetPercentile;
-						nextJump = new NextJump(instruction, target);
+					if (instruction.moveDirection == CommandEnum.middle && onExit){
+						onExit = false;
+						centre = true;
 					}
-					else{
-						Debug.Log("Result is " + result);
-						float holdTime = Mathf.Lerp(minJump, maxJump, (float) result/100);
-						bool centre = result < 100 && result >= 0;
-						Debug.Log("jump in centre: " + centre);
-						bool onExit = result >= 100;
-						bool onEnter = result < 0;
+					
+					nextJump = new NextJump(instruction, holdTime, centre, onEnter, onExit);
+					if (nextJump.onEnter && grounded){
+						velocity = Jump(velocity, JumpImpulse, nextJump.holdLength);
 						
-						if (instruction.moveDirection == CommandEnum.middle && onExit){
-							onExit = false;
-							centre = true;
-						}
-						
-						nextJump = new NextJump(instruction, holdTime, centre, onEnter, onExit);
-						if (nextJump.onEnter && grounded){
-							velocity = Jump(velocity, JumpImpulse, nextJump.holdLength);
-							
-						}
 					}
 				}
 			}

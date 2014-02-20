@@ -10,7 +10,7 @@ public class BullyInstructionGenerator {
 	private List<Plateform> plateforms;
 
 	private GameObject tileHoverPrefab;
-	private GameObject bullyInstructionPrefab;
+	//private GameObject bullyInstructionPrefab;
 
 	private Transform parent;
 	private Transform bullyInstructionParent;
@@ -27,7 +27,7 @@ public class BullyInstructionGenerator {
 	public BullyInstructionGenerator(Dimension mapDimension){
         this.mapDimension = mapDimension;
         tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
-        bullyInstructionPrefab = Resources.Load<GameObject>("BullyInstruction");
+       	//bullyInstructionPrefab = Resources.Load<GameObject>("BullyInstruction");
 		plateforms = new List<Plateform> ();
 		pathingMap = new bool[mapDimension.width,mapDimension.height];
 	}
@@ -98,7 +98,7 @@ public class BullyInstructionGenerator {
 		newTileHover.transform.parent = plateformGroupParent;
 		float width = tileMaxX - tileMinX;
 		float center = width/2;
-		newTileHover.transform.Translate (tileMinX + center, tileY, 0);
+		newTileHover.transform.Translate (tileMinX + center, tileY + 1, 0);
 		newTileHover.transform.localScale = new Vector3(width + 1, 1, 0);
 
 		Plateform plateform = newTileHover.GetComponent<Plateform> ();
@@ -149,7 +149,7 @@ public class BullyInstructionGenerator {
 		int tileHeight = map.tileDimension.height;
 		foreach (var item in objects) {
 			int x = Int32.Parse(item.Attribute("x").Value) / tileHeight;
-			int y = map.mapDimension.height - Int32.Parse(item.Attribute("y").Value) / tileHeight - 2;
+			int y = map.mapDimension.height - Int32.Parse(item.Attribute("y").Value) / tileHeight - 1;
 			var propertyId = item.Descendants().First (e => e.Name == "property" && e.Attribute("name").Value == "id");
 			int id = Int32.Parse(propertyId.Attribute("value").Value);
 			createWaypoint(x, y, id, objects.Count());
@@ -179,10 +179,41 @@ public class BullyInstructionGenerator {
 
 	public void linkPlateforms(){
 		foreach (var plateform in this.plateforms) {
+			findReachablePlateform(plateform);
             BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
             MapElementHelper.generateInstructionOnRight(con, plateform, this.bullyInstructionParent);
 
 		}
+	}
+
+	private void findReachablePlateform(Plateform plateform){
+		foreach (var p in this.plateforms) {
+			if(plateform.Equals(p)) continue;
+
+			if(canReach(plateform, p)){
+				plateform.linkedPlateform.Add(p);
+			}
+		}
+	}
+
+	private bool canReach(Plateform from, Plateform to){
+		if(isInMaximumJumpPosibility(from, to)){
+			return true;
+		}
+		return false;
+	}
+
+	private bool isInMaximumJumpPosibility(Plateform from, Plateform to){
+		Vector3 vFrom, vTo;
+		if (from.isLeftOf (to)) {
+			vFrom = from.getRightCornerPosition();	
+			vTo = to.getLeftCornerPosition();
+		} else {
+			vFrom = from.getLeftCornerPosition();	
+			vTo = to.getRightCornerPosition();
+		}
+		return Math.Abs (vFrom.x - vTo.x) <= 7 && Math.Abs (vFrom.y - vTo.y) <= 4;
+		//return (from.transform.position - to.transform.position).magnitude < 5;
 	}
 
 	/*private bool[,] getSplited(){

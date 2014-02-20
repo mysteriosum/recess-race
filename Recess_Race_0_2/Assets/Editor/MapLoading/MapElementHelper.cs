@@ -3,13 +3,13 @@ using System.Collections;
 
 public class MapElementHelper {
 
-	private GameObject tileHoverPrefab;
+	//private GameObject tileHoverPrefab;
 	private GameObject bullyInstructionPrefab;
 
 
 	private static MapElementHelper instance = new MapElementHelper();
 	private MapElementHelper(){
-		tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
+		//tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
 		bullyInstructionPrefab = Resources.Load<GameObject>("BullyInstruction");
 
 	}
@@ -19,7 +19,7 @@ public class MapElementHelper {
 		BullyInstruction bullyInstruction = generateInstruction (configuration, plateform, parent);
 		
 		Bounds bound =  plateform.getBound();
-		bullyInstruction.transform.Translate(bound.center.x, bound.center.y+1, bound.center.z);
+		bullyInstruction.transform.Translate(bound.center.x, bound.center.y, bound.center.z);
 		
 		return bullyInstruction;
 	}
@@ -29,7 +29,7 @@ public class MapElementHelper {
 		BullyInstruction bullyInstruction = generateInstruction (configuration, plateform, parent);
 		
 		Bounds bound = plateform.getBound ();
-		bullyInstruction.transform.Translate(bound.max.x - 0.5f, bound.center.y + 1, bound.center.z);
+		bullyInstruction.transform.Translate(bound.max.x - 0.5f, bound.center.y, bound.center.z);
 
 		return bullyInstruction;
 	}
