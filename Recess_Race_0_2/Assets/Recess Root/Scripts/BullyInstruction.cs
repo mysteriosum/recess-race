@@ -20,6 +20,23 @@ public enum DifficultyEnum{
 	crazy = 40,
 }
 
+public class BullyInstructionConfiguration{
+    public LengthEnum jumpLength = LengthEnum.none;
+    public CommandEnum moveDirection = CommandEnum.middle;
+    public DifficultyEnum jumpDifficulty = DifficultyEnum.assured;
+
+    public BullyInstructionConfiguration(LengthEnum jumpLength, CommandEnum moveDirection, DifficultyEnum jumpDifficulty) {
+        this.jumpLength = jumpLength;
+        this.moveDirection = moveDirection;
+        this.jumpDifficulty = jumpDifficulty;
+    }
+
+    public BullyInstructionConfiguration()
+    {
+        
+    }
+}
+
 
 
 public class BullyInstruction : MonoBehaviour {
@@ -56,6 +73,12 @@ public class BullyInstruction : MonoBehaviour {
 	public int Difficulty{
 		get { return (int) jumpDifficulty; }
 	}
+
+    public void setTo(BullyInstructionConfiguration config){
+        this.jumpDifficulty = config.jumpDifficulty;
+        this.moveDirection = config.moveDirection;
+        this.jumpLength = config.jumpLength;
+    }
 	
 	// Use this for initialization
 	void Start () {
