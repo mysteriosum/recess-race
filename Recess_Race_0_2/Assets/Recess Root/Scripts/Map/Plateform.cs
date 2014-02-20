@@ -8,6 +8,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 	public List<Plateform> linkedPlateform;
 
     public int id;
+	public int waypointId;
 
     private static int nextId = 0;
     
@@ -34,8 +35,6 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
 	public Bounds getBound(){
 		return this.renderer.bounds;
-		//BoxCollider2D b = this.GetComponent<BoxCollider2D> ();
-		//return b.renderer.bounds;
 	}
 
     public int CompareTo(Plateform other)

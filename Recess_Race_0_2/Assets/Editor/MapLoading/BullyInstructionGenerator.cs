@@ -13,6 +13,8 @@ public class BullyInstructionGenerator {
 	private GameObject bullyInstructionPrefab;
 
 	private Transform parent;
+	private Transform bullyInstructionParent;
+	private Transform plateformGroupParent;
 
 	private bool workingOnATile;
 	private int tileMaxX;
@@ -32,6 +34,16 @@ public class BullyInstructionGenerator {
 
 	public void setGameObjectParent(Transform parent){
 		this.parent = parent;
+
+		GameObject bullyInstructions = new GameObject();
+		bullyInstructions.name = "Bully Instructions";
+		bullyInstructions.transform.parent = parent;
+		bullyInstructionParent = bullyInstructions.transform;
+
+		GameObject plateformGameObject = new GameObject();
+		plateformGameObject.name = "Plateforms";
+		plateformGameObject.transform.parent = parent;
+		plateformGroupParent = plateformGameObject.transform;
 	}
 
 	public void addTile(int x, int y, int id){
@@ -74,7 +86,7 @@ public class BullyInstructionGenerator {
         addTileHover();
         Debug.Log("Generated " + this.plateforms.Count + " plateforms.");
 		removeUselessPlateform ();
-        Debug.Log("Finale " + this.plateforms.Count + " plateforms.");
+        //Debug.Log("Finale " + this.plateforms.Count + " plateforms.");
 	}
 
 
@@ -83,7 +95,7 @@ public class BullyInstructionGenerator {
         if (!workingOnATile) return;
 		GameObject newTileHover = (GameObject)GameObject.Instantiate (this.tileHoverPrefab);
 		newTileHover.name = "Plateform";
-		newTileHover.transform.parent = parent;
+		newTileHover.transform.parent = plateformGroupParent;
 		float width = tileMaxX - tileMinX;
 		float center = width/2;
 		newTileHover.transform.Translate (tileMinX + center, tileY, 0);
@@ -108,7 +120,7 @@ public class BullyInstructionGenerator {
 				}
 			}
         }
-        Debug.Log("To remove " + plateformsToRemove.Count + " plateforms.");
+        //Debug.Log("To remove " + plateformsToRemove.Count + " plateforms.");
 		foreach (Plateform p in plateformsToRemove) {
             this.plateforms.RemoveAll(item => item.id == p.id);
 			GameObject.DestroyImmediate(p.transform.gameObject);
@@ -152,7 +164,14 @@ public class BullyInstructionGenerator {
 			if(bound.Intersects(plateformBound)){
 				var spriteRenderer = plateform.transform.gameObject.GetComponent<SpriteRenderer>();
 				plateform.transform.gameObject.name = "Plateform (wp #" + id + ")";
+				plateform.waypointId = id;
 				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
+				if(id == 1){
+					BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.none, CommandEnum.right, DifficultyEnum.assured);
+					BullyInstruction bi = MapElementHelper.generateInstructionOnCentered(con, plateform, this.bullyInstructionParent);
+					bi.gameObject.transform.localScale = plateform.gameObject.transform.localScale;
+					bi.gameObject.name = "Starting instruction";
+				}
 			}
 		}
 	}
@@ -161,20 +180,14 @@ public class BullyInstructionGenerator {
 	public void linkPlateforms(){
 		foreach (var plateform in this.plateforms) {
             BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
-            generateInstructionOnRight(con, plateform);
+            MapElementHelper.generateInstructionOnRight(con, plateform, this.bullyInstructionParent);
+
 		}
 	}
 
-    private void generateInstructionOnRight(BullyInstructionConfiguration configuration, Plateform plateform)
-    {
-        GameObject newInstruction = (GameObject)GameObject.Instantiate(bullyInstructionPrefab);
-        BullyInstruction bullyInstruction = (BullyInstruction)newInstruction.GetComponent<BullyInstruction>();
-        bullyInstruction.transform.parent = parent;
-
-        Bounds bound =  plateform.getBound();
-        bullyInstruction.transform.Translate(bound.max.x - 0.5f, bound.center.y + 1, bound.center.z);
-        bullyInstruction.setTo(configuration);
-
-    }
+	/*private bool[,] getSplited(){
+		//bool[,] plathingPart = bool[7,];
+	}*/
+    
 
 }

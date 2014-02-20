@@ -2,12 +2,11 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Editor\MapLoading\BullyInstructionGenerator.cs">
     <Files>
-      <File FileName="Assets\Recess Root\Scripts\Map\Plateform.cs" Line="29" Column="5" />
-      <File FileName="Assets\Recess Root\Scripts\Map\Map.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Static\Dimension.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editor\MapLoading\MapLoader.cs" Line="38" Column="83" />
-      <File FileName="Assets\Editor\MapLoading\BullyInstructionGenerator.cs" Line="141" Column="4" />
-      <File FileName="Assets\Recess Root\Scripts\BullyInstruction.cs" Line="115" Column="11" />
+      <File FileName="Assets\Editor\MapLoading\MapElementHelper.cs" Line="31" Column="40" />
+      <File FileName="Assets\Editor\MapLoading\BullyInstructionGenerator.cs" Line="189" Column="33" />
+      <File FileName="Assets\Editor\MapLoading\MapLoader.cs" Line="86" Column="18" />
+      <File FileName="Assets\Recess Root\Scripts\BullyInstruction.cs" Line="179" Column="1" />
+      <File FileName="Assets\Editor\MapLoading\Instructor.cs" Line="6" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

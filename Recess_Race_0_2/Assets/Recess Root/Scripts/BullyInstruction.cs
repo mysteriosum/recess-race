@@ -176,4 +176,5 @@ public class BullyInstruction : MonoBehaviour {
 		Gizmos.color = myColor;
 		Gizmos.DrawCube (t.position, size);
 	}
+
 }

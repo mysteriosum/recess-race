@@ -20,7 +20,7 @@ public class MapLoader {
 	private GameObject worldRootGameObject;
 	private Map map;
 	private GameObject tilesGameObject;
-	private GameObject bullyInstructionGameObject;
+	private GameObject aiGroupGameObject;
 
 	private GameObject tilePrefab;
 
@@ -39,7 +39,7 @@ public class MapLoader {
 
 		loadMapSettings (mapElement);
 		bullyInstructionGenerator = new BullyInstructionGenerator (this.map.mapDimension);
-		bullyInstructionGenerator.setGameObjectParent (bullyInstructionGameObject.transform);
+		bullyInstructionGenerator.setGameObjectParent (aiGroupGameObject.transform);
 
 		loadTiles (tilesLayer);
 		bullyInstructionGenerator.doneLoadingTiles ();
@@ -62,9 +62,9 @@ public class MapLoader {
 		tilesGameObject.name = "Tiles";
 		tilesGameObject.transform.parent = worldRootGameObject.transform;
 		
-		bullyInstructionGameObject = new GameObject();
-		bullyInstructionGameObject.name = "Bully Instructions";
-		bullyInstructionGameObject.transform.parent = worldRootGameObject.transform;
+		aiGroupGameObject = new GameObject();
+		aiGroupGameObject.name = "Ai Group";
+		aiGroupGameObject.transform.parent = worldRootGameObject.transform;
 	}
 
 
@@ -83,9 +83,8 @@ public class MapLoader {
 		string tilesCSV = layer.Elements ().First ().Value;
 		int height = Int32.Parse(layer.Attribute("height").Value);
 		string[] tilesLines = tilesCSV.Split(new string[] { "\n\r", "\r\n", "\n", "\r" }, StringSplitOptions.None);
-
 		int y = height;
-		for (int i = 0; i < height; i++) {
+		for (int i = 1; i <= height; i++) {
 			y--;
 			loadLayerLine(y, tilesLines[i]);
 		}
