@@ -90,84 +90,45 @@ public class BullyInstructionConfiguration{
 public class BullyInstruction : MonoBehaviour {
 
 	public BullyInstructionConfiguration configuration;
-	public LengthEnum jumpLength = LengthEnum.none;
-	public CommandEnum moveDirection = CommandEnum.middle;
-	public DifficultyEnum jumpDifficulty = DifficultyEnum.assured;
-	
-	private float myTarget;
-	private float maxHold = 1.5f;
-	private float minHold = 0;
-	private float mediumHold = 0.5f;
-	
-	private bool isAJumpCommand;
-	
-	private int targetPercentile;
-	private float direction;
-	
+
 	private Couleur myColour;
 	
 	public bool IsAJumpCommand{
-		get { return jumpLength != LengthEnum.none; }
+        get { return configuration.isAJump(); }
 	}
 	public float Direction{
-		get { return direction; }
+        get { return configuration.getDirection(); }
 	}
 	
 	public float MyTarget{
-		get { return myTarget; }
+        get { return configuration.getTarget(); }
 	}
 	public int MyPercentile{
-		get { return targetPercentile; }
+        get { return configuration.getTargetPercentile(); }
 	}
 	public int Difficulty{
-		get { return (int) jumpDifficulty; }
+        get { return (int)configuration.jumpDifficulty; }
 	}
 
     public void setTo(BullyInstructionConfiguration config){
-        this.jumpDifficulty = config.jumpDifficulty;
-        this.moveDirection = config.moveDirection;
-        this.jumpLength = config.jumpLength;
+        configuration.jumpDifficulty = config.jumpDifficulty;
+        configuration.moveDirection = config.moveDirection;
+        configuration.jumpLength = config.jumpLength;
     }
 	
-	// Use this for initialization
+
 	void Start () {
-		switch (moveDirection){
-		case CommandEnum.left:
-			direction = -1f;
-			break;
-		case CommandEnum.right:
-			direction = 1f;
-			break;
-		default:
-			direction = 0;
-			break;
-		}
-		
-		switch (jumpLength){
-		case LengthEnum.medium:
-			myTarget = mediumHold;
-			targetPercentile = (int) (mediumHold / maxHold * 100);
-			break;
-		case LengthEnum.hold:
-			myTarget = maxHold;
-			targetPercentile = 99;
-			break;
-		case LengthEnum.tap:
-			myTarget = minHold;
-			targetPercentile = 0;
-			break;
-		}
 		
 	}
 	
-	// Update is called once per frame
+
 	void Update () {
 	
 	}
 	
 	
 	public LengthEnum GetImpulse () {
-		return jumpLength;
+        return configuration.jumpLength;
 	}
 
 	
@@ -180,8 +141,8 @@ public class BullyInstruction : MonoBehaviour {
 		Vector3 size = Vector3.one;
 		if (derCollider)
 			size = (Vector3) derCollider.size;
-		
-		int index = (int) moveDirection + (jumpLength == LengthEnum.none? 0 : 4);
+
+        int index = (int)configuration.moveDirection + (configuration.jumpLength == LengthEnum.none ? 0 : 4);
 		myColour = (Couleur)index;
 		
 		switch (myColour){

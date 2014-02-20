@@ -142,18 +142,18 @@ public class Bully : Movable {
     }
 	
 	void OnTriggerStay2D (Collider2D other){
-		
 		BullyInstruction instruction = other.GetComponent<BullyInstruction>();
-		if (instruction && nextJump != null && grounded){
-			bool goingTheRightWay = (velocity.x >= 0 && instruction.moveDirection == CommandEnum.right)
-									 || (velocity.x <= 0 && instruction.moveDirection == CommandEnum.left);
+        if (instruction && nextJump != null && grounded) {
+            BullyInstructionConfiguration config = instruction.configuration;
+            bool goingTheRightWay = (velocity.x >= 0 && config.moveDirection == CommandEnum.right)
+                                     || (velocity.x <= 0 && config.moveDirection == CommandEnum.left);
 			
 			if (nextJump.onEnter && goingTheRightWay){
 				velocity = Jump(velocity, JumpImpulse, nextJump.holdLength);
 			}
 			else if (nextJump.onCentre && goingTheRightWay){
 				bool passedCentre = instruction.Direction > 0? (t.position.x >= other.transform.position.x) : (t.position.x <= other.transform.position.x);
-				if (instruction.moveDirection == CommandEnum.middle)
+                if (config.moveDirection == CommandEnum.middle)
 					passedCentre = true;		//special case for middle-jumpers, because they'll never move on 'em
 				if (instruction.IsAJumpCommand && passedCentre){
 					velocity = Jump(velocity, JumpImpulse, nextJump.holdLength);
