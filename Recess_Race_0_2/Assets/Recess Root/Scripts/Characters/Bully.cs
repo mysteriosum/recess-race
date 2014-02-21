@@ -18,45 +18,7 @@ public class Bully : Movable {
 
 
 	public int talent = 10;
-	
-	private class NextJump {
-		public float holdLength;
-		public bool onEnter;
-		public bool onExit;
-		public bool onCentre;
-
-		public BullyInstructionConfiguration instruction;
-
-
-        public NextJump(BullyInstructionConfiguration instruction, float holdLength)
-        {
-			this.holdLength = holdLength;
-			this.onCentre = true;
-			this.onExit = false;
-			this.onEnter = false;
-			this.instruction = instruction;
-		}
-
-        public NextJump(BullyInstructionConfiguration instruction, float holdLength, bool onEnter)
-        {
-			this.holdLength = holdLength;
-			this.onEnter = onEnter;
-			this.onExit = !onEnter;
-			this.onCentre = false;
-			this.instruction = instruction;
-		}
-
-        public NextJump(BullyInstructionConfiguration instruction, float holdLength, bool onCentre, bool onEnter, bool onExit)
-        {
-			this.holdLength = holdLength;
-			this.onEnter = onEnter;
-			this.onExit = onExit;
-			this.onCentre = onCentre;
-			this.instruction = instruction;
-		}
 		
-	}
-	
 	private NextJump nextJump;
 	
 	// Use this for initialization
@@ -75,13 +37,27 @@ public class Bully : Movable {
 	void OnTriggerEnter2D (Collider2D other){
 		BullyInstruction instruction = other.GetComponent<BullyInstruction>();
 
-		if (!instruction) return;
-		debugLog("found an instruction");
-		handleInstruction (instruction.configuration);
+		if (instruction) {
+			debugLog("found an instruction");
+			handleInstruction (instruction.configuration);		
+		}
+
+		Plateform plateform = other.GetComponent<Plateform>();
+		if (plateform) {
+			handlePlateform(plateform);
+		}
+
 	}
 
-    private void handleInstruction(BullyInstructionConfiguration config)
-    {
+	private void handlePlateform(Plateform plateform){
+		NextJump nextJumpConfig = BullyAi.generateMove (this, plateform);
+		this.nextJump = nextJumpConfig;
+		if (nextJumpConfig == null) {
+			Debug.LogError("No jump config found for " + this.name);		
+		}
+	}
+
+    private void handleInstruction(BullyInstructionConfiguration config){
         if (config.isAJump()) {
             if (config.getDirection() == controller.hAxis && nextJump == null) {
                 handleJumpInstruction(config);
