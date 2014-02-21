@@ -62,6 +62,7 @@
      <Compile Include="Assets\Recess Root\Scripts\Items\QuestionMark.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Roulette.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\TennisBall.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\LightoutBox.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Map.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Plateform.cs" />
