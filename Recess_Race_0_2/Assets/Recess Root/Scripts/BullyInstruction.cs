@@ -144,7 +144,7 @@ public class BullyInstruction : MonoBehaviour {
 
         int index = (int)configuration.moveDirection + (configuration.jumpLength == LengthEnum.none ? 0 : 4);
 		myColour = (Couleur)index;
-		
+
 		switch (myColour){
 			
 		case Couleur.black:
