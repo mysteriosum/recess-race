@@ -10,9 +10,7 @@ public class BullyInstructionGenerator {
 	private List<Plateform> plateforms;
 
 	private GameObject tileHoverPrefab;
-	//private GameObject bullyInstructionPrefab;
-
-	private Transform parent;
+	
 	private Transform bullyInstructionParent;
 	private Transform plateformGroupParent;
 
@@ -27,14 +25,11 @@ public class BullyInstructionGenerator {
 	public BullyInstructionGenerator(Dimension mapDimension){
         this.mapDimension = mapDimension;
         tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
-       	//bullyInstructionPrefab = Resources.Load<GameObject>("BullyInstruction");
 		plateforms = new List<Plateform> ();
 		pathingMap = new bool[mapDimension.width,mapDimension.height];
 	}
 
 	public void setGameObjectParent(Transform parent){
-		this.parent = parent;
-
 		GameObject bullyInstructions = new GameObject();
 		bullyInstructions.name = "Bully Instructions";
 		bullyInstructions.transform.parent = parent;

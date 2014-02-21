@@ -147,7 +147,8 @@ public class Fitz : Movable {
 	public bool leaveBalls = true;
 	private Vector2 recoilVelocity = new Vector2(140, 0) / TileProperties.tileDimension;
 	
-	private float jumpTimer = 0;
+	//NeverUsed
+	//private float jumpTimer = 0;
 	
 	protected void Awake(){
 		fitz = this;
@@ -189,7 +190,8 @@ public class Fitz : Movable {
 		if (grounded && controller.getJumpDown && canControl){
 			velocity = Jump(velocity, JumpImpulse);
 			grounded = false;
-			jumpTimer = 0;
+
+			//jumpTimer = 0; //Never USed
 			if (leaveBalls){
 				GameObject newThing = Instantiate(ball, new Vector3(box.center.x, box.yMin, t.position.z), t.rotation) as GameObject;
 				ballDropTimer = 0;

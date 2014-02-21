@@ -60,12 +60,12 @@ public class Bully : Movable {
 	private NextJump nextJump;
 	
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
 		base.Start();
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	protected override void FixedUpdate () {
 		
 		base.FixedUpdate();
 		
@@ -76,8 +76,7 @@ public class Bully : Movable {
 		BullyInstruction instruction = other.GetComponent<BullyInstruction>();
 
 		if (!instruction) return;
-
-		Debug.Log("found an instruction");
+		debugLog("found an instruction");
 		handleInstruction (instruction.configuration);
 	}
 
@@ -89,7 +88,7 @@ public class Bully : Movable {
             }
         } else {
             controller.hAxis = config.getDirection();
-            Debug.Log("Walk " + config.moveDirection);
+			debugLog("Walk " + config.moveDirection);
         }
 	}
 
@@ -99,24 +98,24 @@ public class Bully : Movable {
         int targetPercentile = config.getTargetPercentile();
         int roll = generateRoll(targetPercentile);
         int result;
-        Debug.Log("My roll starts out as " + roll);
+		debugLog("My roll starts out as " + roll);
         if (roll == targetPercentile) {
             nextJump = new NextJump(config, target);
         } else {
             int multiplier = roll < targetPercentile ? 1 : -1;
-            Debug.Log("Calculating modifier. Multiplier: " + multiplier + ", talent: " + talent + " and difficulty " + (int)config.jumpDifficulty);
+			debugLog("Calculating modifier. Multiplier: " + multiplier + ", talent: " + talent + " and difficulty " + (int)config.jumpDifficulty);
             int modifier = multiplier * (talent - (int)config.jumpDifficulty);
             result = roll + modifier;
 
             if ((roll > targetPercentile && result < targetPercentile) || (roll < targetPercentile && result > targetPercentile)) {
-                Debug.Log("perfect!");
+				debugLog("perfect!");
                 result = targetPercentile;
                 nextJump = new NextJump(config, target);
             } else {
-                Debug.Log("Result is " + result);
+				debugLog("Result is " + result);
                 float holdTime = Mathf.Lerp(minJump, maxJump, (float)result / 100);
                 bool centre = result < 100 && result >= 0;
-                Debug.Log("jump in centre: " + centre);
+				debugLog("jump in centre: " + centre);
                 bool onExit = result >= 100;
                 bool onEnter = result < 0;
 
@@ -197,7 +196,13 @@ public class Bully : Movable {
 	}
 	
 	void ResetJumpInput(){
-		Debug.Log("No more jumper");
+		debugLog("No more jumper");
 		controller.getJump = false;
+	}
+
+	void debugLog(string message){
+		if(this.debug){
+			Debug.Log(message);
+		}
 	}
 }

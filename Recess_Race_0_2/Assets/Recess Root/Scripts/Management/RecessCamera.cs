@@ -52,8 +52,8 @@ public class RecessCamera : MonoBehaviour {
 		Vector3 postPos = t.position;
 		
 		foreach (Transform tran in paralaxes){
-			
-			float parAmount = tran.position.z * maxParalax / furthestParalaxZ;		//figure out how much to move each object. Easy because player z = 0 always
+			//Never Used
+			//float parAmount = tran.position.z * maxParalax / furthestParalaxZ;		//figure out how much to move each object. Easy because player z = 0 always
 			
 			tran.Translate((postPos - forepos) * maxParalax, Space.World);
 		}

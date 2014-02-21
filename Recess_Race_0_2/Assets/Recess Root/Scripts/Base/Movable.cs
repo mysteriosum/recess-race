@@ -277,7 +277,7 @@ public class Movable : MonoBehaviour {
 		if (newX != 0){
 			//check for collisions:
 			int modifier = newX > 0? 1 : -1;
-			float checkAmount = box.width/2 * modifier + newX;
+			//float checkAmount = box.width/2 * modifier + newX; //neverUSed
 			Vector2 Min = new Vector2(box.center.x, box.yMin + margin);
 			Vector2 Max = new Vector2(box.center.x, box.yMax - margin);
 			bool connected = false;

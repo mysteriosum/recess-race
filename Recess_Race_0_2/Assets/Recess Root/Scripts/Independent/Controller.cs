@@ -39,7 +39,7 @@ public class Controller {
 	public float hAxis;
 	
 	private float hAxisLast = 0.0f;
-	private float vAxisLast = 0.0f;
+	//private float vAxisLast = 0.0f; //NeverUsed
 	private float getLLastTime = 0f;
 	private float getRLastTime = 0f;
 	private float doubleTapTime = 0.188f;
