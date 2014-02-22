@@ -17,6 +17,7 @@ public class MapLoader {
     }
 
 	private Sprite[] sprites;
+	private Sprite[] banana;
 	private GameObject worldRootGameObject;
 	private Map map;
 	private GameObject tilesGameObject;
@@ -49,6 +50,7 @@ public class MapLoader {
 
 	private void loadAssets(){
 		sprites = Resources.LoadAll<Sprite> ("tileSets/testTileSet");
+		banana = Resources.LoadAll<Sprite> ("background/testBanana");
 		tilePrefab = Resources.Load<GameObject> ("BasicTile");
 	}
 
@@ -101,6 +103,8 @@ public class MapLoader {
 			} else {
 				int id = Int32.Parse(tileId) - 1;
 				GameObject newTile = (GameObject)GameObject.Instantiate (this.tilePrefab);
+				SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
+				newTileSprite.sprite = this.banana[x%10 + 10 * y%10];
 				SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
 				spriteRenderer.sprite = this.sprites[id];
 				newTile.transform.parent = this.tilesGameObject.transform;

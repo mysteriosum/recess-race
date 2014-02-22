@@ -175,8 +175,8 @@ public class BullyInstructionGenerator {
 	public void linkPlateforms(){
 		foreach (var plateform in this.plateforms) {
 			findReachablePlateform(plateform);
-            BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
-            MapElementHelper.generateInstructionOnRight(con, plateform, this.bullyInstructionParent);
+            //BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
+            //MapElementHelper.generateInstructionOnRight(con, plateform, this.bullyInstructionParent);
 
 		}
 	}
