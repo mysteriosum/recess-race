@@ -5,10 +5,10 @@
  </tileset>
  <layer name="Tiles" width="4" height="4">
   <data encoding="csv">
-2,3,3,4,
-16,50,51,18,
-16,64,65,18,
-30,31,31,32
+44,45,45,0,
+58,59,59,0,
+58,59,59,60,
+72,73,73,74
 </data>
  </layer>
  <objectgroup color="#a4170c" name="Waypoints" width="4" height="4"/>

@@ -104,7 +104,13 @@ public class MapLoader {
 				int id = Int32.Parse(tileId) - 1;
 				GameObject newTile = (GameObject)GameObject.Instantiate (this.tilePrefab);
 				SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
-				newTileSprite.sprite = this.banana[x%10 + 10 * y%10];
+				/*int textureWidth =4;
+				int textureHeight = 2;
+				int total = 4*2;*/
+				int textureWidth =10;
+				int textureHeight = 10;
+				int total = 100;
+				newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];
 				SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
 				spriteRenderer.sprite = this.sprites[id];
 				newTile.transform.parent = this.tilesGameObject.transform;
