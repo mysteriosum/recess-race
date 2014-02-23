@@ -50,11 +50,11 @@ public class Bully : Movable {
 	}
 
 	private void handlePlateform(Plateform plateform){
-		NextJump nextJumpConfig = BullyAi.generateMove (this, plateform);
-		this.nextJump = nextJumpConfig;
+		//NextJump nextJumpConfig = BullyAi.generateMove (this, plateform);
+		/*this.nextJump = nextJumpConfig;
 		if (nextJumpConfig == null) {
 			Debug.LogError("No jump config found for " + this.name);		
-		}
+		}*/
 	}
 
     private void handleInstruction(BullyInstructionConfiguration config){
@@ -158,8 +158,7 @@ public class Bully : Movable {
 		}
 	}
 	
-	protected override Vector2 Jump (Vector2 currentVelocity, float amount)
-	{
+	protected override Vector2 Jump (Vector2 currentVelocity, float amount){
 		controller.getJump = true;
 		return base.Jump (currentVelocity, amount);
 	}
