@@ -22,17 +22,12 @@ public class JumpInstruction : Instruction {
 
 
     public override void start() {
+        agent.setMovingStrenght(direction);
         agent.jump();
     }
 
 
     public override void update() {
-        agent.jump();
-        /*if (isInRange()) {
-            agent.setMovingStrenght(0);
-        } else {
-            agent.setMovingStrenght(direction);
-        }*/
     }
 
     private bool isInRange() {
