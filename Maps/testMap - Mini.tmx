@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="4" height="4" tilewidth="8" tileheight="8">
  <tileset firstgid="1" name="testTileSet" tilewidth="8" tileheight="8">
-  <image source="testTileSet.png" trans="ff00ff" width="112" height="168"/>
+  <image source="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/testTileSet.png" width="112" height="168"/>
+ </tileset>
+ <tileset firstgid="295" name="Robert" tilewidth="8" tileheight="8">
+  <image source="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/Colors.jpeg" width="32" height="16"/>
  </tileset>
  <layer name="Tiles" width="4" height="4">
   <data encoding="csv">
-44,45,45,0,
-58,59,59,0,
-58,59,59,60,
+44,45,45,295,
+58,296,59,301,
+58,301,59,60,
 72,73,73,74
 </data>
  </layer>
