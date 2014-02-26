@@ -11,8 +11,8 @@ public class Movable : MonoBehaviour {
 	//evething is in pixels/second
 
 
-	protected float defaultGravity						= 8.5f/TileProperties.tileDimension;
-	protected float holdGravityModifier					= 0.68f;
+	protected float defaultGravity						= 7.8f/TileProperties.tileDimension;
+	protected float holdGravityModifier					= 0.74f;
 	protected float maxFallSpeed						= -250f/TileProperties.tileDimension;
 	
 	protected float lerpAccel							= 0.0375f;
@@ -20,9 +20,9 @@ public class Movable : MonoBehaviour {
 	protected float baseDecel							= 6f/TileProperties.tileDimension;
 	protected float secondsToMax						= 0.8f;
 	
-	protected float maxSpeed							= 130f/TileProperties.tileDimension;
-	protected float jumpImpulse							= 230f/TileProperties.tileDimension;
-	protected float extraImpulseFromRun					= 20f/TileProperties.tileDimension;
+	protected float maxSpeed							= 140f/TileProperties.tileDimension;
+	protected float jumpImpulse							= 196f/TileProperties.tileDimension;
+	protected float extraImpulseFromRun					= 10f/TileProperties.tileDimension;
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
@@ -100,7 +100,7 @@ public class Movable : MonoBehaviour {
 	//------------------------------------------------------\\
 	
 	protected virtual float Gravity {
-		get { return defaultGravity * (controller.getJump && !falling? holdGravityModifier : 1); }
+		get { return defaultGravity * (controller.getJump? holdGravityModifier : 1); }
 	}
 	protected virtual float MaxFallSpeed {
 		get { return maxFallSpeed; }
@@ -180,7 +180,7 @@ public class Movable : MonoBehaviour {
 			Vector2 max = new Vector2(box.xMax, box.center.y);
 
 			for (int i = 0; i < verticalRays; i ++){
-				Vector2 start = Vector2.Lerp(min, max, (float)i / (float) verticalRays);
+				Vector2 start = Vector2.Lerp(min, max, (float)i / (float) (verticalRays-1));
 				Vector2 end = start + -Vector2.up * (downRayLength + box.height/2);
 				downRays[i] = Physics2D.Linecast(start, end, Raylayers.downRay);
 				if (downRays[i].fraction > 0){
