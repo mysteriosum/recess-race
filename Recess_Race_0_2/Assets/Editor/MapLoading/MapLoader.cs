@@ -4,22 +4,26 @@ using System.Collections.Generic;
 using System;
 using System.Xml.Linq;
 using System.Linq;
+using System.IO;
+
 
 public class MapLoader {
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
     }
+
     public static void loadFromFile(string file)
     {
         string text = System.IO.File.ReadAllText(file);
         instance.load(text);
     }
-
-	private Sprite[] sprites;
+	
+	private List<TileData> tilesData;
 	private Sprite[] banana;
-	private GameObject worldRootGameObject;
+
 	private Map map;
+	private GameObject worldRootGameObject;
 	private GameObject tilesGameObject;
 	private GameObject aiGroupGameObject;
 
@@ -28,8 +32,7 @@ public class MapLoader {
 	private BullyInstructionGenerator bullyInstructionGenerator;
 
 
-    private void load(string mapText)
-	{	
+    private void load(string mapText){	
 		loadAssets ();
 		createEmptyWorld ();
 
@@ -38,40 +41,52 @@ public class MapLoader {
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
 		XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
 
+		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
 		loadMapSettings (mapElement);
 		bullyInstructionGenerator = new BullyInstructionGenerator (this.map.mapDimension);
 		bullyInstructionGenerator.setGameObjectParent (aiGroupGameObject.transform);
 
 		loadTiles (tilesLayer);
-		bullyInstructionGenerator.doneLoadingTiles ();
 		bullyInstructionGenerator.loadWaypoints (waypoints, this.map);
 		bullyInstructionGenerator.linkPlateforms ();
 	}
 
 	private void loadAssets(){
-		sprites = Resources.LoadAll<Sprite> ("tileSets/testTileSet");
 		banana = Resources.LoadAll<Sprite> ("background/testBanana");
 		tilePrefab = Resources.Load<GameObject> ("BasicTile");
 	}
 
 	private void createEmptyWorld(){
-		worldRootGameObject = new GameObject();
-		worldRootGameObject.name = "World";
+		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
-		
-		tilesGameObject = new GameObject();
-		tilesGameObject.name = "Tiles";
-		tilesGameObject.transform.parent = worldRootGameObject.transform;
-		
-		aiGroupGameObject = new GameObject();
-		aiGroupGameObject.name = "Ai Group";
-		aiGroupGameObject.transform.parent = worldRootGameObject.transform;
+
+		tilesGameObject = GameObjectFactory.createGameObject ("Tiles", worldRootGameObject);
+		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject);
+	}
+
+	private void loadTileset(IEnumerable<XElement> tileSetElements){
+		this.tilesData = new List<TileData> ();
+		foreach(XElement element in tileSetElements){
+			string name = element.Attribute("name").Value;
+			int firstGridId = Int32.Parse(element.Attribute("firstgid").Value);
+			string source = element.Descendants().First (e => e.Name == "image").Attribute("source").Value;
+			string tilesetName = Path.GetFileName(source).Split(new char[] { '.' })[0];
+			Sprite[] sprites = Resources.LoadAll<Sprite> ("tileSets/" + tilesetName);
+			if(sprites.Count() == 0){
+				Debug.LogError("Map containts a error in tilesets : tileset "+  name + " (" + source + ") does'nt existe.");
+			}else{
+				foreach(Sprite sprite in sprites){
+					TileData data = new TileData(sprite);
+					this.tilesData.Add (data);
+				}
+			}
+		}
 	}
 
 
 	public void loadMapSettings(XElement mapElement){
-//		Debug.Log (mapElement.Name);
+		// Debug.Log (mapElement.Name);
 		int width = Int32.Parse(mapElement.Attribute ("width").Value);
 		int height = Int32.Parse(mapElement.Attribute ("height").Value);
 		int tileWidth = Int32.Parse(mapElement.Attribute ("tilewidth").Value);
@@ -90,6 +105,8 @@ public class MapLoader {
 			y--;
 			loadLayerLine(y, tilesLines[i]);
 		}
+		
+		bullyInstructionGenerator.doneLoadingTiles ();
 	}
 
     private void loadLayerLine(int y, string tileLine)
@@ -102,20 +119,32 @@ public class MapLoader {
 
 			} else {
 				int id = Int32.Parse(tileId) - 1;
-				GameObject newTile = (GameObject)GameObject.Instantiate (this.tilePrefab);
-				SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
-				int textureWidth =10;
-				int textureHeight = 10;
-				int total = 100;
-				newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];
-				SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
-				spriteRenderer.sprite = this.sprites[id];
-				newTile.transform.parent = this.tilesGameObject.transform;
-				newTile.transform.Translate (x, y, 0);
-				bullyInstructionGenerator.addTile(x,y,id);
+				addTile(id, x, y);
 			}
 			x++;
 		}
 
     }
+
+	private void addTile(int id, int x, int y){
+		GameObject newTile = GameObjectFactory.createCopyGameObject (this.tilePrefab, "Tile", this.tilesGameObject);
+		SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
+		int textureWidth =10;
+		int textureHeight = 10;
+		int total = 100;
+		newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];
+		SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
+		spriteRenderer.sprite = this.tilesData [id].sprite;
+		newTile.transform.Translate (x, y, 0);
+		bullyInstructionGenerator.addTile(x,y,id);
+	}
+
+
+	private class TileData{
+		public Sprite sprite;
+
+		public TileData(Sprite sprite){
+			this.sprite = sprite;
+		}
+	}
 }
