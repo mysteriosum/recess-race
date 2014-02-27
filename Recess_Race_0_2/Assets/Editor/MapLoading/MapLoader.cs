@@ -9,6 +9,8 @@ using System.IO;
 
 public class MapLoader {
 
+	public static bool useTestBackground = false;
+
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
     }
@@ -118,7 +120,7 @@ public class MapLoader {
 			if(tileId.Equals("0") || tileId.Equals("") || tileId == null){
 
 			} else {
-				int id = Int32.Parse(tileId) - 1;
+				int id = parse(tileId) - 1;
 				addTile(id, x, y);
 			}
 			x++;
@@ -126,16 +128,31 @@ public class MapLoader {
 
     }
 
+	private int parse(string intStr){
+		try{
+			int id = Int32.Parse(intStr);
+			return id;
+		}catch (OverflowException overflow){
+			Debug.LogError(intStr + " overflow the memory :(");
+		}
+		return -1;
+	}
+
 	private void addTile(int id, int x, int y){
 		GameObject newTile = GameObjectFactory.createCopyGameObject (this.tilePrefab, "Tile", this.tilesGameObject);
-		SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
-		int textureWidth =10;
-		int textureHeight = 10;
-		int total = 100;
-		newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];
+
 		SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
 		spriteRenderer.sprite = this.tilesData [id].sprite;
 		newTile.transform.Translate (x, y, 0);
+
+		if (MapLoader.useTestBackground) {
+			int textureWidth =10;
+			int textureHeight = 10;
+			int total = 100;
+			SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
+			newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];		
+		}
+
 		bullyInstructionGenerator.addTile(x,y,id);
 	}
 

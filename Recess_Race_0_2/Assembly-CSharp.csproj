@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>D:/Programs/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>C:/Programs/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>D:/Programs/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>C:/Programs/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +76,7 @@
      <Compile Include="Assets\Recess Root\Scripts\Static\FileUtils.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\GameObjectFactory.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Raylayers.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Static\RecessManager.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Textf.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\TileProperties.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\VectorFunctions.cs" />
