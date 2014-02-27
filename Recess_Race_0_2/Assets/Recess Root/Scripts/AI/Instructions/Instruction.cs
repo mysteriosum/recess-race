@@ -9,11 +9,13 @@ public abstract class Instruction {
 
     public Instruction(Agent agent) {
         this.agent = agent;
+        isDone = false;
     }
 
     public Instruction(Agent agent, Instruction nextInstruction) {
         this.agent = agent;
         this.nextInstruction = nextInstruction;
+        isDone = false;
     }
 
     abstract public void start();

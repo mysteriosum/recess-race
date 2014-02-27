@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="925" height="50" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="tileset_blackgrey_noalpha" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/tileset_blackgrey_noalpha" tilewidth="32" tileheight="32">
   <image source="tileset_blackgrey_noalpha.png" width="256" height="256"/>
  </tileset>
  <layer name="Tile Layer 1" width="925" height="50">

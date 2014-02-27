@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Editor\AutoSnap.cs" />
+     <Compile Include="Assets\Editor\LightoutCollisionEditor.cs" />
      <Compile Include="Assets\Editor\MapLoading\BullyInstructionGenerator.cs" />
      <Compile Include="Assets\Editor\MapLoading\Instructor.cs" />
      <Compile Include="Assets\Editor\MapLoading\MapElementHelper.cs" />

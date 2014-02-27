@@ -20,6 +20,7 @@ public class Agent : Movable {
             instruction.start();
         }
         this.currentInstruction = instruction;
+        Debug.Log(currentInstruction);
     }
 
     protected override void FixedUpdate() {
@@ -29,6 +30,7 @@ public class Agent : Movable {
 
 
     void OnTriggerEnter2D(Collider2D other) {
+        if (currentInstruction != null) return;
         BullyInstruction instruction = other.GetComponent<BullyInstruction>();
 
         Plateform plateform = other.GetComponent<Plateform>();
@@ -47,8 +49,8 @@ public class Agent : Movable {
 
 
     private void handlePlateform(Plateform plateform) {
+        debugLog("found an instruction");
         switchTo( AgentAi.generateMove(this, plateform) );
-        Debug.Log(currentInstruction);
     }
 
 
@@ -65,6 +67,10 @@ public class Agent : Movable {
     public void jump(/*float jumpStrenght*/) {
         controller.getJump = true;
         this.velocity = base.Jump(velocity, JumpImpulse);
+    }
+
+    public void stopJumping() {
+        controller.getJump = false;
     }
 
    /* protected override Vector2 Jump(Vector2 currentVelocity, float amount) {

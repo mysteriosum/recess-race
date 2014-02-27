@@ -28,6 +28,9 @@ public class JumpInstruction : Instruction {
 
 
     public override void update() {
+        if (isInRange()) {
+            this.isDone = true;
+        }
     }
 
     private bool isInRange() {

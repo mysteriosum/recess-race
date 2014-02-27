@@ -60,6 +60,8 @@
      <Compile Include="Assets\Recess Root\Scripts\Dev\DevBallFader.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Dev\GizmoDad.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Dev\GridMaker.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Dev\LightoutBox.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Dev\LightoutCollision.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Independent\Controller.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Booger.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\BowTie.cs" />
@@ -70,7 +72,6 @@
      <Compile Include="Assets\Recess Root\Scripts\Items\Roulette.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\TennisBall.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Trash.cs" />
-     <Compile Include="Assets\Recess Root\Scripts\LightoutBox.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Map.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Plateform.cs" />
