@@ -10,22 +10,6 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     public int id;
 	public int waypointId;
 
-    private static int nextId = 0;
-    
-    public Plateform(){
-        id = nextId++;
-    }
-
-
-	void Start () {
-	
-	}
-	
-
-	void Update () {
-	
-	}
-
 	public bool isUnder(Plateform p2){
 		Vector3 v1 = this.transform.position; 
 		Vector3 v2 = p2.transform.position;

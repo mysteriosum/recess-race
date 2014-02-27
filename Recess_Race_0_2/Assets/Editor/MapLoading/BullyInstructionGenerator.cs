@@ -19,6 +19,8 @@ public class BullyInstructionGenerator {
 	private int tileMinX;
 	private int tileY;
 
+    private int nextTileId = 0;
+
 	private bool[,] pathingMap;
     private Dimension mapDimension;
 
@@ -97,6 +99,7 @@ public class BullyInstructionGenerator {
 		newTileHover.transform.localScale = new Vector3(width + 1, 1, 0);
 
 		Plateform plateform = newTileHover.GetComponent<Plateform> ();
+        plateform.id = nextTileId++;
 		this.plateforms.Add (plateform);
 	}
 
@@ -166,12 +169,12 @@ public class BullyInstructionGenerator {
 				plateform.transform.gameObject.name = "Plateform (wp #" + id + ")";
 				plateform.waypointId = id;
 				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
-				if(id == 1){
+				/*if(id == 1){
 					BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.none, CommandEnum.right, DifficultyEnum.assured);
 					BullyInstruction bi = MapElementHelper.generateInstructionOnCentered(con, plateform, this.bullyInstructionParent);
 					bi.gameObject.transform.localScale = plateform.gameObject.transform.localScale;
 					bi.gameObject.name = "Starting instruction";
-				}
+				}*/
 			}
 		}
 	}
@@ -212,7 +215,7 @@ public class BullyInstructionGenerator {
 			vFrom = from.getLeftCornerPosition();	
 			vTo = to.getRightCornerPosition();
 		}
-		return Math.Abs (vFrom.x - vTo.x) <= 7 && Math.Abs (vFrom.y - vTo.y) <= 4;
+		return Math.Abs (vFrom.x - vTo.x) <= 13 && Math.Abs (vFrom.y - vTo.y) <= 4;
 		//return (from.transform.position - to.transform.position).magnitude < 5;
 	}
 

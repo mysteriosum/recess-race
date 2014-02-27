@@ -4,6 +4,8 @@ using System.Collections;
 public class Agent : Movable {
 
     private Instruction currentInstruction;
+    private Plateform lastPlateform;
+    public int currentWayPoint = 0;
 
 
     void Update() {
@@ -20,7 +22,7 @@ public class Agent : Movable {
             instruction.start();
         }
         this.currentInstruction = instruction;
-        Debug.Log(currentInstruction);
+        Debug.Log("switch to" + currentInstruction);
     }
 
     protected override void FixedUpdate() {
@@ -30,20 +32,18 @@ public class Agent : Movable {
 
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (currentInstruction != null) return;
         BullyInstruction instruction = other.GetComponent<BullyInstruction>();
-
         Plateform plateform = other.GetComponent<Plateform>();
-        if (plateform) {
+        if (instruction) {
+
+        } else if (plateform) {
+            if (lastPlateform != null && lastPlateform.id == plateform.id) return;
+            lastPlateform = plateform;
+            if (plateform.waypointId > 0) {
+               this.currentWayPoint = plateform.waypointId;
+            }
             handlePlateform(plateform);
         }
-
-       /* if (instruction) {
-            debugLog("found an instruction");
-            handleInstruction(instruction.configuration);
-        }
-
-       */
 
     }
 
@@ -89,4 +89,5 @@ public class Agent : Movable {
         debugLog("Stop The Jump!");
         controller.getJump = false;
     }*/
+
 }
