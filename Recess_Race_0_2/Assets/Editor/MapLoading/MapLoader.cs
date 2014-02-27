@@ -30,7 +30,6 @@ public class MapLoader {
 	private GameObject aiGroupGameObject;
 
     private GameObject tilePrefab;
-    private GameObject tennisBallPrefab;
 
 	private BullyInstructionGenerator bullyInstructionGenerator;
 
@@ -56,15 +55,16 @@ public class MapLoader {
 		bullyInstructionGenerator.linkPlateforms ();
 
         loadTennisBalls();
+        loadGarbage();
 	}
 
     private void loadAssets() {
         banana = Resources.LoadAll<Sprite>("background/testBanana");
         tilePrefab = Resources.Load<GameObject>("BasicTile");
-        tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
     }
 
     private void loadTennisBalls() {
+        GameObject tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
         IEnumerable<XElement> tennisBalls = document.Elements().Descendants().Where(e => e.Name == "object" &&  e.Attribute("type") != null && e.Attribute("type").Value.Equals("TennisBall"));
 
         GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
@@ -86,6 +86,19 @@ public class MapLoader {
             }
             TennisBall ballScript = (TennisBall)tennisBall.GetComponent<TennisBall>();
             ballScript.direction = direction;
+        }
+    }
+
+    private void loadGarbage() {
+        GameObject garbagePrefab = Resources.Load<GameObject>("Objects/Garbage");
+        IEnumerable<XElement> garbages = document.Elements().Descendants().Where(e => e.Name == "object" && e.Attribute("type") != null && e.Attribute("type").Value.Equals("Garbage"));
+
+        GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject);
+        foreach (var element in garbages) {
+            int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
+            int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            GameObject garbage = GameObjectFactory.createCopyGameObject(garbagePrefab, "Garbage", GarbageParent);
+            garbage.transform.Translate(x, y, 0);
         }
     }
 
