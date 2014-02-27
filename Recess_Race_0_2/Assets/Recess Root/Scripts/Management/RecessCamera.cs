@@ -57,5 +57,12 @@ public class RecessCamera : MonoBehaviour {
 			
 			tran.Translate((postPos - forepos) * maxParalax, Space.World);
 		}
+		
+		RecessManager.CurrentTime += Time.deltaTime;
+	}
+	
+	void OnGUI(){
+		GUI.Box(new Rect(0, 0, 100, 50), RecessManager.Score.ToString());
+		GUI.Box(new Rect(0, Screen.height - 50, 100, 50), RecessManager.TimeString);
 	}
 }

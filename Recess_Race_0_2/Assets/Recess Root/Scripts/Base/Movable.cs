@@ -78,7 +78,8 @@ public class Movable : MonoBehaviour {
 	protected BoxCollider2D bc;
 	protected SpriteRenderer r;
 	protected Sprite sprite;
-
+	protected Animator anim;
+	protected bool animated = true;
 
 	//------------------------------------------------------\\
 	//------------------other properties--------------------\\
@@ -128,6 +129,20 @@ public class Movable : MonoBehaviour {
 	protected virtual float SecondsToMax {
 		get { return secondsToMax; }
 	}
+	
+	
+	//------------------------------------------------------\\
+	//-------------------Animation names--------------------\\
+	//------------------------------------------------------\\
+	public class AnimationNames{
+		public string walk = "Walk";
+		public string idle = "Idle";
+		public string jump = "Jump";
+		public string land = "Land";
+		public string fall = "Fall";
+	}
+	
+	public AnimationNames a = new AnimationNames();
 
 	//------------------------------------------------------\\
 	//----------------------Debugging-----------------------\\
@@ -142,6 +157,12 @@ public class Movable : MonoBehaviour {
 		r = GetComponent<SpriteRenderer>();
 		bc = GetComponent<BoxCollider2D>();
 		sprite = r.sprite;
+		anim = GetComponent<Animator>();
+		
+		if (!anim){
+			Debug.LogWarning("No animations on this Movable. Disabling animations!");
+			animated = false;
+		}
 		
 		running = true;			//DEV
 		
@@ -167,6 +188,9 @@ public class Movable : MonoBehaviour {
 			
 			if (velocity.y < 0 && !falling){
 				falling = true;
+				if (animated){
+					anim.Play(a.fall);
+				}
 				SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
 			}
 		}
@@ -203,6 +227,9 @@ public class Movable : MonoBehaviour {
 				grounded = true;
 				falling = false;
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
+				/*if (animated){
+					anim.Play(a.land); //TEMP got rid of this until we have a proper land animation
+				}*/
 			}
 			else if (!connectedDown){
 				grounded = false;
@@ -234,7 +261,6 @@ public class Movable : MonoBehaviour {
 			
 			if (connection){
 				velocity = new Vector2(velocity.x, -velocity.y * HeadHitMod);
-				falling = true;
 				extraMove += new Vector2(0, upRays[lastConnection].point.y - (t.position.y + box.height/2));
 				SendMessage("OnHeadHit", SendMessageOptions.DontRequireReceiver);
 			}
@@ -261,6 +287,12 @@ public class Movable : MonoBehaviour {
 		
 		if (input != 0){
 			newX = Accelerate(input);
+			t.localScale = new Vector3(input > 0? 1 : -1, 1, 1);
+			if (animated && grounded){
+				anim.Play(a.walk);
+			}
+		} else if (animated && grounded){
+			anim.Play(a.idle);
 		}
 		
 		//additional deceleration if the input doesn't match current speed
@@ -313,6 +345,9 @@ public class Movable : MonoBehaviour {
 	}
 	
 	protected virtual Vector2 Jump (Vector2 currentVelocity, float amount){
+		if (animated){
+			anim.Play(a.jump);
+		}
 		Vector2 newVel = new Vector2(currentVelocity.x, amount);
 		return newVel;
 	}
