@@ -124,4 +124,11 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup name="TennisBalls" width="100" height="100">
+  <object type="TennisBall" gid="34" x="100" y="752">
+   <properties>
+    <property name="direction" value="up"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

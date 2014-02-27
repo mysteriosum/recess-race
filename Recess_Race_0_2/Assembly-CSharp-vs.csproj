@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>C:/Programs/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>D:/Programs/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>C:/Programs/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>D:/Programs/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -63,11 +63,13 @@
      <Compile Include="Assets\Recess Root\Scripts\Independent\Controller.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Booger.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\BowTie.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Items\Garbage.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Item.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Lolly.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\QuestionMark.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\Roulette.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Items\TennisBall.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Items\Trash.cs" />
      <Compile Include="Assets\Recess Root\Scripts\LightoutBox.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Map.cs" />

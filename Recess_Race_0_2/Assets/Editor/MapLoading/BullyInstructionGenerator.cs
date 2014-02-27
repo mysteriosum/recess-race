@@ -145,9 +145,14 @@ public class BullyInstructionGenerator {
 		foreach (var item in objects) {
 			int x = Int32.Parse(item.Attribute("x").Value) / tileHeight;
 			int y = map.mapDimension.height - Int32.Parse(item.Attribute("y").Value) / tileHeight - 1;
-			var propertyId = item.Descendants().First (e => e.Name == "property" && e.Attribute("name").Value == "id");
-			int id = Int32.Parse(propertyId.Attribute("value").Value);
-			createWaypoint(x, y, id, objects.Count());
+			try{
+				var propertyId = item.Descendants().First (e => e.Name == "property" && e.Attribute("name").Value == "id");
+				int id = Int32.Parse(propertyId.Attribute("value").Value);
+				createWaypoint(x, y, id, objects.Count());
+			}catch(InvalidOperationException ioe){
+				Debug.Log ("Invalid Waypoint : Missing property id");
+			}
+
 		}
 
 	}

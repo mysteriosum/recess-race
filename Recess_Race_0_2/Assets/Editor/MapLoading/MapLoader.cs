@@ -29,19 +29,22 @@ public class MapLoader {
 	private GameObject tilesGameObject;
 	private GameObject aiGroupGameObject;
 
-	private GameObject tilePrefab;
+    private GameObject tilePrefab;
+    private GameObject tennisBallPrefab;
 
 	private BullyInstructionGenerator bullyInstructionGenerator;
+
+    private XDocument document;
 
 
     private void load(string mapText){	
 		loadAssets ();
 		createEmptyWorld ();
 
-		XDocument document = XDocument.Parse (mapText);
+		document = XDocument.Parse (mapText);
 		XElement mapElement = document.Elements ().First();
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
-		XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
+        XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
 
 		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
 		loadMapSettings (mapElement);
@@ -51,12 +54,40 @@ public class MapLoader {
 		loadTiles (tilesLayer);
 		bullyInstructionGenerator.loadWaypoints (waypoints, this.map);
 		bullyInstructionGenerator.linkPlateforms ();
+
+        loadTennisBalls();
 	}
 
-	private void loadAssets(){
-		banana = Resources.LoadAll<Sprite> ("background/testBanana");
-		tilePrefab = Resources.Load<GameObject> ("BasicTile");
-	}
+    private void loadAssets() {
+        banana = Resources.LoadAll<Sprite>("background/testBanana");
+        tilePrefab = Resources.Load<GameObject>("BasicTile");
+        tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
+    }
+
+    private void loadTennisBalls() {
+        IEnumerable<XElement> tennisBalls = document.Elements().Descendants().Where(e => e.Name == "object" &&  e.Attribute("type") != null && e.Attribute("type").Value.Equals("TennisBall"));
+
+        GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
+        foreach (var element in tennisBalls) {
+            int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
+            int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            GameObject tennisBall = GameObjectFactory.createCopyGameObject(tennisBallPrefab, "Tennis Ball", tennisBallParent);
+            tennisBall.transform.Translate(x,y,0);
+            string value = element.Elements().Descendants().First(e => e.Name == "property" && e.Attribute("name").Value.Equals("direction")).Attribute("value").Value;
+            DirectionsEnum direction = DirectionsEnum.up;
+            if (value == "up") {
+                direction = DirectionsEnum.up;
+            } else if (value == "left") {
+                direction = DirectionsEnum.left;
+            } else if (value == "right") {
+                direction = DirectionsEnum.right;
+            } else if (value == "down") {
+                direction = DirectionsEnum.down;
+            }
+            TennisBall ballScript = (TennisBall)tennisBall.GetComponent<TennisBall>();
+            ballScript.direction = direction;
+        }
+    }
 
 	private void createEmptyWorld(){
 		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);
@@ -111,8 +142,7 @@ public class MapLoader {
 		bullyInstructionGenerator.doneLoadingTiles ();
 	}
 
-    private void loadLayerLine(int y, string tileLine)
-    {
+    private void loadLayerLine(int y, string tileLine){
 		string[] tiles = tileLine.Split(new char[] { ',' }, StringSplitOptions.None);
 		int x = 0;
 		foreach (string tileId in tiles) {

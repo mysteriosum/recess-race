@@ -12,7 +12,10 @@ public class fellow : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		this.transform.position = this.target.position;
-		this.transform.Translate (0,0,-2);
+        if (target != null) {
+            this.transform.position = this.target.position;
+            this.transform.Translate(0, 0, -2);
+        }
+		
 	}
 }
