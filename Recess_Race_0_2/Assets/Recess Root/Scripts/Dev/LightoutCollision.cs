@@ -15,8 +15,9 @@ public class LightoutCollision : MonoBehaviour {
         foreach (var box in boxs) {
             GameObject.DestroyImmediate(box.gameObject);
         }
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        
+        for (int y = height -1; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
                 GameObject newBox = GameObjectFactory.createCopyGameObject(lightoutBoxPrefab,"LightBox",this.gameObject);
                 newBox.transform.Translate(this.transform.position);
                 newBox.transform.Translate(x,y,0);
