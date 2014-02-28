@@ -10,6 +10,7 @@ using System.IO;
 public class MapLoader {
 
 	public static bool useTestBackground = false;
+	public static bool verbose;
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
@@ -57,6 +58,7 @@ public class MapLoader {
         loadTennisBalls();
         loadGarbage();
 		loadQuestionMark ();
+		print ("Done");
 	}
 
     private void loadAssets() {
@@ -144,7 +146,6 @@ public class MapLoader {
 
 
 	public void loadMapSettings(XElement mapElement){
-		// Debug.Log (mapElement.Name);
 		int width = Int32.Parse(mapElement.Attribute ("width").Value);
 		int height = Int32.Parse(mapElement.Attribute ("height").Value);
 		int tileWidth = Int32.Parse(mapElement.Attribute ("tilewidth").Value);
@@ -212,6 +213,11 @@ public class MapLoader {
 		bullyInstructionGenerator.addTile(x,y,id);
 	}
 
+	private void print(string str){
+		if (MapLoader.verbose) {
+			Debug.Log("Maploader : " + str);
+		}
+	}
 
 	private class TileData{
 		public Sprite sprite;

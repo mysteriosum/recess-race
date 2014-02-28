@@ -75,9 +75,10 @@ public class BullyInstructionGenerator {
 	
 	public void doneLoadingTiles(){
         addTileHover();
-        Debug.Log("Generated " + this.plateforms.Count + " plateforms.");
+		if (MapLoader.verbose) {
+			Debug.Log("Generated " + this.plateforms.Count + " plateforms.");		
+		}
 		removeUselessPlateform ();
-        //Debug.Log("Finale " + this.plateforms.Count + " plateforms.");
 	}
 
 
