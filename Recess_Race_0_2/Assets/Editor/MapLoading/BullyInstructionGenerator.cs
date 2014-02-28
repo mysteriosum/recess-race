@@ -11,7 +11,6 @@ public class BullyInstructionGenerator {
 
 	private GameObject tileHoverPrefab;
 	
-	private Transform bullyInstructionParent;
 	private Transform plateformGroupParent;
 
 	private bool workingOnATile;
@@ -32,11 +31,6 @@ public class BullyInstructionGenerator {
 	}
 
 	public void setGameObjectParent(Transform parent){
-		GameObject bullyInstructions = new GameObject();
-		bullyInstructions.name = "Bully Instructions";
-		bullyInstructions.transform.parent = parent;
-		bullyInstructionParent = bullyInstructions.transform;
-
 		GameObject plateformGameObject = new GameObject();
 		plateformGameObject.name = "Plateforms";
 		plateformGameObject.transform.parent = parent;
@@ -152,7 +146,7 @@ public class BullyInstructionGenerator {
 				var propertyId = item.Descendants().First (e => e.Name == "property" && e.Attribute("name").Value == "id");
 				int id = Int32.Parse(propertyId.Attribute("value").Value);
 				createWaypoint(x, y, id, objects.Count());
-			}catch(InvalidOperationException ioe){
+			}catch(InvalidOperationException){
 				Debug.Log ("Invalid Waypoint : Missing property id");
 			}
 

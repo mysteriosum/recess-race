@@ -115,7 +115,7 @@ public class MapLoader {
 		this.tilesData = new List<TileData> ();
 		foreach(XElement element in tileSetElements){
 			string name = element.Attribute("name").Value;
-			int firstGridId = Int32.Parse(element.Attribute("firstgid").Value);
+			// int firstGridId = Int32.Parse(element.Attribute("firstgid").Value);
 			string source = element.Descendants().First (e => e.Name == "image").Attribute("source").Value;
 			string tilesetName = Path.GetFileName(source).Split(new char[] { '.' })[0];
 			Sprite[] sprites = Resources.LoadAll<Sprite> ("tileSets/" + tilesetName);
@@ -176,7 +176,7 @@ public class MapLoader {
 		try{
 			int id = Int32.Parse(intStr);
 			return id;
-		}catch (OverflowException overflow){
+		}catch (OverflowException){
 			Debug.LogError(intStr + " overflow the memory :(");
 		}
 		return -1;

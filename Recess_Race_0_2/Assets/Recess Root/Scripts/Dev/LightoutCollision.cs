@@ -20,7 +20,6 @@ public class LightoutCollision : MonoBehaviour {
                 GameObject newBox = GameObjectFactory.createCopyGameObject(lightoutBoxPrefab,"LightBox",this.gameObject);
                 newBox.transform.Translate(this.transform.position);
                 newBox.transform.Translate(x,y,0);
-                LightoutBox lightBox = (LightoutBox) newBox.GetComponent<LightoutBox>();
             }
         }
 
