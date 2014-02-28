@@ -1,17 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Recess Root\Scripts\Dev\LightoutCollision.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Recess Root\Scripts\AI\JumpPathingMaps.cs">
     <Files>
-      <File FileName="Assets\Recess Root\Scripts\Static\Bool2DArray.cs" Line="1" Column="1" />
+      <File FileName="Assets\Recess Root\Scripts\AI\AgentInstructionTrigger.cs" Line="6" Column="33" />
+      <File FileName="Assets\Recess Root\Scripts\BullyInstruction.cs" Line="18" Column="2" />
       <File FileName="Assets\Recess Root\Scripts\AI\JumpPathingMaps.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\AI\AgentInstructionGenerator.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Dev\LightoutCollision.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\AI\Agent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\AI\Instructions\Instruction.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editor\MapLoading\BullyInstructionGenerator.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editor\MapLoading\MapLoaderEditor.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editor\MapLoading\MapLoader.cs" Line="1" Column="1" />
-      <File FileName="Assets\Recess Root\Scripts\Static\GameObjectFactory.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

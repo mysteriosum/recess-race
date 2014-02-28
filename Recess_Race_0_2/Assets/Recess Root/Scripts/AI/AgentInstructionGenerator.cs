@@ -18,7 +18,8 @@ public class AgentInstructionGenerator {
 
         if(distanceEgal(from,to,12) && doesntInterfer(pathing, JumpPathingMaps.fullJump)){
             instruction = new RunToInstruction(agent, from.getRightCornerPosition(), RunToEpsilon);
-            Instruction jump = new JumpInstruction(agent, to.getLeftCornerPosition(), JumpToEpsilon);
+			Direction direction = (to.transform.position.x > from.transform.position.x) ? Direction.left : Direction.right;
+            Instruction jump = new JumpInstruction(agent, direction, JumpToEpsilon);
             instruction.nextInstruction = jump;
         }
         

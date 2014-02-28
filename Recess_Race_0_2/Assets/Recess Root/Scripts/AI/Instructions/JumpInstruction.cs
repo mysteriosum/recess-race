@@ -1,43 +1,52 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum Direction { left = -1 , right = 1}
+
 public class JumpInstruction : Instruction {
 
-    private Vector3 targetLocation;
     private float distanceToGetBy;
-    private float direction;
-   // private float jumpStrenght;
+    private Direction direction;
+	private float holdLenght;
+	private bool holding;
+	private float moveLenght;
+	private bool moving;
+	private float startX;
 
-    public JumpInstruction(Agent agent, Vector3 targetLocation, float distanceToGetBy = 1f)
+	public JumpInstruction(Agent agent, Direction direction, float holdLenght = 13, float moveLenght = 13, float distanceToGetBy = 1f)
         : base(agent) {
-        this.targetLocation = targetLocation;
         this.distanceToGetBy = distanceToGetBy;
-        //this.jumpStrenght = jumpStrenght;
-        if (targetLocation.x > agent.transform.position.x) {
-            direction = 1;
-        } else {
-            direction = -1;
-        }
+		this.direction = direction;
+		this.holdLenght = holdLenght;
+		this.moveLenght = moveLenght;
     }
 
 
     public override void start() {
-        agent.setMovingStrenght(direction);
+        agent.setMovingStrenght((float)direction);
         agent.jump();
+		this.startX = agent.transform.position.x;
+		this.moving = true;
+		this.holding = true;
     }
 
 
     public override void update() {
-        if (isInRange()) {
-            this.isDone = true;
+		if (moving && Mathf.Abs (startX - agent.transform.position.x) < moveLenght) {
+			moving = false;
+			agent.setMovingStrenght(0);
+		}
+		if (holding && Mathf.Abs (startX - agent.transform.position.x) < holdLenght) {
+			holding = false;
+			agent.stopJumping();
+		}
+        if ((!moving && !holding)) {
+			this.isDone = true;
+			agent.stopJumping();
         }
     }
 
-    private bool isInRange() {
-        return (this.agent.transform.position - targetLocation).magnitude < distanceToGetBy;
-    }
-
     public override string ToString() {
-        return "JumpInstruction, Jump to (" + targetLocation.x + "," + targetLocation.y + ")";
+        return "JumpInstruction, Jump )";
     }
 }
