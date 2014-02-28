@@ -113,7 +113,7 @@ public class Fitz : Movable {
 	
 	private float HorizontalInput{
 		get {
-			if (!canControl || (boogerBoy && wallJumpLockTimer > 0))
+			if (!CanControl || (boogerBoy && wallJumpLockTimer > 0))
 				return 0;
 			
 			return controller.hAxis;
@@ -133,12 +133,18 @@ public class Fitz : Movable {
 	//-----------------------------Stunning/Damage------------------------------\\
 	//--------------------------------------------------------------------------\\
 	
-	private bool canControl = true;
+	private bool CanControl {
+		get { return !hurt; }
+		set { hurt = !value; }
+	}
 	private float stunTimer = 0;
 	private float showFor = 0.1f;
 	private float hideFor = 0.05f;
 	private float blinkTimer = 0;
 	private bool spriteShowing = true;
+	
+	//finish the race
+	private bool lockControls = false;
 	
 	//debug things
 	private float ballDropRate = 0.1f;
@@ -165,7 +171,9 @@ public class Fitz : Movable {
 	//--------------------------------------------------------------------------\\
 	
 	protected override void FixedUpdate () {
-		controller.GetInputs();
+		if (!lockControls){
+			controller.GetInputs();
+		}
 	//------------------------------------------------------\\
 	//------------------TEST AND HACK-----------------------\\
 	//------------------------------------------------------\\
@@ -187,7 +195,7 @@ public class Fitz : Movable {
 	//------------------------------------------------------\\
 		
 		
-		if (grounded && controller.getJumpDown && canControl){
+		if (grounded && controller.getJumpDown && CanControl){
 			velocity = Jump(velocity, JumpImpulse);
 			grounded = false;
 
@@ -276,7 +284,7 @@ public class Fitz : Movable {
 	//-----------------------------hurt & blinking------------------------------\\
 	//--------------------------------------------------------------------------\\
 		
-		if (!canControl){
+		if (stunTimer > 0){
 			stunTimer -= Time.deltaTime;
 			blinkTimer += Time.deltaTime;
 			if (blinkTimer > showFor && spriteShowing){
@@ -290,7 +298,7 @@ public class Fitz : Movable {
 			}
 			
 			if (stunTimer <= 0){
-				canControl = true;
+				CanControl = true;
 				blinkTimer = 0;
 				r.material.color = Color.white;
 			}
@@ -374,6 +382,9 @@ public class Fitz : Movable {
 	
 	private void OnLand(){
 		ResetPropeller();
+		if (hurt && anim){
+			anim.Play (a.rest);
+		}
 	}
 	
 	private void ResetPropeller(){
@@ -392,14 +403,32 @@ public class Fitz : Movable {
 	}
 	
 	
+	public void FinishRace(){
+		lockControls = true;
+		controller.getR = true;
+		controller.ResetJumpInput();
+		
+	}
+	
+	
 	void OnTriggerEnter2D (Collider2D other){
 		DamageScript dmgScript = other.GetComponent<DamageScript>();
 		
 		if (dmgScript && dmgScript.enabled){
-			canControl = false;
+			if (anim){
+				anim.Play (a.hurt);
+			}
+			CanControl = false;
+			
 			stunTimer = dmgScript.StunDuration;
 			dmgScript.SendMessage("CollideWithFitz", t);
 			velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
+		}
+	}
+	
+	void PlayRestAnim (){
+		if (anim && grounded){
+			anim.Play(a.rest);
 		}
 	}
 }

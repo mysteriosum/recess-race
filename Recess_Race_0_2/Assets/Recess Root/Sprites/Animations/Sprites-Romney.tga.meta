@@ -1,0 +1,184 @@
+fileFormatVersion: 2
+guid: 20c884f3f0e51844daf69c72b96a5d0d
+TextureImporter:
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings:
+  - buildTarget: iPhone
+    maxTextureSize: 1024
+    textureFormat: -2
+    compressionQuality: 50
+  spriteSheet:
+    sprites:
+    - name: Sprites-Romney_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 418
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_2
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_3
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_4
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_5
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_6
+      rect:
+        serializedVersion: 2
+        x: 1045
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_7
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_8
+      rect:
+        serializedVersion: 2
+        x: 1463
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_9
+      rect:
+        serializedVersion: 2
+        x: 1672
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_10
+      rect:
+        serializedVersion: 2
+        x: 1881
+        y: 209
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_12
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 0
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_13
+      rect:
+        serializedVersion: 2
+        x: 1045
+        y: 0
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: Sprites-Romney_14
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 0
+        width: 209
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+  spritePackingTag: 
+  userData: 

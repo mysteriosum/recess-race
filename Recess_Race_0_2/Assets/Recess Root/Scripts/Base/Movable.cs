@@ -93,6 +93,7 @@ public class Movable : MonoBehaviour {
 
 	protected bool grounded								= false;
 	protected bool falling								= false;
+	protected bool hurt									= false;
 
 	protected bool activated							= false;
 
@@ -140,6 +141,8 @@ public class Movable : MonoBehaviour {
 		public string jump = "Jump";
 		public string land = "Land";
 		public string fall = "Fall";
+		public string hurt = "Hurt";
+		public string rest = "Rest";
 	}
 	
 	public AnimationNames a = new AnimationNames();
@@ -188,7 +191,7 @@ public class Movable : MonoBehaviour {
 			
 			if (velocity.y < 0 && !falling){
 				falling = true;
-				if (animated){
+				if (animated && !hurt){
 					anim.Play(a.fall);
 				}
 				SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
@@ -223,7 +226,7 @@ public class Movable : MonoBehaviour {
 				//t.position = Vector2.Lerp (downRays[lastConnection].point, pos, downRays[lastConnection].fraction);
 				//t.position = new Vector2(t.position.x, downRays[lastConnection].point.y + box.height/2);
 				velocity = new Vector2(velocity.x, 0);
-				extraMove += new Vector2(0, downRays[lastConnection].point.y - (t.position.y - box.height/2));
+				extraMove += new Vector2(0, -downRays[lastConnection].fraction * (downRayLength));
 				grounded = true;
 				falling = false;
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
@@ -273,7 +276,7 @@ public class Movable : MonoBehaviour {
 	
 	protected virtual void UpdatePosAndBox (){
 		pos = (Vector2) t.position;
-		box = new Rect(t.position.x - bc.size.x/2, t.position.y - bc.size.y/2, bc.size.x, bc.size.y);
+		box = new Rect(t.position.x + bc.center.x - bc.size.x/2, t.position.y + bc.center.y	 - bc.size.y/2, bc.size.x, bc.size.y);
 	}
 
 	//------------------------------------------------------\\
@@ -291,7 +294,7 @@ public class Movable : MonoBehaviour {
 			if (animated && grounded){
 				anim.Play(a.walk);
 			}
-		} else if (animated && grounded){
+		} else if (animated && grounded && !hurt){
 			anim.Play(a.idle);
 		}
 		
@@ -352,15 +355,10 @@ public class Movable : MonoBehaviour {
 		return newVel;
 	}
 	
-
-	protected void LateUpdate() {
-		
-	}
-	
-	
 	void OnDrawGizmos(){
-		if (running){
+		if (running && debug){
 			Gizmos.DrawLine(box.center, box.center + new Vector2(0, box.height / -2 + velocity.y * Time.deltaTime));
+			Gizmos.DrawCube (box.center, new Vector3(box.width, box.height, 1));
 		}
 	}
 }

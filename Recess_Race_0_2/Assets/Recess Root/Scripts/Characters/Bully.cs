@@ -24,6 +24,9 @@ public class Bully : Movable {
 	// Use this for initialization
 	protected override void Start () {
 		base.Start();
+		if(myMaxSpeed == 0){
+			myMaxSpeed = base.maxSpeed;
+		}
 	}
 	
 	// Update is called once per frame
