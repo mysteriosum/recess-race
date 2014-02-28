@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="900" height="40" tilewidth="8" tileheight="8">
- <tileset firstgid="1" name="testTileSet" tilewidth="8" tileheight="8">
+ <tileset firstgid="1" name="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/testTileSet" tilewidth="8" tileheight="8">
   <image source="testTileSet.png" trans="ff00ff" width="112" height="168"/>
  </tileset>
  <layer name="Tiles" width="900" height="40">
@@ -49,6 +49,11 @@
  </layer>
  <objectgroup color="#a4170c" name="Waypoints" width="900" height="40">
   <object x="636" y="12">
+   <properties>
+    <property name="id" value="3"/>
+   </properties>
+  </object>
+  <object x="864" y="155">
    <properties>
     <property name="id" value="3"/>
    </properties>

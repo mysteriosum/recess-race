@@ -3,7 +3,7 @@ using System.Collections;
 
 public class DevBallFader : GizmoDad {
 	
-	private float destroyTimer = 20f;
+	private float destroyTimer = 7f;
 	
 	
 	// Use this for initialization

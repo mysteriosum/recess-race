@@ -3,7 +3,7 @@ using System.Collections;
 
 public class TileProperties {
 	
-	public static int tileDimension = 32;
+	public static int tileDimension = 16;
 	
 	// Use this for initialization
 	void Start () {

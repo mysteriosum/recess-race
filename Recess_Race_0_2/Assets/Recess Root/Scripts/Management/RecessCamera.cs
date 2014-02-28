@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class RecessCamera : MonoBehaviour {
 	private Transform t;
@@ -15,6 +16,50 @@ public class RecessCamera : MonoBehaviour {
 	private float lerpAmount = 0.1f;
 	private float maxParalax = 0.3f;
 	private float furthestParalaxZ;
+	
+	private bool raceFinished = false;
+	private float finishedTimer = 0;
+	private float congratulationsAt = 0.5f;
+	private float placeAt = 2.2f;
+	private float scoredAt = 3.7f;
+	private float showScoreAt = 4.3f;
+	private float tryAgainAt = 6.5f;
+	
+	
+	private Transform[] racers;
+	private Transform fitz;
+	
+	private int rank = 0;
+	
+	public string RankString {
+		get {
+			switch (rank){
+			case 1:
+				return "1st";
+			case 2:
+				return "2nd";
+			case 3:
+				return "3rd";
+			case 4:
+				return "4th";
+			default:
+				return "0?";
+			}
+		}
+	}
+	
+	public int RankPoints {
+		get {
+			if (rank == 1){
+				return 200;
+			} else if (rank == 2){
+				return 125;
+			} else if (rank == 3){
+				return 50;
+			}
+			return 0;
+		}
+	}
 	
 	// Use this for initialization
 	void Awake () {
@@ -40,6 +85,19 @@ public class RecessCamera : MonoBehaviour {
 				furthestParalaxZ = tr.position.z;
 			}
 		}
+		
+		Movable[] movables = FindObjectsOfType<Movable>();
+		List<Transform> tlist = new List<Transform>();
+		foreach (Movable item in movables) {
+			if (item.GetComponent<Fitz>() != null){
+				fitz = item.transform;
+			}
+			else{
+				tlist.Add(item.transform);
+			}
+		}
+		racers = tlist.ToArray();
+		
 	}
 	
 	// Update is called once per frame
@@ -52,10 +110,66 @@ public class RecessCamera : MonoBehaviour {
 		Vector3 postPos = t.position;
 		
 		foreach (Transform tran in paralaxes){
-			
-			float parAmount = tran.position.z * maxParalax / furthestParalaxZ;		//figure out how much to move each object. Easy because player z = 0 always
+			//Never Used
+			//float parAmount = tran.position.z * maxParalax / furthestParalaxZ;		//figure out how much to move each object. Easy because player z = 0 always
 			
 			tran.Translate((postPos - forepos) * maxParalax, Space.World);
 		}
+		
+		//check for rank
+		if (!raceFinished){
+			rank = 1;
+			for (int i = 0; i < racers.Length; i ++){
+				if (fitz.position.x < racers[i].position.x){
+					rank++;
+				}
+			}
+		}
+		
+		
+		RecessManager.CurrentTime += Time.deltaTime;
+		if (raceFinished){
+			finishedTimer += Time.deltaTime;
+		}
+		
+	}
+	
+	void OnGUI(){
+		if (!raceFinished){
+			GUI.Box(new Rect(0, 0, 100, 50), RecessManager.Score.ToString());
+			GUI.Box(new Rect(0, Screen.height - 50, 100, 50), RecessManager.TimeString);
+			GUI.Box (new Rect(0, 50, 100, 50), RankString);
+		} else {
+			if (finishedTimer > congratulationsAt){
+				GUI.Box (new Rect(Screen.width / 2 - 100, Screen.height/4, 200, 50), "Congratulations!");
+			}
+			
+			if (finishedTimer > placeAt){
+				GUI.Box (new Rect(Screen.width/ 2 - 100, Screen.height/4 + 60, 200, 30), "You came in " + RankString + " place!");
+			}
+			
+			if (finishedTimer > scoredAt){
+				GUI.Box (new Rect(Screen.width / 2 - 60, Screen.height/4 + 100, 120, 30), "You scored: " + (finishedTimer > showScoreAt? RecessManager.Score.ToString() : ""));
+			}
+			
+			if (finishedTimer > tryAgainAt){
+				GUI.Box (new Rect(Screen.width / 2 - 100, Screen.height/4 + 150, 200, 70), "Try again?");
+				bool yes = GUI.Button (new Rect(Screen.width/2 - 50, Screen.height/4 + 180, 100, 20), "Yes");
+				bool no = GUI.Button (new Rect(Screen.width/2 - 50, Screen.height/4 + 200, 100, 20), "No");
+				
+				if (yes){
+					Application.LoadLevel(Application.loadedLevel);
+				} else if (no){
+					Application.Quit();
+				}
+			}
+		}
+	}
+	
+	public void FinishRace(){
+		raceFinished = true;
+		fitzNode.parent = null;
+		
+		RecessManager.Score += RankPoints;
 	}
 }

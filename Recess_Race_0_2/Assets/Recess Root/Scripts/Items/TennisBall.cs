@@ -35,9 +35,8 @@ public class TennisBall : Movable {
 	private float deceleration = 0.0125f;
 	private float gravityScale = 0.75f;
 	
-	void Start () {
+	protected override void Start () {
 		base.Start();
-		
 		
 		switch (direction){
 		case DirectionsEnum.up:
@@ -62,8 +61,7 @@ public class TennisBall : Movable {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
-		
+	protected override void FixedUpdate () {
 		if (!hasGravity){ 		//move if I'm still being a hazard
 			
 			float rayLength = circle.radius + velocity.magnitude * Time.deltaTime;

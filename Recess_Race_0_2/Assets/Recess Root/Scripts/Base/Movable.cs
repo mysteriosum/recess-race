@@ -11,8 +11,8 @@ public class Movable : MonoBehaviour {
 	//evething is in pixels/second
 
 
-	protected float defaultGravity						= 8.5f/TileProperties.tileDimension;
-	protected float holdGravityModifier					= 0.68f;
+	protected float defaultGravity						= 7.8f/TileProperties.tileDimension;
+	protected float holdGravityModifier					= 0.74f;
 	protected float maxFallSpeed						= -250f/TileProperties.tileDimension;
 	
 	protected float lerpAccel							= 0.0375f;
@@ -20,9 +20,9 @@ public class Movable : MonoBehaviour {
 	protected float baseDecel							= 6f/TileProperties.tileDimension;
 	protected float secondsToMax						= 0.8f;
 	
-	protected float maxSpeed							= 130f/TileProperties.tileDimension;
-	protected float jumpImpulse							= 230f/TileProperties.tileDimension;
-	protected float extraImpulseFromRun					= 20f/TileProperties.tileDimension;
+	protected float maxSpeed							= 140f/TileProperties.tileDimension;
+	protected float jumpImpulse							= 196f/TileProperties.tileDimension;
+	protected float extraImpulseFromRun					= 10f/TileProperties.tileDimension;
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
@@ -78,7 +78,8 @@ public class Movable : MonoBehaviour {
 	protected BoxCollider2D bc;
 	protected SpriteRenderer r;
 	protected Sprite sprite;
-
+	protected Animator anim;
+	protected bool animated = true;
 
 	//------------------------------------------------------\\
 	//------------------other properties--------------------\\
@@ -92,6 +93,7 @@ public class Movable : MonoBehaviour {
 
 	protected bool grounded								= false;
 	protected bool falling								= false;
+	protected bool hurt									= false;
 
 	protected bool activated							= false;
 
@@ -100,7 +102,7 @@ public class Movable : MonoBehaviour {
 	//------------------------------------------------------\\
 	
 	protected virtual float Gravity {
-		get { return defaultGravity * (controller.getJump && !falling? holdGravityModifier : 1); }
+		get { return defaultGravity * (controller.getJump? holdGravityModifier : 1); }
 	}
 	protected virtual float MaxFallSpeed {
 		get { return maxFallSpeed; }
@@ -128,6 +130,22 @@ public class Movable : MonoBehaviour {
 	protected virtual float SecondsToMax {
 		get { return secondsToMax; }
 	}
+	
+	
+	//------------------------------------------------------\\
+	//-------------------Animation names--------------------\\
+	//------------------------------------------------------\\
+	public class AnimationNames{
+		public string walk = "Walk";
+		public string idle = "Idle";
+		public string jump = "Jump";
+		public string land = "Land";
+		public string fall = "Fall";
+		public string hurt = "Hurt";
+		public string rest = "Rest";
+	}
+	
+	public AnimationNames a = new AnimationNames();
 
 	//------------------------------------------------------\\
 	//----------------------Debugging-----------------------\\
@@ -142,6 +160,12 @@ public class Movable : MonoBehaviour {
 		r = GetComponent<SpriteRenderer>();
 		bc = GetComponent<BoxCollider2D>();
 		sprite = r.sprite;
+		anim = GetComponent<Animator>();
+		
+		if (!anim){
+			Debug.LogWarning("No animations on this Movable. Disabling animations!");
+			animated = false;
+		}
 		
 		running = true;			//DEV
 		
@@ -167,6 +191,9 @@ public class Movable : MonoBehaviour {
 			
 			if (velocity.y < 0 && !falling){
 				falling = true;
+				if (animated && !hurt){
+					anim.Play(a.fall);
+				}
 				SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
 			}
 		}
@@ -180,7 +207,7 @@ public class Movable : MonoBehaviour {
 			Vector2 max = new Vector2(box.xMax, box.center.y);
 
 			for (int i = 0; i < verticalRays; i ++){
-				Vector2 start = Vector2.Lerp(min, max, (float)i / (float) verticalRays);
+				Vector2 start = Vector2.Lerp(min, max, (float)i / (float) (verticalRays-1));
 				Vector2 end = start + -Vector2.up * (downRayLength + box.height/2);
 				downRays[i] = Physics2D.Linecast(start, end, Raylayers.downRay);
 				if (downRays[i].fraction > 0){
@@ -199,10 +226,13 @@ public class Movable : MonoBehaviour {
 				//t.position = Vector2.Lerp (downRays[lastConnection].point, pos, downRays[lastConnection].fraction);
 				//t.position = new Vector2(t.position.x, downRays[lastConnection].point.y + box.height/2);
 				velocity = new Vector2(velocity.x, 0);
-				extraMove += new Vector2(0, downRays[lastConnection].point.y - (t.position.y - box.height/2));
+				extraMove += new Vector2(0, -downRays[lastConnection].fraction * (downRayLength));
 				grounded = true;
 				falling = false;
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
+				/*if (animated){
+					anim.Play(a.land); //TEMP got rid of this until we have a proper land animation
+				}*/
 			}
 			else if (!connectedDown){
 				grounded = false;
@@ -234,7 +264,6 @@ public class Movable : MonoBehaviour {
 			
 			if (connection){
 				velocity = new Vector2(velocity.x, -velocity.y * HeadHitMod);
-				falling = true;
 				extraMove += new Vector2(0, upRays[lastConnection].point.y - (t.position.y + box.height/2));
 				SendMessage("OnHeadHit", SendMessageOptions.DontRequireReceiver);
 			}
@@ -247,7 +276,7 @@ public class Movable : MonoBehaviour {
 	
 	protected virtual void UpdatePosAndBox (){
 		pos = (Vector2) t.position;
-		box = new Rect(t.position.x - bc.size.x/2, t.position.y - bc.size.y/2, bc.size.x, bc.size.y);
+		box = new Rect(t.position.x + bc.center.x - bc.size.x/2, t.position.y + bc.center.y	 - bc.size.y/2, bc.size.x, bc.size.y);
 	}
 
 	//------------------------------------------------------\\
@@ -261,6 +290,12 @@ public class Movable : MonoBehaviour {
 		
 		if (input != 0){
 			newX = Accelerate(input);
+			t.localScale = new Vector3(input > 0? 1 : -1, 1, 1);
+			if (animated && grounded){
+				anim.Play(a.walk);
+			}
+		} else if (animated && grounded && !hurt){
+			anim.Play(a.idle);
 		}
 		
 		//additional deceleration if the input doesn't match current speed
@@ -277,7 +312,7 @@ public class Movable : MonoBehaviour {
 		if (newX != 0){
 			//check for collisions:
 			int modifier = newX > 0? 1 : -1;
-			float checkAmount = box.width/2 * modifier + newX;
+			//float checkAmount = box.width/2 * modifier + newX; //neverUSed
 			Vector2 Min = new Vector2(box.center.x, box.yMin + margin);
 			Vector2 Max = new Vector2(box.center.x, box.yMax - margin);
 			bool connected = false;
@@ -313,19 +348,17 @@ public class Movable : MonoBehaviour {
 	}
 	
 	protected virtual Vector2 Jump (Vector2 currentVelocity, float amount){
+		if (animated){
+			anim.Play(a.jump);
+		}
 		Vector2 newVel = new Vector2(currentVelocity.x, amount);
 		return newVel;
 	}
 	
-
-	protected void LateUpdate() {
-		
-	}
-	
-	
 	void OnDrawGizmos(){
-		if (running){
+		if (running && debug){
 			Gizmos.DrawLine(box.center, box.center + new Vector2(0, box.height / -2 + velocity.y * Time.deltaTime));
+			Gizmos.DrawCube (box.center, new Vector3(box.width, box.height, 1));
 		}
 	}
 }
