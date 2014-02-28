@@ -18,5 +18,28 @@ public class LightoutCollisionEditor : Editor {
         if (GUILayout.Button("Reset colors")) {
             collision.resetColors();
         }
+
+        EditorGUILayout.TextArea(generateLightoutCollision(collision));
+    }
+
+    private string generateLightoutCollision(LightoutCollision collision) {
+        string text = "{";
+        LightoutBox[] boxs = collision.gameObject.GetComponentsInChildren<LightoutBox>();
+        int x = 0;
+        foreach(LightoutBox box in boxs){
+            if (x == collision.width) {
+                text += "},\n{";
+                x = 0;
+            }
+            if (x == 0) {
+                text += box.triggered ? "true" : "false";
+            } else {
+                text += box.triggered ? ",true" : ",false";
+            }
+            x++;
+        }
+        text += "}";
+
+        return text;
     }
 }

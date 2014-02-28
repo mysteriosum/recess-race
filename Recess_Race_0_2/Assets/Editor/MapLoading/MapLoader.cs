@@ -47,7 +47,7 @@ public class MapLoader {
 
 		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
 		loadMapSettings (mapElement);
-		bullyInstructionGenerator = new BullyInstructionGenerator (this.map.mapDimension);
+		bullyInstructionGenerator = new BullyInstructionGenerator (this.map);
 		bullyInstructionGenerator.setGameObjectParent (aiGroupGameObject.transform);
 
 		loadTiles (tilesLayer);
@@ -139,6 +139,7 @@ public class MapLoader {
 		int tileHeight = Int32.Parse(mapElement.Attribute ("tileheight").Value);
 		this.map.mapDimension = new Dimension (width,height);
 		this.map.tileDimension = new Dimension (tileWidth,tileHeight);
+        this.map.pathingMap = BoolArray.generateBoolArrayArray(width,height);
 	}
 
 

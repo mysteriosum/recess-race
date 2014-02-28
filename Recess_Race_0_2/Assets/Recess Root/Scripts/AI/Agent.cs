@@ -50,7 +50,9 @@ public class Agent : Movable {
 
     private void handlePlateform(Plateform plateform) {
         debugLog("found an instruction");
-        switchTo( AgentAi.generateMove(this, plateform) );
+        Plateform getToPlateform = AgentPlateformFinder.generateMove(this, plateform);
+        Instruction intructionsToGetThere = AgentInstructionGenerator.findInstruction(this, plateform, getToPlateform);
+        switchTo(intructionsToGetThere);
     }
 
 

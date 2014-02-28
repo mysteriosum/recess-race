@@ -47,10 +47,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Recess Root\Scripts\AI\Agent.cs" />
-     <Compile Include="Assets\Recess Root\Scripts\AI\AgentAi.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\AI\AgentInstructionGenerator.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\AI\AgentPlateformFinder.cs" />
      <Compile Include="Assets\Recess Root\Scripts\AI\Instructions\Instruction.cs" />
      <Compile Include="Assets\Recess Root\Scripts\AI\Instructions\JumpInstruction.cs" />
      <Compile Include="Assets\Recess Root\Scripts\AI\Instructions\RunToInstruction.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\AI\JumpPathingMaps.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Avatar\Fitz.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Base\DamageScript.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Base\Movable.cs" />
@@ -75,6 +77,7 @@
      <Compile Include="Assets\Recess Root\Scripts\Management\RecessCamera.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Map.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Map\Plateform.cs" />
+     <Compile Include="Assets\Recess Root\Scripts\Static\BoolArray.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\Dimension.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\FileUtils.cs" />
      <Compile Include="Assets\Recess Root\Scripts\Static\GameObjectFactory.cs" />

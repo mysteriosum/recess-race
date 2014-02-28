@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class LightoutCollision : MonoBehaviour {
 
     public bool reset;
-    //private List<LightoutBox> boxs = new List<LightoutBox>();
 
     public int width;
     public int height;
@@ -33,6 +32,7 @@ public class LightoutCollision : MonoBehaviour {
             box.resetColor();
         }
     }
+
 }
 
 

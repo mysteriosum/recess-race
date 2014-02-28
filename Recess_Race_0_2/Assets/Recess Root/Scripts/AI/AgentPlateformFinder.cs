@@ -2,32 +2,13 @@
 using System.Collections;
 using System.Linq;
 
-public class AgentAi {
-
-    private static float RunToEpsilon = 0.2f;
-    private static float JumpToEpsilon = 3f;
-	public static Instruction generateMove(Agent agent, Plateform plateform){
-        Plateform to = findNextPlateformToGetToNextWayPoint(agent,plateform);
-		/*if (Mathf.Abs(to.transform.position.y - agent.transform.position.y) < 1) {
-			BullyInstructionConfiguration config = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
-           // return new 
-			//NextJump nextJump = new NextJump(config, 5f);
-			//nextJump.walkDistance = 1;
-			//nextJump.holdLength = 10;
-			//return nextJump;
-		}*/
-
-        Instruction run = new RunToInstruction(agent, plateform.getRightCornerPosition(), RunToEpsilon);
-        Instruction jump = new JumpInstruction(agent, to.getLeftCornerPosition(), JumpToEpsilon);
-        run.nextInstruction = jump;
-        return run;
-	}
+public class AgentPlateformFinder {
 
     private static int trys = 0;
     private static int currentDepth;
     private static int maxDepth = 3;
 
-    private static Plateform findNextPlateformToGetToNextWayPoint(Agent agent, Plateform plateform) {
+    public static Plateform generateMove(Agent agent, Plateform plateform) {
         trys = 0;
         Plateform minPlateform = null;
         int min = maxDepth;

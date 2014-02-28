@@ -21,14 +21,14 @@ public class BullyInstructionGenerator {
 
     private int nextTileId = 0;
 
-	private bool[,] pathingMap;
     private Dimension mapDimension;
+    private Map map;
 
-	public BullyInstructionGenerator(Dimension mapDimension){
-        this.mapDimension = mapDimension;
+	public BullyInstructionGenerator(Map map){
+        this.mapDimension = map.mapDimension;
+        this.map = map;
         tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
 		plateforms = new List<Plateform> ();
-		pathingMap = new bool[mapDimension.width,mapDimension.height];
 	}
 
 	public void setGameObjectParent(Transform parent){
@@ -44,7 +44,7 @@ public class BullyInstructionGenerator {
 	}
 
 	public void addTile(int x, int y, int id){
-        this.pathingMap[x, y] = true;
+        this.map.pathingMap[x][y] = true;
 
 		if (!workingOnATile) {
             prepareNextTile(x, y);
@@ -63,7 +63,7 @@ public class BullyInstructionGenerator {
 
     private bool tileOver(int x, int y)
     {
-        return y != mapDimension.height-1 && pathingMap[x, y + 1];
+        return y != mapDimension.height-1 && map.pathingMap[x][y + 1];
     }
 
     private void prepareNextTile(int x, int y)
