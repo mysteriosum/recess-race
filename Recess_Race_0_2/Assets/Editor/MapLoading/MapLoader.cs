@@ -56,6 +56,7 @@ public class MapLoader {
 
         loadTennisBalls();
         loadGarbage();
+		loadQuestionMark ();
 	}
 
     private void loadAssets() {
@@ -65,9 +66,9 @@ public class MapLoader {
 
     private void loadTennisBalls() {
         GameObject tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
-        IEnumerable<XElement> tennisBalls = document.Elements().Descendants().Where(e => e.Name == "object" &&  e.Attribute("type") != null && e.Attribute("type").Value.Equals("TennisBall"));
-
+		IEnumerable<XElement> tennisBalls = document.Elements ().Descendants ().Where (e => e.Name == "objectgroup" && e.Attribute ("name").Value.Equals ("TenisBalls")).Descendants ();
         GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
+
         foreach (var element in tennisBalls) {
             int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
             int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
@@ -91,8 +92,7 @@ public class MapLoader {
 
     private void loadGarbage() {
         GameObject garbagePrefab = Resources.Load<GameObject>("Objects/Garbage");
-        IEnumerable<XElement> garbages = document.Elements().Descendants().Where(e => e.Name == "object" && e.Attribute("type") != null && e.Attribute("type").Value.Equals("Garbage"));
-
+		IEnumerable<XElement> garbages = document.Elements ().Descendants ().Where (e => e.Name == "objectgroup" && e.Attribute ("name").Value.Equals ("Garbages")).Descendants ();
         GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject);
         foreach (var element in garbages) {
             int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
@@ -100,7 +100,19 @@ public class MapLoader {
             GameObject garbage = GameObjectFactory.createCopyGameObject(garbagePrefab, "Garbage", GarbageParent);
             garbage.transform.Translate(x, y, 0);
         }
-    }
+	}
+	
+	private void loadQuestionMark() {
+		GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
+		IEnumerable<XElement> garbages = document.Elements ().Descendants ().Where (e => e.Name == "objectgroup" && e.Attribute ("name").Value.Equals ("QuestionMarks")).Descendants ();
+		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject);
+		foreach (var element in garbages) {
+			int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
+			int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "Garbage", questionMarkParent);
+			garbage.transform.Translate(x, y, 0);
+		}
+	}
 
 	private void createEmptyWorld(){
 		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);
