@@ -39,6 +39,11 @@ public class Fitz : Movable {
 	private float ottoTiming						= 20f;
 	
 	private float itemTimer							= 0;
+	
+	private GameObject pinkyAnim;
+	private GameObject boogerAnim;
+	private GameObject ottoAnim;
+	
 	//--------------------------------------------------------------------------\\
 	//-----------------------movement property overrides------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -164,6 +169,21 @@ public class Fitz : Movable {
 		base.Start();
 		
 		ball = Resources.Load("devBall");
+		
+		foreach(Transform anims in GetComponentsInChildren<Transform>()){
+			if (anims.name.Contains ("Pinky")){
+				pinkyAnim = anims.gameObject;
+				pinkyAnim.SetActive (false);
+			}
+			if (anims.name.Contains ("BoogerBoy")){
+				boogerAnim = anims.gameObject;
+				boogerAnim.SetActive (false);
+			}
+			if (anims.name.Contains ("Otto")){
+				ottoAnim = anims.gameObject;
+				ottoAnim.SetActive (false);
+			}
+		}
 	}
 	
 	//--------------------------------------------------------------------------\\
@@ -248,6 +268,7 @@ public class Fitz : Movable {
 				controller.ResetJumpInput();
 				spinFalling = true;
 				itemTimer -= propellerTimePenalty;
+				anim.Play (a.jump);
 			}
 			if (propelTimer > 0){
 				propelTimer -= Time.deltaTime;
@@ -311,8 +332,14 @@ public class Fitz : Movable {
 		pinky = true;
 		otto = false;
 		boogerBoy = false;
+		pinkyAnim.SetActive (true);
+		boogerAnim.SetActive(false);
+		ottoAnim.SetActive(false);
+		renderer.enabled = true;
 		//TEMP
-		r.color = new Color(0.8f, 0, 0.5f, 1f);
+		//r.color = new Color(0.8f, 0, 0.5f, 1f);
+		
+		
 		Invoke("ChangeToFitz", pinkyTiming);
 	}
 	
@@ -321,7 +348,11 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = false;
 		boogerBoy = true;
-		r.color = new Color(0.1f, 0.9f, 0.25f, 1f);
+		pinkyAnim.SetActive (false);
+		boogerAnim.SetActive(true);
+		ottoAnim.SetActive(false);
+		renderer.enabled = false;
+		//r.color = new Color(0.1f, 0.9f, 0.25f, 1f);
 		Invoke("ChangeToFitz", boogerBoyTiming);
 	}
 	
@@ -330,7 +361,11 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = true;
 		boogerBoy = false;
-		r.color = new Color(0.18f, 0.18f, 0.18f, 1f);
+		pinkyAnim.SetActive (false);
+		boogerAnim.SetActive(false);
+		ottoAnim.SetActive(true);
+		renderer.enabled = false;
+		//r.color = new Color(0.18f, 0.18f, 0.18f, 1f);
 		Invoke("ChangeToFitz", ottoTiming);
 	}
 	
@@ -338,7 +373,11 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = false;
 		boogerBoy = false;
-		r.color = Color.white;
+		pinkyAnim.SetActive (false);
+		boogerAnim.SetActive(false);
+		ottoAnim.SetActive(false);
+		renderer.enabled = true;
+		//r.color = Color.white;
 	}
 	
 	protected override Vector2 Move (Vector2 currentVelocity, float input)

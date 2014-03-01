@@ -1,0 +1,202 @@
+fileFormatVersion: 2
+guid: 66489fb5309b60548890678a215c52b6
+TextureImporter:
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spritePixelsToUnits: 110
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings:
+  - buildTarget: iPhone
+    maxTextureSize: 1024
+    textureFormat: -2
+    compressionQuality: 50
+  spriteSheet:
+    sprites:
+    - name: Sprites-OttoCoat_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 418
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_1
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 418
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_3
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_4
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_5
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_6
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_7
+      rect:
+        serializedVersion: 2
+        x: 1045
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_8
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_9
+      rect:
+        serializedVersion: 2
+        x: 1463
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_10
+      rect:
+        serializedVersion: 2
+        x: 1672
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_11
+      rect:
+        serializedVersion: 2
+        x: 1881
+        y: 209
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_13
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 0
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_14
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 0
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_15
+      rect:
+        serializedVersion: 2
+        x: 1045
+        y: 0
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+    - name: Sprites-OttoCoat_16
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 0
+        width: 209
+        height: 209
+      alignment: 7
+      pivot: {x: 0, y: 0}
+  spritePackingTag: 
+  userData: 

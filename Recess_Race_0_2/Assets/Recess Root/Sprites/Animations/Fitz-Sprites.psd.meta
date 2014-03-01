@@ -35,7 +35,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: .5, y: .5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 110
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings:
@@ -52,7 +52,7 @@ TextureImporter:
         y: 418
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_1
       rect:
@@ -61,7 +61,7 @@ TextureImporter:
         y: 418
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_2
       rect:
@@ -70,7 +70,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_3
       rect:
@@ -79,7 +79,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_4
       rect:
@@ -88,7 +88,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_5
       rect:
@@ -97,7 +97,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_6
       rect:
@@ -106,7 +106,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_7
       rect:
@@ -115,7 +115,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_8
       rect:
@@ -124,7 +124,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_9
       rect:
@@ -133,7 +133,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_10
       rect:
@@ -142,7 +142,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_11
       rect:
@@ -151,7 +151,7 @@ TextureImporter:
         y: 209
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_12
       rect:
@@ -160,7 +160,7 @@ TextureImporter:
         y: 0
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_13
       rect:
@@ -169,7 +169,7 @@ TextureImporter:
         y: 0
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_14
       rect:
@@ -178,7 +178,7 @@ TextureImporter:
         y: 0
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
     - name: Fitz-Sprites_15
       rect:
@@ -187,7 +187,7 @@ TextureImporter:
         y: 0
         width: 209
         height: 209
-      alignment: 0
+      alignment: 7
       pivot: {x: 0, y: 0}
   spritePackingTag: 
   userData: 
