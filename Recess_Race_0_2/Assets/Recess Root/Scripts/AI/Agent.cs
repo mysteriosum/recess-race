@@ -35,7 +35,9 @@ public class Agent : Movable {
 		AgentInstructionTrigger instruction = other.GetComponent<AgentInstructionTrigger>();
         Plateform plateform = other.GetComponent<Plateform>();
         if (instruction) {
-			switchTo(instruction.getInstruction(this));
+            if (currentInstruction == null) {
+                switchTo(instruction.getInstruction(this));
+            }
         } else if (plateform) {
             if (lastPlateform != null && lastPlateform.id == plateform.id) return;
             lastPlateform = plateform;
