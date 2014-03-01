@@ -18,14 +18,16 @@ public class Fitz : Movable {
 	private float propelGravMod						= -1.35f;
 	private bool spinFalling						= false;
 	private float spinFallMod						= 0.5f;
-	private float spinFallMoveMod					= 0.70f;
+	private float spinFallMoveMod					= 0.575f;
 	readonly private float propelTiming				= 0.3f;
 	private float propelTimer						= 0f;
 	private float propellerTimePenalty				= 0.25f;
 	
 	private bool boogerBoy							= false;
 	private float boogerBoySecToMax					= 0.158f;
+	private float bBoyDecelMod						= 2.0f;
 	private float boogerBoyTiming					= 18f;
+	private float bBoySpeedMod						= 0.85f;
 	private bool wallHanging						= false;
 	private float wallHangFallMod					= 0.15f;
 	private float wallJumpLockTiming				= 0.15f;
@@ -88,6 +90,9 @@ public class Fitz : Movable {
 			if (pinky){
 				return base.MaxSpeed * (spinFalling? spinFallMoveMod : 1);
 			}
+			if (boogerBoy){
+				return base.MaxSpeed * bBoySpeedMod;
+			}
 			return base.MaxSpeed;
 		}
 	}
@@ -109,6 +114,12 @@ public class Fitz : Movable {
 				return boogerBoySecToMax;
 			}
 			return base.SecondsToMax;
+		}
+	}
+	
+	protected override float Deceleration {
+		get {
+			return base.Deceleration * (boogerBoy? bBoyDecelMod : 1);
 		}
 	}
 	
@@ -287,7 +298,6 @@ public class Fitz : Movable {
 	//--------------------------------------------------------------------------\\
 		if (boogerBoy){
 			if (controller.getJumpDown && wallHanging){
-				Debug.Log("Wall jump!");
 				wallJumpInput = HorizontalInput * -1;
 				wallJumpLockTimer = wallJumpLockTiming;
 				velocity = new Vector2(MaxSpeed * wallJumpInput, JumpImpulse);

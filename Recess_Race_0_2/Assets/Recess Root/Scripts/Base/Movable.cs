@@ -26,6 +26,8 @@ public class Movable : MonoBehaviour {
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
+	protected float maxWalkAnimMultiplier				= 1.5f;
+	
 	//angles and slopes
 	float angleLeeway = 5f;
 	
@@ -295,6 +297,7 @@ public class Movable : MonoBehaviour {
 			t.localScale = new Vector3(input > 0? 1 : -1, 1, 1);
 			if (animated && grounded){
 				anim.Play(a.walk);
+				anim.speed = Mathf.Lerp(MaxSpeed * maxWalkAnimMultiplier, MaxSpeed, Mathf.Abs(newX) / MaxSpeed)/ MaxSpeed;
 			}
 		} else if (animated && grounded && !hurt){
 			anim.Play(a.idle);
