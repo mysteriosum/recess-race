@@ -26,6 +26,8 @@ public class Movable : MonoBehaviour {
 	
 	protected float headHitVelocityMod					= 0.33f;
 	
+	protected float maxWalkAnimMultiplier				= 1.5f;
+	
 	//angles and slopes
 	float angleLeeway = 5f;
 	
@@ -226,7 +228,9 @@ public class Movable : MonoBehaviour {
 				//t.position = Vector2.Lerp (downRays[lastConnection].point, pos, downRays[lastConnection].fraction);
 				//t.position = new Vector2(t.position.x, downRays[lastConnection].point.y + box.height/2);
 				velocity = new Vector2(velocity.x, 0);
-				extraMove += new Vector2(0, -downRays[lastConnection].fraction * (downRayLength));
+				extraMove += new Vector2(0, downRays[lastConnection].point.y - box.yMin);
+//				extraMove += new Vector2(0, (downRayLength + box.height/2) * -(1 - downRays[lastConnection].fraction));
+				//t.position = new Vector3(t.position.x + bc.center.x, downRays[lastConnection].point.y + bc.center.y - bc.size.y/2, t.position.z);
 				grounded = true;
 				falling = false;
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
@@ -264,7 +268,7 @@ public class Movable : MonoBehaviour {
 			
 			if (connection){
 				velocity = new Vector2(velocity.x, -velocity.y * HeadHitMod);
-				extraMove += new Vector2(0, upRays[lastConnection].point.y - (t.position.y + box.height/2));
+				extraMove += new Vector2(0, upRays[lastConnection].point.y - box.yMax);
 				SendMessage("OnHeadHit", SendMessageOptions.DontRequireReceiver);
 			}
 		}
@@ -293,6 +297,7 @@ public class Movable : MonoBehaviour {
 			t.localScale = new Vector3(input > 0? 1 : -1, 1, 1);
 			if (animated && grounded){
 				anim.Play(a.walk);
+				anim.speed = Mathf.Lerp(MaxSpeed * maxWalkAnimMultiplier, MaxSpeed, Mathf.Abs(newX) / MaxSpeed)/ MaxSpeed;
 			}
 		} else if (animated && grounded && !hurt){
 			anim.Play(a.idle);
