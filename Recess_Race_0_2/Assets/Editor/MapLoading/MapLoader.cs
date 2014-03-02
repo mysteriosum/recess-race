@@ -72,8 +72,8 @@ public class MapLoader {
         GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
 
         foreach (var element in tennisBalls) {
-            int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
-            int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            float x = (float) parse(element.Attribute("x").Value) / map.tileDimension.width;
+            float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
             GameObject tennisBall = GameObjectFactory.createCopyGameObject(tennisBallPrefab, "Tennis Ball", tennisBallParent);
             tennisBall.transform.Translate(x,y,0);
             string value;
@@ -104,8 +104,8 @@ public class MapLoader {
         IEnumerable<XElement> garbages = getAllObjectFromObjectGroup("Garbages");
         GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject);
         foreach (var element in garbages) {
-            int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
-            int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            float x = (float) parse(element.Attribute("x").Value) / map.tileDimension.width;
+            float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
             GameObject garbage = GameObjectFactory.createCopyGameObject(garbagePrefab, "Garbage", GarbageParent);
             garbage.transform.Translate(x, y, 0);
         }
@@ -116,8 +116,8 @@ public class MapLoader {
         IEnumerable<XElement> questionMarks = getAllObjectFromObjectGroup("QuestionMarks");
 		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject);
 		foreach (var element in questionMarks) {
-			int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
-			int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            float x = (float)parse(element.Attribute("x").Value) / map.tileDimension.width;
+            float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
 			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "Garbage", questionMarkParent);
 			garbage.transform.Translate(x, y, 0);
 		}
