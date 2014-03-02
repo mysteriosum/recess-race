@@ -125,22 +125,22 @@
   </object>
  </objectgroup>
  <objectgroup name="TennisBalls" width="100" height="100">
-  <object type="TennisBall" x="704" y="3045">
+  <object x="704" y="3045">
    <properties>
     <property name="direction" value="up"/>
    </properties>
   </object>
-  <object type="TennisBall" x="751" y="3045">
+  <object x="751" y="3045">
    <properties>
     <property name="direction" value="up"/>
    </properties>
   </object>
-  <object type="TennisBall" x="454" y="3055">
+  <object x="454" y="3055">
    <properties>
     <property name="direction" value="up"/>
    </properties>
   </object>
-  <object type="TennisBall" x="258" y="3059">
+  <object x="258" y="3059">
    <properties>
     <property name="direction" value="up"/>
    </properties>

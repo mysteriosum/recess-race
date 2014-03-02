@@ -86,7 +86,7 @@ public class BullyInstructionGenerator {
     {
         if (!workingOnATile) return;
 		GameObject newTileHover = (GameObject)GameObject.Instantiate (this.tileHoverPrefab);
-		newTileHover.name = "Plateform";
+        newTileHover.name = "Plateform " + nextTileId;
 		newTileHover.transform.parent = plateformGroupParent;
 		float width = tileMaxX - tileMinX;
 		float center = width/2;
@@ -161,7 +161,7 @@ public class BullyInstructionGenerator {
 			Bounds plateformBound = plateform.getBound();
 			if(bound.Intersects(plateformBound)){
 				var spriteRenderer = plateform.transform.gameObject.GetComponent<SpriteRenderer>();
-				plateform.transform.gameObject.name = "Plateform (wp #" + id + ")";
+				plateform.transform.gameObject.name = "Plateform " + plateform.id + " - wp #" + id + "";
 				plateform.waypointId = id;
 				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
 				/*if(id == 1){
@@ -189,7 +189,28 @@ public class BullyInstructionGenerator {
 			if(plateform.Equals(p)) continue;
 
 			if(canReach(plateform, p)){
-				plateform.linkedPlateform.Add(p);
+                for (float x = plateform.getLeftCornerPosition().x; x < plateform.getLeftCornerPosition().x + plateform.getWidth(); x++) {
+                    Vector3 from = new Vector3(x, plateform.transform.position.y, plateform.transform.position.z);
+                    for (float x2 = p.getLeftCornerPosition().x; x2 < p.getLeftCornerPosition().x + p.getWidth(); x2++) {
+                        Vector3 to = new Vector3(x2, p.transform.position.y, p.transform.position.z);
+                        int distanceX = (int)(to.x - from.x);
+                        int distanceY = (int)(to.y - from.y);
+                        if (distanceX < 0 || distanceY < 0 || distanceX == 0) continue;
+                        if (distanceX > 13) continue;
+                        if (Mathf.Abs(distanceX) > 13 || Mathf.Abs(distanceY) > 6) continue;
+
+                        bool[,] pathingMap = this.map.split(from, new Dimension(13, 6));
+                        //Debug.Log(distanceX + "," + distanceY);
+                        List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
+                        if (possibleJumps == null) continue;
+                        foreach (var jump in possibleJumps) {
+                            if (!jump.jumpingPath.collideWith(pathingMap)) {
+                                plateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
+                            }
+
+                        }
+                    }
+                }
 			}
 		}
 	}

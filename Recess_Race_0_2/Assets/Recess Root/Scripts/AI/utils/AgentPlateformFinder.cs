@@ -13,16 +13,16 @@ public class AgentPlateformFinder {
         Plateform minPlateform = null;
         int min = maxDepth;
         int targetWayPointId = agent.currentWayPoint + 1;
-        foreach (var p in plateform.linkedPlateform) {
-            if (p.waypointId == targetWayPointId) {
+        foreach (var link in plateform.linkedJumpPlateform) {
+            if (link.plateform.waypointId == targetWayPointId) {
                 min = 1;
-                minPlateform = p;
+                minPlateform = link.plateform;
                 break;
             }
-            int minForP = findHowManyMoveToWayPoint(p, targetWayPointId);
+            int minForP = findHowManyMoveToWayPoint(link.plateform, targetWayPointId);
             if (minForP < min) {
                 min = minForP;
-                minPlateform = p;
+                minPlateform = link.plateform;
             }
         }
         Debug.Log("From plateform #" + plateform.id + " to wp #" + targetWayPointId + " in " + min + " jumps (trys " + trys + ").");
@@ -37,16 +37,16 @@ public class AgentPlateformFinder {
         if (currentDepth++ >= maxDepth) {
             currentDepth--;
             return maxDepth;
-        } 
+        }
         int min = maxDepth;
-        foreach (var plateform in from.linkedPlateform) {
-            if (from.id == plateform.id) {
+        foreach (var link in from.linkedJumpPlateform) {
+            if (from.id == link.plateform.id) {
                 continue;
-            }else if (plateform.waypointId == targetWayPointId) {
+            } else if (link.plateform.waypointId == targetWayPointId) {
                 currentDepth--;
                 return 1;
             } else {
-                int nb = findHowManyMoveToWayPoint(plateform, targetWayPointId);
+                int nb = findHowManyMoveToWayPoint(link.plateform, targetWayPointId);
                 min = Mathf.Min(nb, min);
             }
         }

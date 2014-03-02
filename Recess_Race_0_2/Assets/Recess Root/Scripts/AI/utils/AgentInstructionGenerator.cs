@@ -16,7 +16,7 @@ public class AgentInstructionGenerator {
         // printBoolArray(pathing);
         Instruction instruction = null;
 
-        if(distanceEgal(from,to,12) && doesntInterfer(pathing, JumpPathingMaps.fullJump)){
+        if(distanceEgal(from,to,12) /*&& doesntInterfer(pathing, JumpPathingMaps.jump_x12_y0)*/){
             instruction = new RunToInstruction(agent, from.getRightCornerPosition(), RunToEpsilon);
 			Direction direction = (to.transform.position.x > from.transform.position.x) ? Direction.left : Direction.right;
             Instruction jump = new JumpInstruction(agent, direction, JumpToEpsilon);

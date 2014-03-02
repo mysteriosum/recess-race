@@ -68,7 +68,7 @@ public class MapLoader {
 
     private void loadTennisBalls() {
         GameObject tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
-		IEnumerable<XElement> tennisBalls = document.Elements ().Descendants ().Where (e => e.Name == "objectgroup" && e.Attribute ("name").Value.Equals ("TenisBalls")).Descendants ();
+        IEnumerable<XElement> tennisBalls = document.Elements().Descendants("objectgroup").Where(e => e.Attribute("name").Value.Equals("TennisBalls")).Descendants("object");
         GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
 
         foreach (var element in tennisBalls) {
@@ -94,7 +94,7 @@ public class MapLoader {
 
     private void loadGarbage() {
         GameObject garbagePrefab = Resources.Load<GameObject>("Objects/Garbage");
-		IEnumerable<XElement> garbages = document.Elements ().Descendants ().Where (e => e.Name == "objectgroup" && e.Attribute ("name").Value.Equals ("Garbages")).Descendants ();
+        IEnumerable<XElement> garbages = document.Elements().Descendants("objectgroup").Where(e => e.Attribute("name").Value.Equals("Garbages")).Descendants("object");
         GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject);
         foreach (var element in garbages) {
             int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
@@ -106,9 +106,9 @@ public class MapLoader {
 	
 	private void loadQuestionMark() {
 		GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
-		IEnumerable<XElement> garbages = document.Elements ().Descendants ().Where (e => e.Name == "objectgroup" && e.Attribute ("name").Value.Equals ("QuestionMarks")).Descendants ();
+        IEnumerable<XElement> questionMarks = document.Elements().Descendants("objectgroup").Where(e => e.Attribute("name").Value.Equals("QuestionMarks")).Descendants("object");
 		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject);
-		foreach (var element in garbages) {
+		foreach (var element in questionMarks) {
 			int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
 			int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
 			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "Garbage", questionMarkParent);
