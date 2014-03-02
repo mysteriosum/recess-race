@@ -32,7 +32,6 @@ public class JumpInstruction : Instruction {
 
 
     public override void update() {
-        Debug.Log(Mathf.Abs(startX - agent.transform.position.x));
 		if (moving && Mathf.Abs (startX - agent.transform.position.x) >= moveLenght) {
 			moving = false;
 			agent.setMovingStrenght(0);

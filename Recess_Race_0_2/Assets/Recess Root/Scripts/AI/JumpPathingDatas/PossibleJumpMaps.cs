@@ -27,7 +27,15 @@ public class PossibleJumpMaps {
         possibles[7, 0] = list7_0;
 
         List<JumpRunCreationData> list5_1 = new List<JumpRunCreationData>();
-        list5_1.Add(new JumpRunCreationData(0f, 5f, JumpPathingMaps.jump_x5_y1));
+        list5_1.Add(new JumpRunCreationData(0f, 2.8f, JumpPathingMaps.jump_x5_y1));
         possibles[5, 1] = list5_1;
+
+        List<JumpRunCreationData> list5_2 = new List<JumpRunCreationData>();
+        list5_2.Add(new JumpRunCreationData(0f, 2.5f, JumpPathingMaps.jump_x5_y2));
+        possibles[5, 2] = list5_2;
+
+        List<JumpRunCreationData> list6_2 = new List<JumpRunCreationData>();
+        list6_2.Add(new JumpRunCreationData(0f, 3.5f, JumpPathingMaps.jump_x6_y2));
+        possibles[6, 2] = list6_2;
     }
 }

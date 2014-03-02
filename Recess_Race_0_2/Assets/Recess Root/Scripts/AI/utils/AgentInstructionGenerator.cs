@@ -9,19 +9,19 @@ public class AgentInstructionGenerator {
     private static Map map;
 
 
-    public static Instruction findInstruction(Agent agent, Plateform from, Plateform to) {
+    public static Instruction findInstruction(Agent agent, Plateform from, LinkedJumpPlateform to) {
         if (map == null) map = (Map) GameObject.FindObjectOfType<Map>();
 
         bool[,] pathing = map.split(from.getRightCornerPosition(), new Dimension(13, 7));
         // printBoolArray(pathing);
         Instruction instruction = null;
 
-        if(distanceEgal(from,to,12) /*&& doesntInterfer(pathing, JumpPathingMaps.jump_x12_y0)*/){
-            instruction = new RunToInstruction(agent, from.getRightCornerPosition(), RunToEpsilon);
+        /*if(distanceEgal(from,to,12) /*&& doesntInterfer(pathing, JumpPathingMaps.jump_x12_y0)*//*){
+           /* instruction = new RunToInstruction(agent, from.getRightCornerPosition(), RunToEpsilon);
 			Direction direction = (to.transform.position.x > from.transform.position.x) ? Direction.left : Direction.right;
             Instruction jump = new JumpInstruction(agent, direction, JumpToEpsilon);
             instruction.nextInstruction = jump;
-        }
+        }*/
         
         return instruction;
     }

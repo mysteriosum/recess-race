@@ -55,8 +55,8 @@ public class MapLoader {
 		bullyInstructionGenerator.loadWaypoints (waypoints, this.map);
 		bullyInstructionGenerator.linkPlateforms ();
 
-        loadTennisBalls();
         loadGarbage();
+        loadTennisBalls();
 		loadQuestionMark ();
 		print ("Done");
 	}
@@ -68,7 +68,7 @@ public class MapLoader {
 
     private void loadTennisBalls() {
         GameObject tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
-        IEnumerable<XElement> tennisBalls = document.Elements().Descendants("objectgroup").Where(e => e.Attribute("name").Value.Equals("TennisBalls")).Descendants("object");
+        IEnumerable<XElement> tennisBalls = getAllObjectFromObjectGroup("TennisBalls");
         GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
 
         foreach (var element in tennisBalls) {
@@ -76,7 +76,14 @@ public class MapLoader {
             int y = map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
             GameObject tennisBall = GameObjectFactory.createCopyGameObject(tennisBallPrefab, "Tennis Ball", tennisBallParent);
             tennisBall.transform.Translate(x,y,0);
-            string value = element.Elements().Descendants().First(e => e.Name == "property" && e.Attribute("name").Value.Equals("direction")).Attribute("value").Value;
+            string value;
+            try {
+                value = element.Elements().Descendants().First(e => e.Name == "property" && e.Attribute("name").Value.Equals("direction")).Attribute("value").Value;
+            }catch(InvalidOperationException){
+                Debug.LogError("MapLoader : Tennis ball without direction attribute! (" + x + element.Attribute("x").Value + "," + element.Attribute("y").Value + ")");
+                continue;
+            }
+            
             DirectionsEnum direction = DirectionsEnum.up;
             if (value == "up") {
                 direction = DirectionsEnum.up;
@@ -94,7 +101,7 @@ public class MapLoader {
 
     private void loadGarbage() {
         GameObject garbagePrefab = Resources.Load<GameObject>("Objects/Garbage");
-        IEnumerable<XElement> garbages = document.Elements().Descendants("objectgroup").Where(e => e.Attribute("name").Value.Equals("Garbages")).Descendants("object");
+        IEnumerable<XElement> garbages = getAllObjectFromObjectGroup("Garbages");
         GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject);
         foreach (var element in garbages) {
             int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
@@ -105,8 +112,8 @@ public class MapLoader {
 	}
 	
 	private void loadQuestionMark() {
-		GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
-        IEnumerable<XElement> questionMarks = document.Elements().Descendants("objectgroup").Where(e => e.Attribute("name").Value.Equals("QuestionMarks")).Descendants("object");
+        GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
+        IEnumerable<XElement> questionMarks = getAllObjectFromObjectGroup("QuestionMarks");
 		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject);
 		foreach (var element in questionMarks) {
 			int x = parse(element.Attribute("x").Value) / map.tileDimension.width;
@@ -115,6 +122,10 @@ public class MapLoader {
 			garbage.transform.Translate(x, y, 0);
 		}
 	}
+
+    private IEnumerable<XElement> getAllObjectFromObjectGroup(string name) {
+        return document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == name).Descendants().Where(e => e.Name == "object");
+    }
 
 	private void createEmptyWorld(){
 		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);

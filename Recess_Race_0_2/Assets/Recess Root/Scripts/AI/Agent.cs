@@ -51,10 +51,13 @@ public class Agent : Movable {
 
 
     private void handlePlateform(Plateform plateform) {
-        debugLog("found an instruction");
-        Plateform getToPlateform = AgentPlateformFinder.generateMove(this, plateform);
-        Instruction intructionsToGetThere = AgentInstructionGenerator.findInstruction(this, plateform, getToPlateform);
-        switchTo(intructionsToGetThere);
+        LinkedJumpPlateform getToPlateform = AgentPlateformFinder.generateMove(this, plateform);
+        if (getToPlateform == null) {
+            Debug.LogError("No More jump Possible for agent : " + this.name);
+        } else {
+            Instruction intructionsToGetThere = InstructionFactory.makeRunJump(this, getToPlateform.jumpStart, getToPlateform.data);
+            switchTo(intructionsToGetThere);
+        }
     }
 
 
@@ -75,6 +78,13 @@ public class Agent : Movable {
 
     public void stopJumping() {
         controller.getJump = false;
+    }
+    public float getXSpeed() {
+        return this.velocity.x;
+    }
+
+    public float getMaxXSpeed() {
+        return this.maxSpeed;
     }
 
    /* protected override Vector2 Jump(Vector2 currentVelocity, float amount) {

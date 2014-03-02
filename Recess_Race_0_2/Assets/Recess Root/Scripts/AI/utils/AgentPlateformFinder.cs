@@ -8,26 +8,32 @@ public class AgentPlateformFinder {
     private static int currentDepth;
     private static int maxDepth = 3;
 
-    public static Plateform generateMove(Agent agent, Plateform plateform) {
+    public static LinkedJumpPlateform generateMove(Agent agent, Plateform plateform) {
         trys = 0;
-        Plateform minPlateform = null;
+        LinkedJumpPlateform minPlateform = null;
         int min = maxDepth;
         int targetWayPointId = agent.currentWayPoint + 1;
         foreach (var link in plateform.linkedJumpPlateform) {
+            float runningAccelerationThreachhold = 0.9f - 0.8f * (agent.getXSpeed() / agent.getMaxXSpeed());
+            if (runningAccelerationThreachhold < 0) runningAccelerationThreachhold = 0.1f; 
+            if (Mathf.Abs(link.jumpStart.x - agent.transform.position.x) < runningAccelerationThreachhold) {
+                Debug.Log("Jump Tooo close distance " + Mathf.Abs(link.jumpStart.x - agent.transform.position.x) + " - Threshold " + runningAccelerationThreachhold);
+                continue;
+            }
             if (link.plateform.waypointId == targetWayPointId) {
                 min = 1;
-                minPlateform = link.plateform;
+                minPlateform = link;
                 break;
             }
             int minForP = findHowManyMoveToWayPoint(link.plateform, targetWayPointId);
             if (minForP < min) {
                 min = minForP;
-                minPlateform = link.plateform;
+                minPlateform = link;
             }
         }
         Debug.Log("From plateform #" + plateform.id + " to wp #" + targetWayPointId + " in " + min + " jumps (trys " + trys + ").");
         if (minPlateform != null) {
-            Debug.Log("use plateform #" + minPlateform.id);
+            Debug.Log("use plateform #" + minPlateform.plateform.id + " from " + minPlateform.jumpStart.ToString());
          }
         return minPlateform;
     }
