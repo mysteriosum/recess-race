@@ -37,9 +37,10 @@ public class Controller {
 	public bool locked;
 	
 	public float hAxis;
+	public float vAxis;
 	
 	private float hAxisLast = 0.0f;
-	//private float vAxisLast = 0.0f; //NeverUsed
+	private float vAxisLast = 0.0f;
 	private float getLLastTime = 0f;
 	private float getRLastTime = 0f;
 	private float doubleTapTime = 0.188f;
@@ -92,6 +93,21 @@ public class Controller {
 			getRLastTime = Time.time;
 		}
 		hAxisLast = hAxis;
+		
+	}
+	
+	public void CursorInput(){
+		vAxis = Input.GetAxis("Vertical");
+		
+		getD = vAxis < -0.3f;
+		getU = vAxis > 0.3f;
+		
+		getDDown = (vAxisLast < 0.3f && vAxisLast > -0.3f) && getD;
+		getUDown = (vAxisLast < 0.3f && vAxisLast > -0.3f) && getU;
+		
+		getDUp = vAxisLast < -0.3f && !getD;
+		getUUp = vAxisLast > 0.3f && !getU;
+		vAxisLast = vAxis;
 		
 	}
 	

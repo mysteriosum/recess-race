@@ -22,6 +22,7 @@ public class Fitz : Movable {
 	readonly private float propelTiming				= 0.3f;
 	private float propelTimer						= 0f;
 	private float propellerTimePenalty				= 0.25f;
+	private float pinkyDoubleJumpMode				= 0.5f;
 	
 	private bool boogerBoy							= false;
 	private float boogerBoySecToMax					= 0.158f;
@@ -99,8 +100,8 @@ public class Fitz : Movable {
 	
 	protected override float JumpImpulse {
 		get {
-			if (pinky || boogerBoy){
-				return jumpImpulse;
+			if (pinky){
+				return jumpImpulse * (spinFalling? pinkyDoubleJumpMode : 1);
 			}
 			else{
 				return base.JumpImpulse;
@@ -143,7 +144,21 @@ public class Fitz : Movable {
 		}
 	}
 	
+	public bool IsPinky {
+		get { return pinky; }
+	}
 	
+	public bool IsBoogerBoy {
+		get { return boogerBoy; }
+	}
+	
+	public bool IsOtto {
+		get { return otto; }
+	}
+	
+	public bool IsHurt {
+		get { return hurt; }
+	}
 	
 	//--------------------------------------------------------------------------\\
 	//-----------------------------Stunning/Damage------------------------------\\
@@ -273,13 +288,12 @@ public class Fitz : Movable {
 	//--------------------------------------------------------------------------\\
 		if (pinky){
 			if (controller.getJumpDown && !grounded){
-				velocity = new Vector2(velocity.x, 0);
-				propelling = true;
-				propelTimer = propelTiming;
+//				propelling = true;
+//				propelTimer = propelTiming;
 				controller.ResetJumpInput();
 				spinFalling = true;
+				velocity = Jump (velocity, JumpImpulse);
 				itemTimer -= propellerTimePenalty;
-				anim.Play (a.jump);
 			}
 			if (propelTimer > 0){
 				propelTimer -= Time.deltaTime;
@@ -467,10 +481,14 @@ public class Fitz : Movable {
 			if (anim){
 				anim.Play (a.hurt);
 			}
-			CanControl = false;
-			
-			stunTimer = dmgScript.StunDuration;
 			dmgScript.SendMessage("CollideWithFitz", t);
+			
+			if (boogerBoy){
+				return;
+			}
+			
+			CanControl = false;
+			stunTimer = dmgScript.StunDuration;
 			velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 		}
 	}

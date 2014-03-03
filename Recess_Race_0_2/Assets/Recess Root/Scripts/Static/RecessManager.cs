@@ -8,10 +8,14 @@ public class RecessManager {
 	private static float currentTime;
 	private static int highScore;
 	private static float bestTime = 0f;
+	private static int garbage = 0;
 	
-	public static int Score{
+	public static int Score {
 		get{ return score; }
 		set{ score = value; }
+	}
+	public static int GarbageCount {
+		get { return garbage; }
 	}
 	public static float CurrentTime{
 		get{ return currentTime; }
@@ -44,6 +48,7 @@ public class RecessManager {
 	
 	public static void AddGarbageToScore(){
 		score+= garbageValue;
+		garbage ++;
 	}
 	
 	public static void SaveStatistics(){
