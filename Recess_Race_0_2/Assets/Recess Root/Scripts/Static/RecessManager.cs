@@ -51,12 +51,18 @@ public class RecessManager {
 		garbage ++;
 	}
 	
-	public static void SaveStatistics(){
+	public static void SaveStatistics(bool eraseCurrent){
 		if (score > highScore){
 			PlayerPrefs.SetInt("highScore", score);
+			highScore = score;
 		}
 		if (currentTime < bestTime){
 			PlayerPrefs.SetFloat("bestTime", currentTime);
+			bestTime = currentTime;
+		}
+		if (eraseCurrent){
+			score = 0;
+			currentTime = 0;
 		}
 	}
 	

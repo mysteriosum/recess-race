@@ -35,6 +35,7 @@ public class RecessCamera : MonoBehaviour {
 	private float readyTime = 1.0f;
 	private float setTime = 2.0f;
 	private float goTime = 3.0f;
+	private float noMoreGoTime = 4.5f;
 	private float goTimer = 0;
 
 	private bool raceFinished = false;
@@ -200,7 +201,7 @@ public class RecessCamera : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		
-		if (!raceBegun){
+		if (goTimer < noMoreGoTime){
 			goTimer += Time.deltaTime;
 			
 			if (goTimer > goTime){
@@ -213,7 +214,7 @@ public class RecessCamera : MonoBehaviour {
 		
 		
 		Vector3 forepos = t.position;
-		if (fitzNode != null){
+		if (fitzNode != null && raceBegun){
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , t.position.z);
 			t.position = Vector3.Lerp(t.position, target, lerpAmount);
 		}
@@ -236,8 +237,9 @@ public class RecessCamera : MonoBehaviour {
 			}
 		}
 		
-		
-		RecessManager.CurrentTime += Time.deltaTime;
+		if (raceBegun && !raceFinished){
+			RecessManager.CurrentTime += Time.deltaTime;
+		}
 		if (raceFinished){
 			finishedTimer += Time.deltaTime;
 		}
@@ -245,6 +247,28 @@ public class RecessCamera : MonoBehaviour {
 	}
 	
 	void OnGUI(){
+		if (goTimer < noMoreGoTime){
+			
+			
+			if (goTimer > readyTime){
+				string goText = "Ready...";
+				Texture2D goTexture = hud.ready;
+				if (goTimer > setTime){
+					goTexture = hud.getSet;
+					goText = "Set...";
+				}
+				if (goTimer > goTime){
+					goTexture = hud.go;
+					goText = "GO!";
+				}
+				float gotexWidth = Screen.width * 0.42f;
+				float gotexHeight = Screen.height * 0.4f;
+				Rect goRect = new Rect(Screen.width/2 - gotexWidth/2, 0, gotexWidth, gotexHeight);
+				
+				GUI.DrawTexture(goRect, goTexture, ScaleMode.ScaleAndCrop);
+				GUI.TextArea(goRect, goText, hud.skin.customStyles[3]);
+			}
+		}
 		if (!raceFinished){
 			Texture2D miniTexture = hud.fitzMini;;
 			
@@ -352,9 +376,11 @@ public class RecessCamera : MonoBehaviour {
 				}
 				
 				if (yes){
+					RecessManager.SaveStatistics(true);
 					Application.LoadLevel(Application.loadedLevel);
 				}
 				if (no){
+					RecessManager.SaveStatistics(true);
 					Application.Quit();
 				}
 			}

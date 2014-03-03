@@ -17,7 +17,7 @@ public class MainMenu : MonoBehaviour {
 	public Texture2D mainPic;
 	public Texture2D credits;
 	
-	private MenuEnum currentMenu = MenuEnum.intro;
+	private MenuEnum currentMenu = MenuEnum.title;
 	public Vector2 mainButtonOffset = Vector2.zero;
 	
 	public GUIContent[] mainMenu = new GUIContent[]{ new GUIContent("Play"), new GUIContent("Credits")};

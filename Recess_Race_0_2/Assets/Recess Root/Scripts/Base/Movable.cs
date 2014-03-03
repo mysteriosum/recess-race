@@ -165,7 +165,9 @@ public class Movable : MonoBehaviour {
 		anim = GetComponent<Animator>();
 		
 		if (!anim){
-			Debug.LogWarning("No animations on this Movable. Disabling animations!");
+			if (debug){
+				Debug.LogWarning("No animations on this Movable. Disabling animations!");
+			}
 			animated = false;
 		}
 		
