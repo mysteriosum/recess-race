@@ -11,7 +11,13 @@ public class RecessCamera : MonoBehaviour {
 	const int scrnHeight = 480;
 	const int scrnWidth = 640;
 	
-	public Transform[] paralaxes;
+	private Transform[] parallaxes;
+	public Sprite[] backgroundElements;
+	
+	private float farDistance;
+	private int minimumAtStart = 5;
+	private float minimumDistance = -10;
+	private float bgDistance = 40;
 	
 	private float lerpAmount = 0.1f;
 	private float maxParalax = 0.3f;
@@ -80,16 +86,11 @@ public class RecessCamera : MonoBehaviour {
 			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like");
 		}
 		
-		foreach(Transform tr in paralaxes){
-			if (tr.position.z > furthestParalaxZ){
-				furthestParalaxZ = tr.position.z;
-			}
-		}
 		
 		Movable[] movables = FindObjectsOfType<Movable>();
 		List<Transform> tlist = new List<Transform>();
 		foreach (Movable item in movables) {
-			if (item.GetComponent<Fitz>() != null){
+			if (item.GetComponent<Fitz>() != null){	
 				fitz = item.transform;
 			}
 			else{
@@ -98,6 +99,32 @@ public class RecessCamera : MonoBehaviour {
 		}
 		racers = tlist.ToArray();
 		
+		Vector3 defaultPosition = new Vector3(minimumDistance, t.position.y, bgDistance);
+		
+		
+		//---------------------------------------------------------------\\
+		//--------------------------place bg tiles-----------------------\\
+		//---------------------------------------------------------------\\
+		List<Transform> parallaxen = new List<Transform>();
+		
+		for (int i = 0; i < minimumAtStart; i++) {
+			GameObject newGuy = new GameObject("background" + i.ToString());
+			SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
+			int rando = Random.Range (0, backgroundElements.Length);
+			newSprite.sprite = backgroundElements[rando];
+			newGuy.transform.position = defaultPosition + Vector3.right * newSprite.sprite.bounds.extents.x * 2;
+			defaultPosition = newGuy.transform.position;
+			newSprite.sortingLayerName = "Background";
+			parallaxen.Add (newGuy.transform);
+		}
+		
+		parallaxes = parallaxen.ToArray();
+		
+		foreach(Transform tr in parallaxes){
+			if (tr.position.z > furthestParalaxZ){
+				furthestParalaxZ = tr.position.z;
+			}
+		}
 	}
 	
 	// Update is called once per frame
@@ -109,7 +136,7 @@ public class RecessCamera : MonoBehaviour {
 		}
 		Vector3 postPos = t.position;
 		
-		foreach (Transform tran in paralaxes){
+		foreach (Transform tran in parallaxes){
 			//Never Used
 			//float parAmount = tran.position.z * maxParalax / furthestParalaxZ;		//figure out how much to move each object. Easy because player z = 0 always
 			

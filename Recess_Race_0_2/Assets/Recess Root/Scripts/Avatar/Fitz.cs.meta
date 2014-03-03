@@ -2,7 +2,10 @@ fileFormatVersion: 2
 guid: 09ca1b51170078f499394dfb7d7f1167
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - pinkyController: {instanceID: 0}
+  - boogerController: {fileID: 9100000, guid: 400b26fb41b6d2f44b7b37746517d9af, type: 2}
+  - ottoController: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

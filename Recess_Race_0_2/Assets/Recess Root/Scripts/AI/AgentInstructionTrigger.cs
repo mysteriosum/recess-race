@@ -8,8 +8,6 @@ public class AgentInstructionTrigger : MonoBehaviour {
 
 	public Direction direction = Direction.right;
 
-
-
 	public Instruction getInstruction(Agent agent){
 		Vector3 runto = this.transform.position;
 		runto.x += (int)direction;
@@ -29,9 +27,9 @@ public class AgentInstructionTrigger : MonoBehaviour {
 			size = (Vector3)derCollider.size;
 
 		if (direction.Equals (Direction.left)) {
-			myColor = new Color (this.jumpHoldingLenght / 13f * 255, 0, 0, alpha);
+			myColor = new Color (this.jumpHoldingLenght / 13f , 255, 0, alpha);
 		} else {
-			myColor = new Color (0, 0, this.jumpHoldingLenght / 13f, alpha);
+            myColor = new Color(255, 0, this.jumpHoldingLenght / 13f, alpha);
 		
 		}
 

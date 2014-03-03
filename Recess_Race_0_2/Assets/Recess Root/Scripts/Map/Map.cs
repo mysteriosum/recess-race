@@ -7,36 +7,25 @@ public class Map : MonoBehaviour {
     public Dimension tileDimension;
     public BoolArray[] pathingMap;
 
-	/*// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}*/
-
     public bool[,] split(Vector3 startingPosition, Dimension dimension) {
         return split((int)startingPosition.x, (int)startingPosition.y, dimension);
     }
 
     public bool[,] split(int startX, int startY, Dimension dimension) {
-        bool[,] array = new bool[dimension.height, dimension.width];
-
-        int i = 0;
-        int j = 0;
-        for (int x = startX; x < startX + dimension.width; x++) {
-            for (int y = startY; y < startY + dimension.height; y++) {
-                if (x > mapDimension.width || y > mapDimension.height) {
-                    array[i,j] = true;
+        bool[,] array = new bool[dimension.width, dimension.height];
+        int xNew = 0;
+        int yNew = 0;
+        for (int xThis = startX; xThis < startX + dimension.width; xThis++) {
+            for (int yThis = startY; yThis < startY + dimension.height; yThis++) {
+                if (xThis >= mapDimension.width || yThis >= mapDimension.height || xThis < 0 || yThis < 0) {
+                    array[xNew,yNew] = true;
                 } else {
-                    array[i, j] = pathingMap[x][y];
+                    array[xNew, yNew] = pathingMap[xThis][yThis];
                 }
-                i++;
+                yNew++;
             }
-            i = 0;
-            j++;
+            yNew = 0;
+            xNew++;
         }
 
         return array;

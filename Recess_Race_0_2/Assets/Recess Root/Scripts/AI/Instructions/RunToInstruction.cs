@@ -31,7 +31,11 @@ public class RunToInstruction : Instruction {
     }
 
     private bool isInRange() {
-        return (this.agent.transform.position - targetLocation).magnitude < distanceToGetBy;
+        if (direction == -1) {
+            return this.agent.transform.position.x < targetLocation.x;
+        } else {
+            return this.agent.transform.position.x > targetLocation.x;
+        }
     }
 
     public override string ToString() {
