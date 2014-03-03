@@ -177,7 +177,6 @@ public class Movable : MonoBehaviour {
 	
 		
 		if (!activated){	//so I don't fall a million metres in the first frame because it took so long to load v_v;
-			activated = true;
 			return;
 		}
 		UpdatePosAndBox();
@@ -344,6 +343,10 @@ public class Movable : MonoBehaviour {
 		}
 		//Debug.Log("newX = " + newX);
 		return new Vector2(newX, currentVelocity.y);
+	}
+	
+	public void Go(){
+		activated = true;
 	}
 	
 	protected virtual float Accelerate(float input){

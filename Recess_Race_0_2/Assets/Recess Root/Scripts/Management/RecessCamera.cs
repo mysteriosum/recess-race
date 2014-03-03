@@ -31,6 +31,12 @@ public class RecessCamera : MonoBehaviour {
 	private float maxParallax = 0.3f;
 	private float furthestParalaxZ;
 	
+	private bool raceBegun = false;
+	private float readyTime = 1.0f;
+	private float setTime = 2.0f;
+	private float goTime = 3.0f;
+	private float goTimer = 0;
+
 	private bool raceFinished = false;
 	private float finishedTimer = 0;
 	private float congratulationsAt = 0.5f;
@@ -53,6 +59,10 @@ public class RecessCamera : MonoBehaviour {
 		public Vector2 rankOffsetFromMini = new Vector2 (20, 0);
 		public Vector2 timeBorder = new Vector2(14, 14);
 		public Vector2 scoreBorder = new Vector2 (10, 20);
+		
+		public Texture2D ready;
+		public Texture2D getSet;
+		public Texture2D go;
 		
 		public Texture2D selectIcon;
 		
@@ -189,6 +199,19 @@ public class RecessCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		
+		if (!raceBegun){
+			goTimer += Time.deltaTime;
+			
+			if (goTimer > goTime){
+				raceBegun = true;
+				foreach (Movable mov in FindObjectsOfType(typeof(Movable)) as Movable[]){
+					mov.Go();
+				}
+			}
+		}
+		
+		
 		Vector3 forepos = t.position;
 		if (fitzNode != null){
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , t.position.z);
@@ -260,8 +283,8 @@ public class RecessCamera : MonoBehaviour {
 			GUI.BeginGroup (scoreRect);
 				GUI.TextArea (new Rect (0, 0, numberWidth, numberHeight), RecessManager.Score.ToString (), hud.skin.customStyles[1]);
 				GUI.TextArea (new Rect (0, numberHeight, numberWidth, textHeight), "Score", hud.skin.customStyles[0]);
-				GUI.TextArea (new Rect (0, numberHeight + textHeight, numberWidth, numberHeight), RecessManager.GarbageCount.ToString(), hud.skin.customStyles[1]);
-				GUI.TextArea (new Rect(0, numberHeight * 2 + textHeight, numberWidth, textHeight), "Garbage", hud.skin.customStyles[0]);
+				//GUI.TextArea (new Rect (0, numberHeight + textHeight, numberWidth, numberHeight), RecessManager.GarbageCount.ToString(), hud.skin.customStyles[1]);
+				//GUI.TextArea (new Rect(0, numberHeight * 2 + textHeight, numberWidth, textHeight), "Garbage", hud.skin.customStyles[0]);
 			GUI.EndGroup ();
 			
 		} else {

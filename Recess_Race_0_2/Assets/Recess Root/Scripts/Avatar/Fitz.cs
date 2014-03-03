@@ -217,6 +217,9 @@ public class Fitz : Movable {
 	//--------------------------------------------------------------------------\\
 	
 	protected override void FixedUpdate () {
+		
+		if (!activated) return;
+		
 		if (!lockControls){
 			controller.GetInputs();
 		}
