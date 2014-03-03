@@ -7,6 +7,8 @@ public class MapLoaderEditor : EditorWindow {
 	public string fileName = "";
 	public bool useTestBackground = false;
 	public bool verbose = true;
+    public Plateform plateform;
+    public int choosenX;
 
 	void OnGUI(){
 		GUILayout.BeginHorizontal ();
@@ -29,7 +31,22 @@ public class MapLoaderEditor : EditorWindow {
                 MapLoader.loadFromFile(fileName);
 			}
 		}
-	}
+
+        GUILayout.Space(30);
+        this.plateform = (Plateform)EditorGUILayout.ObjectField("Plateform", this.plateform, typeof(Plateform), true);
+        if (this.plateform != null) {
+            int left = (int)plateform.getLeftCornerPosition().x;
+            int right = (int)plateform.getRightCornerPosition().x;
+            choosenX = EditorGUILayout.IntSlider("working on x :", choosenX, left, right);
+            Map map = (Map)GameObject.FindObjectOfType<Map>();
+            if (map) {
+                bool[,] split = map.split(new Vector3(choosenX, plateform.transform.position.y, 0), new Dimension(13,6));
+                PathingMap pathingMap = new PathingMap(split);
+                EditorGUILayout.TextArea(pathingMap.ToStringWithNumbers());
+            }
+            
+        }
+    }
 	
 	
 	[MenuItem ("FruitsUtils/MapLoader")]

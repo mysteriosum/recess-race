@@ -32,7 +32,7 @@ public class MapLoader {
 
     private GameObject tilePrefab;
 
-	private BullyInstructionGenerator bullyInstructionGenerator;
+	private PlateformGenerator bullyInstructionGenerator;
 
     private XDocument document;
 
@@ -48,7 +48,7 @@ public class MapLoader {
 
 		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
 		loadMapSettings (mapElement);
-		bullyInstructionGenerator = new BullyInstructionGenerator (this.map);
+		bullyInstructionGenerator = new PlateformGenerator (this.map);
 		bullyInstructionGenerator.setGameObjectParent (aiGroupGameObject.transform);
 
 		loadTiles (tilesLayer);
@@ -124,7 +124,12 @@ public class MapLoader {
 	}
 
     private IEnumerable<XElement> getAllObjectFromObjectGroup(string name) {
-        return document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == name).Descendants().Where(e => e.Name == "object");
+        try {
+            return document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == name).Descendants().Where(e => e.Name == "object");
+        } catch (InvalidOperationException) {
+            Debug.LogError("MapLoader : Missing objectgroup " + name);
+        }
+        return new List<XElement>();
     }
 
 	private void createEmptyWorld(){

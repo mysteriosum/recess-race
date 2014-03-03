@@ -5,7 +5,7 @@ using System;
 using System.Xml.Linq;
 using System.Linq;
 
-public class BullyInstructionGenerator {
+public class PlateformGenerator {
 
 	private List<Plateform> plateforms;
 
@@ -23,7 +23,7 @@ public class BullyInstructionGenerator {
     private Dimension mapDimension;
     private Map map;
 
-	public BullyInstructionGenerator(Map map){
+	public PlateformGenerator(Map map){
         this.mapDimension = map.mapDimension;
         this.map = map;
         tileHoverPrefab = Resources.Load<GameObject>("TilePlateformHover");
@@ -191,6 +191,10 @@ public class BullyInstructionGenerator {
 			if(canReach(plateform, p)){
                 for (float x = plateform.getLeftCornerPosition().x; x < plateform.getLeftCornerPosition().x + plateform.getWidth(); x++) {
                     Vector3 from = new Vector3(x, plateform.transform.position.y, plateform.transform.position.z);
+                    bool[,] pathingMap = this.map.split(from, new Dimension(13, 6));
+                    PathingMap debuTest = new PathingMap(pathingMap);
+                    //Debug.Log(from);
+                    //Debug.Log(debuTest.ToString());
                     for (float x2 = p.getLeftCornerPosition().x; x2 < p.getLeftCornerPosition().x + p.getWidth(); x2++) {
                         Vector3 to = new Vector3(x2, p.transform.position.y, p.transform.position.z);
                         int distanceX = (int)(to.x - from.x);
@@ -199,11 +203,11 @@ public class BullyInstructionGenerator {
                         if (distanceX > 13) continue;
                         if (Mathf.Abs(distanceX) > 13 || Mathf.Abs(distanceY) > 6) continue;
 
-                        bool[,] pathingMap = this.map.split(from, new Dimension(13, 6));
                         //Debug.Log(distanceX + "," + distanceY);
                         List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
                         if (possibleJumps == null) continue;
                         foreach (var jump in possibleJumps) {
+                           // Debug.Log(jump.jumpingPath.ToString());
                             if (!jump.jumpingPath.collideWith(pathingMap)) {
                                 plateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
                             }
