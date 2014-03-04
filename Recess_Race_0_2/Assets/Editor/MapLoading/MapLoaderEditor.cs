@@ -11,6 +11,7 @@ public class MapLoaderEditor : EditorWindow {
     public int choosenX;
 	public bool flipXMapPathing = false;
 	public bool flipYMapPathing = false;
+    public int mapPathingHeight = 6;
 
 	void OnGUI(){
 		GUILayout.BeginHorizontal ();
@@ -41,16 +42,18 @@ public class MapLoaderEditor : EditorWindow {
             int right = (int)plateform.getRightCornerPosition().x;
             choosenX = EditorGUILayout.IntSlider("working on x :", choosenX, left, right);
             Map map = (Map)GameObject.FindObjectOfType<Map>();
-			flipXMapPathing = EditorGUILayout.Toggle("Flip map pathing", flipXMapPathing);
+            flipXMapPathing = EditorGUILayout.Toggle("Flip X map pathing", flipXMapPathing);
+            flipYMapPathing = EditorGUILayout.Toggle("Flip Y map pathing", flipYMapPathing);
+            mapPathingHeight = EditorGUILayout.IntSlider("map Pathing Height", mapPathingHeight, 1, 30);
             if (map) {
 				bool[,] split;
 				SplitDirection splitDirection;
 				if(flipXMapPathing){
-					splitDirection = (flipYMapPathing)? SplitDirection.TopLeft : SplitDirection.TopLeft;
+					splitDirection = (flipYMapPathing)? SplitDirection.BottomLeft : SplitDirection.TopLeft;
 				}else{
-					splitDirection = (flipYMapPathing)? SplitDirection.TopRight : SplitDirection.TopRight;
+					splitDirection = (flipYMapPathing)? SplitDirection.BottomRight : SplitDirection.TopRight;
 				}
-				split = map.splitTo (splitDirection, new Vector3(choosenX, plateform.transform.position.y, 0), new Dimension(13,6));
+                split = map.splitTo(splitDirection, new Vector3(choosenX, plateform.transform.position.y, 0), new Dimension(13, mapPathingHeight));
                 PathingMap pathingMap = new PathingMap(split);
                 EditorGUILayout.TextArea(pathingMap.ToStringWithNumbers());
             }

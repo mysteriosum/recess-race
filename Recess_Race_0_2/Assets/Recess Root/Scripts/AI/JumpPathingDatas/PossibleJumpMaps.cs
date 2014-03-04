@@ -17,9 +17,9 @@ public class PossibleJumpMaps {
         
     }
 
-	public static int yUpHeightIncludingZero = 4;
+	public static int yUpHeightIncludingZero = 5;
 	public static int yDownHeight = 7;
-	private static int yHeight = 4 + 7;
+	private static int yHeight = 5 + 7;
     public static List<JumpRunCreationData>[,] possibles = new List<JumpRunCreationData>[14,yHeight];
 	public static List<JumpRunCreationData>[,] possiblesInverse = new List<JumpRunCreationData>[14,yHeight];
     
@@ -98,7 +98,6 @@ public class PossibleJumpMaps {
 	private static List<JumpRunCreationData> cloneInverseList(List<JumpRunCreationData> toClone){
 		List<JumpRunCreationData> cloned = new List<JumpRunCreationData> ();
 		foreach (JumpRunCreationData item in toClone) {
-			Debug.Log(item.jumpingPath.getXRevertedMap().ToStringWithNumbers());
 			JumpRunCreationData newJump = new JumpRunCreationData(Direction.left, item.jumpHoldingLenght, item.moveHoldingLenght, item.jumpingPath.getXRevertedMap());
 			cloned.Add (newJump);
 		}

@@ -157,6 +157,15 @@ public class MapLoader {
 					this.tilesData.Add (data);
 				}
 			}
+
+            IEnumerable<XElement> tileList = element.Descendants().Where(e => e.Name == "tile");
+            foreach (var tileData in tileList) {
+                int id = parse(tileData.Attribute("id").Value);
+                XElement noCollision = element.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
+                if (noCollision != null) {
+                    this.tilesData[id].hasCollision = false;
+                }
+            }
 		}
 	}
 
@@ -225,6 +234,9 @@ public class MapLoader {
 			SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
 			newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];		
 		}
+        if (!this.tilesData[id].hasCollision) {
+            GameObject.DestroyImmediate(newTile.GetComponent<BoxCollider2D>());
+        }
 
 		bullyInstructionGenerator.addTile(x,y,id);
 	}
@@ -237,9 +249,11 @@ public class MapLoader {
 
 	private class TileData{
 		public Sprite sprite;
+        public bool hasCollision;
 
 		public TileData(Sprite sprite){
 			this.sprite = sprite;
+            hasCollision = true;
 		}
 	}
 }
