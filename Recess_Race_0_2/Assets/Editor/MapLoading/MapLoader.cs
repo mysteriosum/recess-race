@@ -164,7 +164,8 @@ public class MapLoader {
                 try {
                     XElement noCollision = element.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
                     if (noCollision != null) {
-                        this.tilesData[firstGridId + id].hasCollision = false;
+                        this.tilesData[firstGridId + id - 1].hasCollision = false;
+                       // Debug.LogError("Tile " + id + " in " + name + " have noCollision");
                     }
                 } catch (InvalidOperationException) {
                    // Debug.LogError("Tile " + id + " in " + name + "doesnt have noCollision");
