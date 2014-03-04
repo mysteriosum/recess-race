@@ -77,9 +77,6 @@ public class PlateformGenerator {
 	
 	public void doneLoadingTiles(){
         addTileHover();
-		if (MapLoader.verbose) {
-			Debug.Log("Generated " + this.plateforms.Count + " plateforms.");		
-		}
 		removeUselessPlateform ();
 	}
 

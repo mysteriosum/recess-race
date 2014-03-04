@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 
 public class MapLoader {
@@ -48,24 +49,26 @@ public class MapLoader {
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
         XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
 
-        print("Loading tileSets");
 		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
 		loadMapSettings (mapElement);
 		bullyInstructionGenerator = new PlateformGenerator (this.map);
-		bullyInstructionGenerator.setGameObjectParent (aiGroupGameObject.transform);
+        bullyInstructionGenerator.setGameObjectParent(aiGroupGameObject.transform);
+        print("Loaded tileSets");
 
-        print("Loading tiles");
         loadTiles(tilesLayer);
-        print("Loading Waypoints");
+        print("Loaded tiles");
+
         bullyInstructionGenerator.loadWaypoints(waypoints, this.map);
-        print("Loading Ai instructions");
+        print("Loadied Waypoints");
+        
 		bullyInstructionGenerator.linkPlateforms ();
+        print("Loaded Ai instructions");
 
 
-        print("Loading Objects");
         loadGarbage();
         loadTennisBalls();
-		loadQuestionMark ();
+        loadQuestionMark();
+        print("Loaded Objects");
 		print ("Done");
 	}
 
@@ -88,7 +91,7 @@ public class MapLoader {
             try {
                 value = element.Elements().Descendants().First(e => e.Name == "property" && e.Attribute("name").Value.Equals("direction")).Attribute("value").Value;
             }catch(InvalidOperationException){
-                Debug.LogError("MapLoader : Tennis ball without direction attribute! (" + x + element.Attribute("x").Value + "," + element.Attribute("y").Value + ")");
+                UnityEngine.Debug.LogError("MapLoader : Tennis ball without direction attribute! (" + x + element.Attribute("x").Value + "," + element.Attribute("y").Value + ")");
                 continue;
             }
             
@@ -135,7 +138,7 @@ public class MapLoader {
         try {
             return document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == name).Descendants().Where(e => e.Name == "object");
         } catch (InvalidOperationException) {
-            Debug.LogError("MapLoader : Missing objectgroup " + name);
+            UnityEngine.Debug.LogError("MapLoader : Missing objectgroup " + name);
         }
         return new List<XElement>();
     }
@@ -158,7 +161,7 @@ public class MapLoader {
 			string tilesetName = Path.GetFileName(source).Split(new char[] { '.' })[0];
 			Sprite[] sprites = Resources.LoadAll<Sprite> ("tileSets/" + tilesetName);
 			if(sprites.Count() == 0){
-				Debug.LogError("Map containts a error in tilesets : tileset "+  name + " (" + source + ") does'nt existe.");
+				UnityEngine.Debug.LogError("Map containts a error in tilesets : tileset "+  name + " (" + source + ") does'nt existe.");
 			}else{
 				foreach(Sprite sprite in sprites){
 					TileData data = new TileData(sprite);
@@ -230,7 +233,7 @@ public class MapLoader {
 			int id = Int32.Parse(intStr);
 			return id;
 		}catch (OverflowException){
-			Debug.LogError(intStr + " overflow the memory :(");
+			UnityEngine.Debug.LogError(intStr + " overflow the memory :(");
 		}
 		return -1;
 	}
@@ -256,11 +259,18 @@ public class MapLoader {
 		bullyInstructionGenerator.addTile(x,y,id);
 	}
 
+    private Stopwatch stopwatch;
 	private void print(string str){
-		if (MapLoader.verbose) {
-			Debug.Log("Maploader : " + str);
-		}
-        Thread.Sleep(5);
+        if (stopwatch == null) {
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+        }
+        if (MapLoader.verbose) {
+            stopwatch.Stop();
+            UnityEngine.Debug.Log("Maploader : " + str + " (" + stopwatch.ElapsedMilliseconds + " ms)");
+        }
+        stopwatch.Reset();
+        stopwatch.Start();
 	}
 
 	private class TileData{
