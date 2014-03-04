@@ -314,7 +314,6 @@
     <property name="direction" value="down"/>
    </properties>
   </object>
-  <object x="23435" y="1032" width="40" height="32"/>
  </objectgroup>
  <objectgroup name="QuestionMarks" width="925" height="50">
   <object gid="27" x="19794" y="967"/>
@@ -378,6 +377,61 @@
   <object x="13037" y="628" width="81" height="72">
    <properties>
     <property name="id" value="10"/>
+   </properties>
+  </object>
+  <object x="14647" y="755" width="81" height="72">
+   <properties>
+    <property name="id" value="11"/>
+   </properties>
+  </object>
+  <object x="15469" y="485" width="81" height="72">
+   <properties>
+    <property name="id" value="12"/>
+   </properties>
+  </object>
+  <object x="17238" y="691" width="81" height="72">
+   <properties>
+    <property name="id" value="13"/>
+   </properties>
+  </object>
+  <object x="18650" y="1061" width="81" height="72">
+   <properties>
+    <property name="id" value="14"/>
+   </properties>
+  </object>
+  <object x="19981" y="1140" width="81" height="72">
+   <properties>
+    <property name="id" value="15"/>
+   </properties>
+  </object>
+  <object x="21708" y="946" width="81" height="72">
+   <properties>
+    <property name="id" value="16"/>
+   </properties>
+  </object>
+  <object x="24447" y="1192" width="81" height="72">
+   <properties>
+    <property name="id" value="16"/>
+   </properties>
+  </object>
+  <object x="25964" y="1056" width="81" height="72">
+   <properties>
+    <property name="id" value="17"/>
+   </properties>
+  </object>
+  <object x="27351" y="1495" width="81" height="72">
+   <properties>
+    <property name="id" value="18"/>
+   </properties>
+  </object>
+  <object x="28037" y="912" width="81" height="72">
+   <properties>
+    <property name="id" value="19"/>
+   </properties>
+  </object>
+  <object x="29268" y="1133" width="81" height="72">
+   <properties>
+    <property name="id" value="20"/>
    </properties>
   </object>
  </objectgroup>
