@@ -25,6 +25,7 @@ public class Agent : Movable {
     }
 
     protected override void FixedUpdate() {
+		if (!activated) return;
         base.FixedUpdate();
         velocity = Move(velocity, controller.hAxis);
     }

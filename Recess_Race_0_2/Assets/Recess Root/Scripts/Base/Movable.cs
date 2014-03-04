@@ -165,7 +165,9 @@ public class Movable : MonoBehaviour {
 		anim = GetComponent<Animator>();
 		
 		if (!anim){
-			Debug.LogWarning("No animations on this Movable. Disabling animations!");
+			if (debug){
+				Debug.LogWarning("No animations on this Movable. Disabling animations!");
+			}
 			animated = false;
 		}
 		
@@ -177,7 +179,6 @@ public class Movable : MonoBehaviour {
 	
 		
 		if (!activated){	//so I don't fall a million metres in the first frame because it took so long to load v_v;
-			activated = true;
 			return;
 		}
 		UpdatePosAndBox();
@@ -344,6 +345,10 @@ public class Movable : MonoBehaviour {
 		}
 		//Debug.Log("newX = " + newX);
 		return new Vector2(newX, currentVelocity.y);
+	}
+	
+	public void Go(){
+		activated = true;
 	}
 	
 	protected virtual float Accelerate(float input){

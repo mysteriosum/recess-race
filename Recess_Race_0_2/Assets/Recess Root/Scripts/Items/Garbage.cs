@@ -2,10 +2,11 @@
 using System.Collections;
 
 public class Garbage : MonoBehaviour {
-
+	public Sprite[] garbages;
 	// Use this for initialization
 	void Start () {
-	
+		SpriteRenderer spr = GetComponent<SpriteRenderer>();
+		spr.sprite = garbages[Random.Range (0, garbages.Length)];
 	}
 	
 	// Update is called once per frame
