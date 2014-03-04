@@ -173,6 +173,11 @@ public class PlateformGenerator {
 		}
 	}
 
+    public void hideAllPlatefoms() {
+        foreach (var plateform in this.plateforms) {
+            GameObject.DestroyImmediate(plateform.GetComponent<SpriteRenderer>());
+        }
+    }
 
 	public void linkPlateforms(){
 		foreach (var plateform in this.plateforms) {

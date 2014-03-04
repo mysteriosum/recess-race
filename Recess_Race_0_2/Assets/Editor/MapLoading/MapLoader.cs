@@ -13,6 +13,7 @@ public class MapLoader {
 
 	public static bool useTestBackground = false;
 	public static bool verbose;
+    public static bool inDebugMode = false;
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
@@ -30,7 +31,7 @@ public class MapLoader {
 	private GameObject worldRootGameObject;
 	private GameObject aiGroupGameObject;
 
-	private PlateformGenerator bullyInstructionGenerator;
+	private PlateformGenerator plateformGenerator;
     private TileCreator tileCreator;
 
     private XDocument document;
@@ -51,17 +52,17 @@ public class MapLoader {
         print("Loaded tileSets");
         tileCreator = new TileCreator(worldRootGameObject.transform, tilesData);
 		loadMapSettings (mapElement);
-		bullyInstructionGenerator = new PlateformGenerator (this.map);
-        bullyInstructionGenerator.setGameObjectParent(aiGroupGameObject.transform);
+		plateformGenerator = new PlateformGenerator (this.map);
+        plateformGenerator.setGameObjectParent(aiGroupGameObject.transform);
         print("Loaded MapSettings");
 
         loadTiles(tilesLayer);
         print("Loaded tiles");
 
-        bullyInstructionGenerator.loadWaypoints(waypoints, this.map);
+        plateformGenerator.loadWaypoints(waypoints, this.map);
         print("Loadied Waypoints");
         
-		bullyInstructionGenerator.linkPlateforms ();
+		plateformGenerator.linkPlateforms ();
         print("Loaded Ai instructions");
 
 
@@ -69,6 +70,10 @@ public class MapLoader {
         loadTennisBalls();
         loadQuestionMark();
         print("Loaded Objects");
+
+        if(!MapLoader.inDebugMode){
+            plateformGenerator.hideAllPlatefoms();
+        }
 		print ("Done");
 	}
 
@@ -206,7 +211,7 @@ public class MapLoader {
 			loadLayerLine(y, tilesLines[i]);
 		}
 		
-		bullyInstructionGenerator.doneLoadingTiles ();
+		plateformGenerator.doneLoadingTiles ();
         tileCreator.doneLoadingTiles();
 	}
 
@@ -216,7 +221,7 @@ public class MapLoader {
 		foreach (string tileId in tiles) {
 			if(!tileId.Equals("0") && !tileId.Equals("") && tileId != null){
 				int id = parse(tileId) - 1;
-                bullyInstructionGenerator.addTile(x, y, id);
+                plateformGenerator.addTile(x, y, id);
 				tileCreator.addTile(id, x, y);
 			}
 			x++;

@@ -7,6 +7,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
     public List<LinkedJumpPlateform> linkedJumpPlateform;
 
+    public Color color;
     public int id;
 	public int waypointId;
 
@@ -31,6 +32,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     }
 
 	void OnDrawGizmos(){
+
         foreach (var linked in linkedJumpPlateform) {
             if (linked == null || !linked.plateform) continue;
 			Vector3 v2,v3;

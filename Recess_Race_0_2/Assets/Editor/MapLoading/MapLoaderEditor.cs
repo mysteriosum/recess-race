@@ -5,8 +5,6 @@ using UnityEditor;
 public class MapLoaderEditor : EditorWindow {
 
 	public string fileName = "";
-	public bool useTestBackground = false;
-	public bool verbose = false;
     public Plateform plateform;
     public int choosenX;
 	public bool flipXMapPathing = false;
@@ -21,16 +19,14 @@ public class MapLoaderEditor : EditorWindow {
 		}
 		GUILayout.EndHorizontal ();
 
-		this.useTestBackground = GUILayout.Toggle (this.useTestBackground, "Use test Background");
-		this.verbose = GUILayout.Toggle (this.verbose, "Verbose");
+        MapLoader.inDebugMode = GUILayout.Toggle(MapLoader.inDebugMode, "Is in debug mod (show Plateform)");
+        MapLoader.verbose = GUILayout.Toggle(MapLoader.verbose, "Verbose");
 		if (fileName.Length == 0) {
 			GUI.enabled = false;
 			GUILayout.Button("Load Map");
 			GUI.enabled = true;
 		}else{
 			if(GUILayout.Button("Load Map")) {
-				MapLoader.useTestBackground = this.useTestBackground;
-				MapLoader.verbose = this.verbose;
                 MapLoader.loadFromFile(fileName);
 			}
 		}
