@@ -3,8 +3,6 @@ using System.Collections;
 
 public class AgentInstructionGenerator {
 
-    private static float RunToEpsilon = 0.2f;
-    private static float JumpToEpsilon = 3f;
 
     private static Map map;
 
@@ -12,7 +10,7 @@ public class AgentInstructionGenerator {
     public static Instruction findInstruction(Agent agent, Plateform from, LinkedJumpPlateform to) {
         if (map == null) map = (Map) GameObject.FindObjectOfType<Map>();
 
-        bool[,] pathing = map.split(from.getRightCornerPosition(), new Dimension(13, 7));
+        bool[,] pathing = map.splitToRight(from.getRightCornerPosition(), new Dimension(13, 7));
         // printBoolArray(pathing);
         Instruction instruction = null;
 

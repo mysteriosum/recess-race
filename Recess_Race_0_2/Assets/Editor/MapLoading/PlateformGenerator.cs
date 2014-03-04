@@ -184,33 +184,44 @@ public class PlateformGenerator {
 		}
 	}
 
-	private void findReachablePlateform(Plateform plateform){
+	private void findReachablePlateform(Plateform fromPlateform){
 		foreach (var p in this.plateforms) {
-			if(plateform.Equals(p)) continue;
+			if(fromPlateform.Equals(p)) continue;
 
-			if(canReach(plateform, p)){
-                for (float x = plateform.getLeftCornerPosition().x; x < plateform.getLeftCornerPosition().x + plateform.getWidth(); x++) {
-                    Vector3 from = new Vector3(x, plateform.transform.position.y, plateform.transform.position.z);
-                    bool[,] pathingMap = this.map.split(from, new Dimension(13, 6));
-                    PathingMap debuTest = new PathingMap(pathingMap);
-                    //Debug.Log(from);
-                    //Debug.Log(debuTest.ToString());
+			if(canReach(fromPlateform, p)){
+                for (float x = fromPlateform.getLeftCornerPosition().x; x < fromPlateform.getLeftCornerPosition().x + fromPlateform.getWidth(); x++) {
+                    Vector3 from = new Vector3(x, fromPlateform.transform.position.y, fromPlateform.transform.position.z);
+                    
                     for (float x2 = p.getLeftCornerPosition().x; x2 < p.getLeftCornerPosition().x + p.getWidth(); x2++) {
                         Vector3 to = new Vector3(x2, p.transform.position.y, p.transform.position.z);
                         int distanceX = (int)(to.x - from.x);
-                        int distanceY = (int)(to.y - from.y);
-                        if (distanceX < 0 || distanceY < 0 || distanceX == 0) continue;
-                        if (distanceX > 13) continue;
-                        if (Mathf.Abs(distanceX) > 13 || Mathf.Abs(distanceY) > 6) continue;
+                        int distanceY = (int)(to.y - from.y);                        
+						if (distanceX == 0 || Mathf.Abs(distanceX) > 13 || distanceY >= PossibleJumpMaps.yUpHeightIncludingZero 
+						    || distanceY < PossibleJumpMaps.yDownHeight) continue;
+
+						bool[,] pathingMap;
+						SplitDirection splitDirection;
+						if(from.x > to.x){
+							splitDirection = (from.y > to.y)? SplitDirection.TopLeft : SplitDirection.TopLeft;
+						}else{
+							splitDirection = (from.y > to.y)? SplitDirection.TopRight : SplitDirection.TopRight;
+						}
+						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, distanceY + 2));
+
 
                         //Debug.Log(distanceX + "," + distanceY);
                         List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
                         if (possibleJumps == null) continue;
                         foreach (var jump in possibleJumps) {
-                           // Debug.Log(jump.jumpingPath.ToString());
-                            if (!jump.jumpingPath.collideWith(pathingMap)) {
-                                plateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
-                            }
+							if(from.x > to.x){
+								if (!jump.jumpingPath.collideWithFromRightSide(pathingMap)) {
+									fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
+								}
+							}else{
+								if (!jump.jumpingPath.collideWith(pathingMap)) {
+									fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
+								}
+							}
 
                         }
                     }
@@ -227,21 +238,17 @@ public class PlateformGenerator {
 	}
 
 	private bool isInMaximumJumpPosibility(Plateform from, Plateform to){
-		Vector3 vFrom, vTo;
-		if (from.isLeftOf (to)) {
-			vFrom = from.getRightCornerPosition();	
-			vTo = to.getLeftCornerPosition();
-		} else {
-			vFrom = from.getLeftCornerPosition();	
-			vTo = to.getRightCornerPosition();
-		}
-		return Math.Abs (vFrom.x - vTo.x) <= 13 && Math.Abs (vFrom.y - vTo.y) <= 4;
-		//return (from.transform.position - to.transform.position).magnitude < 5;
+		Vector3 vFromLeft, vToLeft, vFromRight, vToRight;
+		vFromLeft = from.getLeftCornerPosition ();
+		vFromRight = from.getRightCornerPosition ();
+		vToLeft = to.getLeftCornerPosition ();
+		vToRight = to.getRightCornerPosition ();
+		
+		return isJummpable (vFromRight, vToLeft) || isJummpable (vFromRight, vToRight) || isJummpable(vFromLeft, vToLeft) || isJummpable (vFromLeft, vToRight);
 	}
 
-	/*private bool[,] getSplited(){
-		//bool[,] plathingPart = bool[7,];
-	}*/
-    
+	private bool isJummpable(Vector3 v1, Vector3 v2){
+		return Math.Abs (v1.x - v2.x) <= 13 && Math.Abs (v1.y - v2.y) <= 4;
+	}
 
 }
