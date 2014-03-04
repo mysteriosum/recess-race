@@ -1,33 +1,74 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+public enum SplitDirection{
+	TopLeft, TopRight, BottomLeft, BottomRight
+}
 public class Map : MonoBehaviour {
 
 	public Dimension mapDimension;
     public Dimension tileDimension;
     public BoolArray[] pathingMap;
 
-    public bool[,] split(Vector3 startingPosition, Dimension dimension) {
-        return split((int)startingPosition.x, (int)startingPosition.y, dimension);
-    }
+	public bool[,] splitTo(SplitDirection direction, Vector3 startingPosition, Dimension dimension) {
+		switch (direction) {
+		case SplitDirection.BottomLeft : return splitToLeft(startingPosition,dimension);
+		case SplitDirection.BottomRight : return splitToRight(startingPosition,dimension);
+		case SplitDirection.TopLeft : return splitToTopLeft(startingPosition,dimension);
+		case SplitDirection.TopRight : return splitToTopRight(startingPosition,dimension);
+		default: return null;
+		}
+	}
 
-    public bool[,] split(int startX, int startY, Dimension dimension) {
-        bool[,] array = new bool[dimension.width, dimension.height];
-        int xNew = 0;
-        int yNew = 0;
-        for (int xThis = startX; xThis < startX + dimension.width; xThis++) {
-            for (int yThis = startY; yThis < startY + dimension.height; yThis++) {
-                if (xThis >= mapDimension.width || yThis >= mapDimension.height || xThis < 0 || yThis < 0) {
-                    array[xNew,yNew] = true;
-                } else {
-                    array[xNew, yNew] = pathingMap[xThis][yThis];
-                }
-                yNew++;
-            }
-            yNew = 0;
-            xNew++;
-        }
+	public bool[,] splitToRight(Vector3 startingPosition, Dimension dimension) {
+		int forXStart = (int) startingPosition.x;
+		int forXEnd = (int) startingPosition.x + dimension.height;
+		int forYStart = (int) startingPosition.y;
+		int forYEnd = (int) startingPosition.y + dimension.height;
+		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+	}
 
-        return array;
-    }
+	public bool[,] splitToLeft(Vector3 startingPosition, Dimension dimension) {
+		int forXStart = (int) startingPosition.x - dimension.width+1;
+		int forXEnd = (int) startingPosition.x + 1;
+		int forYStart = (int) startingPosition.y;
+		int forYEnd = (int) startingPosition.y + dimension.height;
+		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+	}
+
+	public bool[,] splitToTopRight(Vector3 startingPosition, Dimension dimension) {
+		int forXStart = (int) startingPosition.x ;
+		int forXEnd = (int) startingPosition.x + + dimension.width;
+		int forYStart = (int) startingPosition.y - dimension.height+1;
+		int forYEnd = (int) startingPosition.y + 1;
+		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+	}
+
+	public bool[,] splitToTopLeft(Vector3 startingPosition, Dimension dimension) {
+		int forXStart = (int) startingPosition.x - dimension.width+1;
+		int forXEnd = (int) startingPosition.x + 1;
+		int forYStart = (int) startingPosition.y - dimension.height+1;
+		int forYEnd = (int) startingPosition.y + 1;
+		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+	}
+
+	private bool[,] split(int forXStart, int forXEnd, int forYStart, int forYEnd, Dimension dimension){
+		bool[,] array = new bool[dimension.width, dimension.height];
+		int xNew = 0;
+		int yNew = 0;
+		for (int xThis = forXStart; xThis < forXEnd; xThis++) {
+			for (int yThis = forYStart; yThis < forYEnd; yThis++) {
+				if (xThis >= mapDimension.width || yThis >= mapDimension.height || xThis < 0 || yThis < 0) {
+					array[xNew,yNew] = true;
+				} else {
+					array[xNew, yNew] = pathingMap[xThis][yThis];
+				}
+				yNew++;
+			}
+			yNew = 0;
+			xNew++;
+		}
+		return array;
+	}
 }

@@ -34,7 +34,8 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
         foreach (var linked in linkedJumpPlateform) {
             if (linked == null || !linked.plateform) continue;
 			Vector3 v2,v3;
-            float finalX = linked.jumpStart.x + linked.data.moveHoldingLenght + 2 - (linked.data.moveHoldingLenght / 13);
+			int direction = (int) linked.data.direction;
+            float finalX = linked.jumpStart.x +  direction * (linked.data.moveHoldingLenght + 2 - (linked.data.moveHoldingLenght / 13));
             float aproximativeJumpHeight = 3 + 2* (linked.data.jumpHoldingLenght/13);
             v2 = new Vector3((finalX + linked.jumpStart.x) / 2, linked.jumpStart.y + aproximativeJumpHeight, 0);
             v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);

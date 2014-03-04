@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[SerializeField]
 public enum Direction { left = -1 , right = 1}
 
 public class JumpInstruction : Instruction {

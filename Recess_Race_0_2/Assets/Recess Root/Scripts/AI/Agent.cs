@@ -22,7 +22,6 @@ public class Agent : Movable {
             instruction.start();
         }
         this.currentInstruction = instruction;
-        Debug.Log("switch to" + currentInstruction);
     }
 
     protected override void FixedUpdate() {

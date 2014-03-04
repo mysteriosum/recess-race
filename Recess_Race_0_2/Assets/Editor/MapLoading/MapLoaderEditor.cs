@@ -9,6 +9,8 @@ public class MapLoaderEditor : EditorWindow {
 	public bool verbose = true;
     public Plateform plateform;
     public int choosenX;
+	public bool flipXMapPathing = false;
+	public bool flipYMapPathing = false;
 
 	void OnGUI(){
 		GUILayout.BeginHorizontal ();
@@ -39,8 +41,16 @@ public class MapLoaderEditor : EditorWindow {
             int right = (int)plateform.getRightCornerPosition().x;
             choosenX = EditorGUILayout.IntSlider("working on x :", choosenX, left, right);
             Map map = (Map)GameObject.FindObjectOfType<Map>();
+			flipXMapPathing = EditorGUILayout.Toggle("Flip map pathing", flipXMapPathing);
             if (map) {
-                bool[,] split = map.split(new Vector3(choosenX, plateform.transform.position.y, 0), new Dimension(13,6));
+				bool[,] split;
+				SplitDirection splitDirection;
+				if(flipXMapPathing){
+					splitDirection = (flipYMapPathing)? SplitDirection.TopLeft : SplitDirection.TopLeft;
+				}else{
+					splitDirection = (flipYMapPathing)? SplitDirection.TopRight : SplitDirection.TopRight;
+				}
+				split = map.splitTo (splitDirection, new Vector3(choosenX, plateform.transform.position.y, 0), new Dimension(13,6));
                 PathingMap pathingMap = new PathingMap(split);
                 EditorGUILayout.TextArea(pathingMap.ToStringWithNumbers());
             }
