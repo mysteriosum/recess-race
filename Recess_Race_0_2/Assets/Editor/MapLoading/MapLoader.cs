@@ -145,7 +145,7 @@ public class MapLoader {
 		this.tilesData = new List<TileData> ();
 		foreach(XElement element in tileSetElements){
 			string name = element.Attribute("name").Value;
-			// int firstGridId = Int32.Parse(element.Attribute("firstgid").Value);
+			int firstGridId = Int32.Parse(element.Attribute("firstgid").Value);
 			string source = element.Descendants().First (e => e.Name == "image").Attribute("source").Value;
 			string tilesetName = Path.GetFileName(source).Split(new char[] { '.' })[0];
 			Sprite[] sprites = Resources.LoadAll<Sprite> ("tileSets/" + tilesetName);
@@ -161,10 +161,16 @@ public class MapLoader {
             IEnumerable<XElement> tileList = element.Descendants().Where(e => e.Name == "tile");
             foreach (var tileData in tileList) {
                 int id = parse(tileData.Attribute("id").Value);
-                XElement noCollision = element.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
-                if (noCollision != null) {
-                    this.tilesData[id].hasCollision = false;
+                try {
+                    XElement noCollision = element.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
+                    if (noCollision != null) {
+                        this.tilesData[firstGridId + id].hasCollision = false;
+                    }
+                } catch (InvalidOperationException) {
+                   // Debug.LogError("Tile " + id + " in " + name + "doesnt have noCollision");
                 }
+                
+                
             }
 		}
 	}
