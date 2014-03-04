@@ -25,22 +25,19 @@ public class MapLoader {
     }
 	
 	private List<TileData> tilesData;
-	private Sprite[] banana;
 
 	private Map map;
 	private GameObject worldRootGameObject;
-	private GameObject tilesGameObject;
 	private GameObject aiGroupGameObject;
 
-    private GameObject tilePrefab;
-
 	private PlateformGenerator bullyInstructionGenerator;
+    private TileCreator tileCreator;
 
     private XDocument document;
 
 
     private void load(string mapText){
-        print("Set-up");
+        stopwatch = new Stopwatch();
 		loadAssets ();
 		createEmptyWorld ();
 
@@ -48,12 +45,15 @@ public class MapLoader {
 		XElement mapElement = document.Elements ().First();
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
         XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
+        print("Set-up");
 
-		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
+        loadTileset(mapElement.Descendants().Where(e => e.Name == "tileset"));
+        print("Loaded tileSets");
+        tileCreator = new TileCreator(worldRootGameObject.transform, tilesData);
 		loadMapSettings (mapElement);
 		bullyInstructionGenerator = new PlateformGenerator (this.map);
         bullyInstructionGenerator.setGameObjectParent(aiGroupGameObject.transform);
-        print("Loaded tileSets");
+        print("Loaded MapSettings");
 
         loadTiles(tilesLayer);
         print("Loaded tiles");
@@ -73,14 +73,12 @@ public class MapLoader {
 	}
 
     private void loadAssets() {
-        banana = Resources.LoadAll<Sprite>("background/testBanana");
-        tilePrefab = Resources.Load<GameObject>("BasicTile");
     }
 
     private void loadTennisBalls() {
         GameObject tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");
         IEnumerable<XElement> tennisBalls = getAllObjectFromObjectGroup("TennisBalls");
-        GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject);
+        GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject.transform);
 
         foreach (var element in tennisBalls) {
             float x = (float) parse(element.Attribute("x").Value) / map.tileDimension.width;
@@ -113,7 +111,7 @@ public class MapLoader {
     private void loadGarbage() {
         GameObject garbagePrefab = Resources.Load<GameObject>("Objects/Garbage");
         IEnumerable<XElement> garbages = getAllObjectFromObjectGroup("Garbages");
-        GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject);
+        GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject.transform);
         foreach (var element in garbages) {
             float x = (float) parse(element.Attribute("x").Value) / map.tileDimension.width;
             float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
@@ -125,7 +123,7 @@ public class MapLoader {
 	private void loadQuestionMark() {
         GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
         IEnumerable<XElement> questionMarks = getAllObjectFromObjectGroup("QuestionMarks");
-		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject);
+		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject.transform);
 		foreach (var element in questionMarks) {
             float x = (float)parse(element.Attribute("x").Value) / map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
@@ -148,8 +146,7 @@ public class MapLoader {
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
 
-		tilesGameObject = GameObjectFactory.createGameObject ("Tiles", worldRootGameObject);
-		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject);
+		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);
 	}
 
 	private void loadTileset(IEnumerable<XElement> tileSetElements){
@@ -210,18 +207,17 @@ public class MapLoader {
 		}
 		
 		bullyInstructionGenerator.doneLoadingTiles ();
+        tileCreator.doneLoadingTiles();
 	}
 
     private void loadLayerLine(int y, string tileLine){
 		string[] tiles = tileLine.Split(new char[] { ',' }, StringSplitOptions.None);
 		int x = 0;
 		foreach (string tileId in tiles) {
-
-			if(tileId.Equals("0") || tileId.Equals("") || tileId == null){
-
-			} else {
+			if(!tileId.Equals("0") && !tileId.Equals("") && tileId != null){
 				int id = parse(tileId) - 1;
-				addTile(id, x, y);
+                bullyInstructionGenerator.addTile(x, y, id);
+				tileCreator.addTile(id, x, y);
 			}
 			x++;
 		}
@@ -238,33 +234,10 @@ public class MapLoader {
 		return -1;
 	}
 
-	private void addTile(int id, int x, int y){
-		GameObject newTile = GameObjectFactory.createCopyGameObject (this.tilePrefab, "Tile", this.tilesGameObject);
-
-		SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
-		spriteRenderer.sprite = this.tilesData [id].sprite;
-		newTile.transform.Translate (x, y, 0);
-
-		if (MapLoader.useTestBackground) {
-			int textureWidth =10;
-			int textureHeight = 10;
-			int total = 100;
-			SpriteRenderer newTileSprite = newTile.transform.GetChild (0).GetComponent<SpriteRenderer>();
-			newTileSprite.sprite = this.banana[(int)((x % textureWidth + textureWidth * (textureHeight- y % textureHeight))) % total];		
-		}
-        if (!this.tilesData[id].hasCollision) {
-            GameObject.DestroyImmediate(newTile.GetComponent<BoxCollider2D>());
-        }
-
-		bullyInstructionGenerator.addTile(x,y,id);
-	}
+	
 
     private Stopwatch stopwatch;
 	private void print(string str){
-        if (stopwatch == null) {
-            stopwatch = new Stopwatch();
-            stopwatch.Start();
-        }
         if (MapLoader.verbose) {
             stopwatch.Stop();
             UnityEngine.Debug.Log("Maploader : " + str + " (" + stopwatch.ElapsedMilliseconds + " ms)");
@@ -273,7 +246,7 @@ public class MapLoader {
         stopwatch.Start();
 	}
 
-	private class TileData{
+	public class TileData{
 		public Sprite sprite;
         public bool hasCollision;
 
