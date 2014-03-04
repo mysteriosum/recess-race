@@ -55,8 +55,16 @@ public class Agent : Movable {
         if (getToPlateform == null) {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {
-            Instruction intructionsToGetThere = InstructionFactory.makeRunJump(this, getToPlateform.jumpStart, getToPlateform.data);
-            switchTo(intructionsToGetThere);
+            JumpRunCreationData data = getToPlateform.data;
+            if (data.jump){ 
+                Instruction intructionsToGetThere = InstructionFactory.makeRunJump(this, getToPlateform.jumpStart, getToPlateform.data);
+                switchTo(intructionsToGetThere);
+            } else {
+                Vector3 runto = getToPlateform.jumpStart;
+                runto.x += ((int)data.direction * data.moveHoldingLenght);
+                Instruction intructionsToGetThere = new RunToInstruction(this, runto);
+                switchTo(intructionsToGetThere);
+            }
         }
     }
 

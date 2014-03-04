@@ -23,6 +23,8 @@ public class PlateformGenerator {
     private Dimension mapDimension;
     private Map map;
 
+    public static bool debug = false;
+
 	public PlateformGenerator(Map map){
         this.mapDimension = map.mapDimension;
         this.map = map;
@@ -42,7 +44,7 @@ public class PlateformGenerator {
 
 		if (!workingOnATile) {
             prepareNextTile(x, y);
-		} else if (tileMaxX + 1 == x) { //right after where we are
+        } else if (tileMaxX + 1 == x && tileY == y) { //right after where we are
             if (tileOver(x, y)) {
                 addTileHover();
                 prepareNextTile(x, y);
@@ -148,7 +150,7 @@ public class PlateformGenerator {
 				int id = Int32.Parse(propertyId.Attribute("value").Value);
 				createWaypoint(x, y, id, objects.Count());
 			}catch(InvalidOperationException){
-				Debug.Log ("Invalid Waypoint : Missing property id");
+				Debug.LogError ("Invalid Waypoint : Missing property id");
 			}
 
 		}
@@ -177,65 +179,61 @@ public class PlateformGenerator {
 
 	public void linkPlateforms(){
 		foreach (var plateform in this.plateforms) {
-			findReachablePlateform(plateform);
-            //BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.hold, CommandEnum.right, DifficultyEnum.assured);
-            //MapElementHelper.generateInstructionOnRight(con, plateform, this.bullyInstructionParent);
+            foreach (var p2 in this.plateforms) {
+                if (plateform.Equals(p2)) continue;
 
-		}
-	}
-
-	private void findReachablePlateform(Plateform fromPlateform){
-		foreach (var p in this.plateforms) {
-			if(fromPlateform.Equals(p)) continue;
-
-			if(canReach(fromPlateform, p)){
-                for (float x = fromPlateform.getLeftCornerPosition().x; x < fromPlateform.getLeftCornerPosition().x + fromPlateform.getWidth(); x++) {
-                    Vector3 from = new Vector3(x, fromPlateform.transform.position.y, fromPlateform.transform.position.z);
-                    
-                    for (float x2 = p.getLeftCornerPosition().x; x2 < p.getLeftCornerPosition().x + p.getWidth(); x2++) {
-                        Vector3 to = new Vector3(x2, p.transform.position.y, p.transform.position.z);
-                        int distanceX = (int)(to.x - from.x);
-                        int distanceY = (int)(to.y - from.y);                        
-						if (distanceX == 0 || Mathf.Abs(distanceX) > 13 || distanceY >= PossibleJumpMaps.yUpHeightIncludingZero 
-						    || distanceY < PossibleJumpMaps.yDownHeight) continue;
-
-						bool[,] pathingMap;
-						SplitDirection splitDirection;
-						if(from.x > to.x){
-							splitDirection = (from.y > to.y)? SplitDirection.TopLeft : SplitDirection.TopLeft;
-						}else{
-							splitDirection = (from.y > to.y)? SplitDirection.TopRight : SplitDirection.TopRight;
-						}
-						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, distanceY + 2));
-
-
-                        //Debug.Log(distanceX + "," + distanceY);
-                        List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
-                        if (possibleJumps == null) continue;
-                        foreach (var jump in possibleJumps) {
-							if(from.x > to.x){
-								if (!jump.jumpingPath.collideWithFromRightSide(pathingMap)) {
-									fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
-								}
-							}else{
-								if (!jump.jumpingPath.collideWith(pathingMap)) {
-									fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, p, jump));
-								}
-							}
-
-                        }
-                    }
+                if (isInMaximumJumpPosibility(plateform, p2)) {
+                    findReachablePlateform(plateform, p2);
                 }
-			}
+            }
 		}
 	}
 
-	private bool canReach(Plateform from, Plateform to){
-		if(isInMaximumJumpPosibility(from, to)){
-			return true;
-		}
-		return false;
+	private void findReachablePlateform(Plateform fromPlateform, Plateform toPlateform){
+        for (float x = fromPlateform.getLeftCornerPosition().x; x < fromPlateform.getLeftCornerPosition().x + fromPlateform.getWidth(); x++) {
+            Vector3 from = new Vector3(x, fromPlateform.transform.position.y, fromPlateform.transform.position.z);
+            for (float x2 = toPlateform.getLeftCornerPosition().x; x2 < toPlateform.getLeftCornerPosition().x + toPlateform.getWidth(); x2++) {
+                Vector3 to = new Vector3(x2, toPlateform.transform.position.y, toPlateform.transform.position.z);
+                int distanceX = (int)(to.x - from.x);
+                int distanceY = (int)(to.y - from.y);                 
+				if (distanceX == 0 || Mathf.Abs(distanceX) > 13 || distanceY >= PossibleJumpMaps.yUpHeightIncludingZero 
+					|| distanceY < -PossibleJumpMaps.yDownHeight) continue;
+
+                bool[,] pathingMap;
+                SplitDirection splitDirection;
+                SplitDirection checkDirection;
+                if (from.x < to.x) {
+                    splitDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
+                    checkDirection = (from.y > to.y) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
+                } else {
+                    splitDirection = (from.y > to.y) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
+                    checkDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
+				}
+                if (from.y > to.y) { // Drop down
+                    pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, Math.Abs(distanceY) + 2));
+                } else {
+                    pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, 6));
+                }
+				
+
+                print(fromPlateform.name + " to " + toPlateform.name);
+                print(splitDirection.ToString() + " - " + checkDirection.ToString());
+                print((new PathingMap(pathingMap)).ToString()); 
+
+                List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
+                if (possibleJumps == null) continue;
+                foreach (var jump in possibleJumps) {
+                    print(jump.jumpingPath.ToString());
+                    if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
+                        fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, toPlateform, jump));
+                    }
+
+                }
+            }
+        }
+			
 	}
+
 
 	private bool isInMaximumJumpPosibility(Plateform from, Plateform to){
 		Vector3 vFromLeft, vToLeft, vFromRight, vToRight;
@@ -248,7 +246,13 @@ public class PlateformGenerator {
 	}
 
 	private bool isJummpable(Vector3 v1, Vector3 v2){
-		return Math.Abs (v1.x - v2.x) <= 13 && Math.Abs (v1.y - v2.y) <= 4;
+        return Math.Abs(v1.x - v2.x) <= 13 && v2.y - v1.y <= 4;
 	}
+
+    private void print(string str) {
+        if (debug) {
+            Debug.Log(str);
+        }
+    }
 
 }

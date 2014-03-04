@@ -75,7 +75,7 @@ public class PathingMap {
 		case SplitDirection.BottomLeft : return collideWithFromBottomLeft(pathing);
 		case SplitDirection.BottomRight : return collideWithFromBottomRight(pathing);
 		case SplitDirection.TopLeft : return collideWithFromTopLeft(pathing);
-		case SplitDirection.TopRight : return collideWithFromTopRightSide(pathing);
+		case SplitDirection.TopRight : return collideWithFromTopRight(pathing);
 		default: return false;
 		}
 	}
@@ -104,7 +104,7 @@ public class PathingMap {
 		return false;
 	}
 
-	public bool collideWithFromTopRightSide(bool[,] pathing) {
+	public bool collideWithFromTopRight(bool[,] pathing) {
 		int thisLastIndex = this.pathingMap.Length - 1;
 		int otherLastIndex = pathing.GetLength(0) -1;
 		int thisLastIndexY = this.pathingMap[0].Length - 1;

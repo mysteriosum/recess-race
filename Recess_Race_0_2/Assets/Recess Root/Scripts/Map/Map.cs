@@ -23,37 +23,43 @@ public class Map : MonoBehaviour {
 
 	public bool[,] splitToRight(Vector3 startingPosition, Dimension dimension) {
 		int forXStart = (int) startingPosition.x;
-		int forXEnd = (int) startingPosition.x + dimension.height;
+        int forXEnd = (int)startingPosition.x + dimension.width;
 		int forYStart = (int) startingPosition.y;
-		int forYEnd = (int) startingPosition.y + dimension.height;
-		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+        int forYEnd = (int)startingPosition.y + dimension.height;
+       // Debug.Log("Right " + dimension.ToString());
+		return split(forXStart, forXEnd, forYStart, forYEnd);
 	}
 
 	public bool[,] splitToLeft(Vector3 startingPosition, Dimension dimension) {
 		int forXStart = (int) startingPosition.x - dimension.width+1;
 		int forXEnd = (int) startingPosition.x + 1;
 		int forYStart = (int) startingPosition.y;
-		int forYEnd = (int) startingPosition.y + dimension.height;
-		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+        int forYEnd = (int)startingPosition.y + dimension.height;
+       // Debug.Log("Left " + dimension.ToString());
+		return split(forXStart, forXEnd, forYStart, forYEnd);
 	}
 
 	public bool[,] splitToTopRight(Vector3 startingPosition, Dimension dimension) {
 		int forXStart = (int) startingPosition.x ;
 		int forXEnd = (int) startingPosition.x + + dimension.width;
 		int forYStart = (int) startingPosition.y - dimension.height+1;
-		int forYEnd = (int) startingPosition.y + 1;
-		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+        int forYEnd = (int)startingPosition.y + 1;
+        //Debug.Log("TopRight " + dimension.ToString());
+		return split(forXStart, forXEnd, forYStart, forYEnd);
 	}
 
 	public bool[,] splitToTopLeft(Vector3 startingPosition, Dimension dimension) {
 		int forXStart = (int) startingPosition.x - dimension.width+1;
 		int forXEnd = (int) startingPosition.x + 1;
 		int forYStart = (int) startingPosition.y - dimension.height+1;
-		int forYEnd = (int) startingPosition.y + 1;
-		return split(forXStart, forXEnd, forYStart, forYEnd, dimension);
+        int forYEnd = (int)startingPosition.y + 1;
+        //Debug.Log("TopLeft " + dimension.ToString());
+		return split(forXStart, forXEnd, forYStart, forYEnd);
 	}
 
-	private bool[,] split(int forXStart, int forXEnd, int forYStart, int forYEnd, Dimension dimension){
+	private bool[,] split(int forXStart, int forXEnd, int forYStart, int forYEnd){
+        Dimension dimension = new Dimension(forXEnd - forXStart, forYEnd - forYStart);
+        //Debug.Log(dimension.ToString());
 		bool[,] array = new bool[dimension.width, dimension.height];
 		int xNew = 0;
 		int yNew = 0;
@@ -62,6 +68,7 @@ public class Map : MonoBehaviour {
 				if (xThis >= mapDimension.width || yThis >= mapDimension.height || xThis < 0 || yThis < 0) {
 					array[xNew,yNew] = true;
 				} else {
+                    //Debug.Log(xNew + "," + yNew + " - " + xThis + "," + yThis);
 					array[xNew, yNew] = pathingMap[xThis][yThis];
 				}
 				yNew++;

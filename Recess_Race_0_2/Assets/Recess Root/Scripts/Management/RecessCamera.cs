@@ -207,7 +207,7 @@ public class RecessCamera : MonoBehaviour {
 			if (goTimer > goTime){
 				raceBegun = true;
 				foreach (Movable mov in FindObjectsOfType(typeof(Movable)) as Movable[]){
-					mov.Go();
+					mov.setActivated();
 				}
 			}
 		}

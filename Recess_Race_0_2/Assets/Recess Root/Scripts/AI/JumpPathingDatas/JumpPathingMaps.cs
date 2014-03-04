@@ -4,13 +4,101 @@ using System.Collections;
 public class JumpPathingMaps {
 
 
+	public static PathingMap jump_x2_yMinus16 = new PathingMap(true, new bool[,] { 
+    {true,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true}
+	});
 
+    public static PathingMap jump_x2_yMinus15 = new PathingMap(true, new bool[,] { 
+    {true,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true}
+	});
+
+    public static PathingMap jump_x2_yMinus8 = new PathingMap(true, new bool[,] { 
+    {true,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true}
+	});
+
+    public static PathingMap jump_x2_yMinus7 = new PathingMap(true, new bool[,] { 
+    {true,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true}
+	});
+
+    public static PathingMap jump_x2_yMinus6 = new PathingMap(true, new bool[,] { 
+    {true,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true},
+{false,true,true}
+	});
 
 	public static PathingMap jump_x2_yMinus4 = new PathingMap(true, new bool[,] { 
 		{true,true,true},
 		{false,true,true},
 		{false,true,true},
 		{false,true,true},
+		{false,true,true}
+	});
+
+    public static PathingMap jump_x2_yMinus3 = new PathingMap(true, new bool[,] { 
+		{true,true,true},
+		{false,true,true},
+		{false,true,true},
+		{false,true,true}
+	});
+
+    public static PathingMap jump_x2_yMinus2 = new PathingMap(true, new bool[,] { 
+		{true,true,true},
+		{false,true,true},
+		{false,true,true}
+	});
+
+    public static PathingMap jump_x2_yMinus1 = new PathingMap(true, new bool[,] { 
+		{true,true,true},
 		{false,true,true}
 	});
 

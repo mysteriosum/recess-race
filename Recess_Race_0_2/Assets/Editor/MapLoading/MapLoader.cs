@@ -5,6 +5,7 @@ using System;
 using System.Xml.Linq;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 
 public class MapLoader {
@@ -37,7 +38,8 @@ public class MapLoader {
     private XDocument document;
 
 
-    private void load(string mapText){	
+    private void load(string mapText){
+        print("Set-up");
 		loadAssets ();
 		createEmptyWorld ();
 
@@ -46,15 +48,21 @@ public class MapLoader {
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
         XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
 
+        print("Loading tileSets");
 		loadTileset(mapElement.Descendants().Where (e => e.Name == "tileset"));
 		loadMapSettings (mapElement);
 		bullyInstructionGenerator = new PlateformGenerator (this.map);
 		bullyInstructionGenerator.setGameObjectParent (aiGroupGameObject.transform);
 
-		loadTiles (tilesLayer);
-		bullyInstructionGenerator.loadWaypoints (waypoints, this.map);
+        print("Loading tiles");
+        loadTiles(tilesLayer);
+        print("Loading Waypoints");
+        bullyInstructionGenerator.loadWaypoints(waypoints, this.map);
+        print("Loading Ai instructions");
 		bullyInstructionGenerator.linkPlateforms ();
 
+
+        print("Loading Objects");
         loadGarbage();
         loadTennisBalls();
 		loadQuestionMark ();
@@ -252,6 +260,7 @@ public class MapLoader {
 		if (MapLoader.verbose) {
 			Debug.Log("Maploader : " + str);
 		}
+        Thread.Sleep(5);
 	}
 
 	private class TileData{

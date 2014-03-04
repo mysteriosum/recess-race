@@ -6,7 +6,7 @@ public class MapLoaderEditor : EditorWindow {
 
 	public string fileName = "";
 	public bool useTestBackground = false;
-	public bool verbose = true;
+	public bool verbose = false;
     public Plateform plateform;
     public int choosenX;
 	public bool flipXMapPathing = false;
@@ -49,9 +49,9 @@ public class MapLoaderEditor : EditorWindow {
 				bool[,] split;
 				SplitDirection splitDirection;
 				if(flipXMapPathing){
-					splitDirection = (flipYMapPathing)? SplitDirection.BottomLeft : SplitDirection.TopLeft;
+                    splitDirection = (flipYMapPathing) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
 				}else{
-					splitDirection = (flipYMapPathing)? SplitDirection.BottomRight : SplitDirection.TopRight;
+                    splitDirection = (flipYMapPathing) ? SplitDirection.TopRight : SplitDirection.BottomRight;
 				}
                 split = map.splitTo(splitDirection, new Vector3(choosenX, plateform.transform.position.y, 0), new Dimension(13, mapPathingHeight));
                 PathingMap pathingMap = new PathingMap(split);

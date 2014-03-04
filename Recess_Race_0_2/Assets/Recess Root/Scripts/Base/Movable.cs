@@ -347,7 +347,7 @@ public class Movable : MonoBehaviour {
 		return new Vector2(newX, currentVelocity.y);
 	}
 	
-	public void Go(){
+	public void setActivated(){
 		activated = true;
 	}
 	

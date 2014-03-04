@@ -18,15 +18,50 @@ public class PossibleJumpMaps {
     }
 
 	public static int yUpHeightIncludingZero = 5;
-	public static int yDownHeight = 7;
-	private static int yHeight = 5 + 7;
+	public static int yDownHeight = 16;
+	private static int yHeight = 5 + 16;
     public static List<JumpRunCreationData>[,] possibles = new List<JumpRunCreationData>[14,yHeight];
 	public static List<JumpRunCreationData>[,] possiblesInverse = new List<JumpRunCreationData>[14,yHeight];
-    
-    static PossibleJumpMaps(){
-		List<JumpRunCreationData> list2_m4 = new List<JumpRunCreationData>();
-		list2_m4.Add(new JumpRunCreationData(13f, 13f, JumpPathingMaps.jump_x2_yMinus4));
-		possibles[2, getIndexFromY(-4)] = list2_m4;
+
+    static PossibleJumpMaps() {
+        List<JumpRunCreationData> list2_m1 = new List<JumpRunCreationData>();
+        list2_m1.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus1));
+        possibles[2, getIndexFromY(-1)] = list2_m1;
+
+        List<JumpRunCreationData> list2_m2 = new List<JumpRunCreationData>();
+        list2_m2.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus2));
+        possibles[2, getIndexFromY(-2)] = list2_m2;
+
+        List<JumpRunCreationData> list2_m3 = new List<JumpRunCreationData>();
+        list2_m3.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus3));
+        possibles[2, getIndexFromY(-3)] = list2_m3;
+
+        List<JumpRunCreationData> list2_m4 = new List<JumpRunCreationData>();
+        list2_m4.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus4));
+        possibles[2, getIndexFromY(-4)] = list2_m4;
+
+        List<JumpRunCreationData> list2_m6 = new List<JumpRunCreationData>();
+        list2_m6.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus6));
+        possibles[2, getIndexFromY(-6)] = list2_m6;
+
+        List<JumpRunCreationData> list2_m7 = new List<JumpRunCreationData>();
+        list2_m7.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus7));
+        possibles[2, getIndexFromY(-7)] = list2_m7;
+
+        List<JumpRunCreationData> list2_m8 = new List<JumpRunCreationData>();
+        list2_m8.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus8));
+        possibles[2, getIndexFromY(-8)] = list2_m8;
+
+        List<JumpRunCreationData> list2_m15 = new List<JumpRunCreationData>();
+        list2_m15.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus15));
+        possibles[2, getIndexFromY(-15)] = list2_m15;
+
+        List<JumpRunCreationData> list2_m16 = new List<JumpRunCreationData>();
+        list2_m16.Add(new JumpRunCreationData(false, Direction.right, 0f, 1.5f, JumpPathingMaps.jump_x2_yMinus16));
+        possibles[2, getIndexFromY(-16)] = list2_m16;
+
+
+
 
 		List<JumpRunCreationData> list13_0 = new List<JumpRunCreationData>();
         list13_0.Add(new JumpRunCreationData(13f, 13f, JumpPathingMaps.jump_x12_y0));
@@ -98,7 +133,7 @@ public class PossibleJumpMaps {
 	private static List<JumpRunCreationData> cloneInverseList(List<JumpRunCreationData> toClone){
 		List<JumpRunCreationData> cloned = new List<JumpRunCreationData> ();
 		foreach (JumpRunCreationData item in toClone) {
-			JumpRunCreationData newJump = new JumpRunCreationData(Direction.left, item.jumpHoldingLenght, item.moveHoldingLenght, item.jumpingPath.getXRevertedMap());
+			JumpRunCreationData newJump = new JumpRunCreationData(item.jump,Direction.left, item.jumpHoldingLenght, item.moveHoldingLenght, item.jumpingPath.getXRevertedMap());
 			cloned.Add (newJump);
 		}
 		return cloned;
