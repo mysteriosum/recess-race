@@ -103,7 +103,6 @@ public class TennisBall : Movable {
 			
 			if (grounded && lastYVelocity < 0 && Mathf.Abs(lastYVelocity) > bounceRetentionPercentage){
 				float amount = Mathf.Abs(lastYVelocity) * bounceRetentionPercentage;
-				Debug.Log("Amount is " + amount);
 				if (amount > MinimumBounce){
 					velocity = Jump(velocity, Mathf.Abs(lastYVelocity) * bounceRetentionPercentage);
 				}
