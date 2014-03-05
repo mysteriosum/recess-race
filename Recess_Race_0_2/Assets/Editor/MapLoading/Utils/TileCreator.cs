@@ -24,6 +24,7 @@ public class TileCreator {
         this.tilesData = tilesData;
         this.tilesParent = GameObjectFactory.createGameObject("Tiles", parent).transform;
         this.collidersParent = GameObjectFactory.createGameObject("Colliders", parent).transform;
+        collidersParent.gameObject.layer = LayerMask.NameToLayer("normalCollisions");
         loadAssets();
     }
 
@@ -75,6 +76,7 @@ public class TileCreator {
 
     private void pushCollider() {
         GameObject newCollider = GameObjectFactory.createGameObject("Collider", collidersParent);
+        newCollider.layer = LayerMask.NameToLayer("normalCollisions");
         newCollider.AddComponent<BoxCollider2D>();
         BoxCollider2D box = newCollider.GetComponent<BoxCollider2D>();
         float width = tileMaxX - tileMinX;
