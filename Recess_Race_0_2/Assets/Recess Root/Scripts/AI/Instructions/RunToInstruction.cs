@@ -5,27 +5,39 @@ public class RunToInstruction : Instruction {
 	    
 	private float targetX;
     private float direction;
+	private float lastX;
+	private int stockCounter;
 
     public RunToInstruction(Agent agent, Vector3 targetLocation) : base(agent){
 		this.targetX = targetLocation.x;
-        if (targetLocation.x > agent.transform.position.x) {
-            direction = 1;
-        } else {
-            direction = -1;
-        }
+		stockCounter = 10;
     }
 
 
     public override void start() {
+		if (targetX > agent.transform.position.x) {
+			direction = 1;
+		} else {
+			direction = -1;
+		}
         agent.setMovingStrenght(direction);
+		this.lastX = agent.transform.position.x;
     }
 
 
-    public override void update() {
-        if (isInRange()) {
+	public override void update() {
+		if(Mathf.Abs(lastX - agent.transform.position.x) < 0.007){
+			stockCounter--;
+			Debug.Log(stockCounter + " - " + (lastX - agent.transform.position.x));
+		}else{
+			stockCounter = 10;
+		}
+		if (isInRange() || stockCounter <= 0) {
             agent.setMovingStrenght(0);
+			if(stockCounter <= 0) Debug.Log ("Unstuck");
             isDone = true;
         }
+		this.lastX = agent.transform.position.x;
     }
 
     private bool isInRange() {

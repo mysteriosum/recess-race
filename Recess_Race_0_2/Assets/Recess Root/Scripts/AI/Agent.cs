@@ -20,6 +20,7 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
+			Debug.Log (instruction.ToString());
         }
         this.currentInstruction = instruction;
     }
@@ -39,7 +40,7 @@ public class Agent : Movable {
                 switchTo(instruction.getInstruction(this));
             }
         } else if (plateform) {
-            if (lastPlateform != null && lastPlateform.id == plateform.id) return;
+			if (currentInstruction != null && lastPlateform != null && lastPlateform.id == plateform.id) return;
             lastPlateform = plateform;
             if (plateform.waypointId > 0) {
                this.currentWayPoint = plateform.waypointId;
@@ -55,16 +56,27 @@ public class Agent : Movable {
         if (getToPlateform == null) {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {
+			float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, getToPlateform);
+
+			Instruction instructionsToGetThere;
             JumpRunCreationData data = getToPlateform.data;
             if (data.jump){ 
-                Instruction intructionsToGetThere = InstructionFactory.makeRunJump(this, getToPlateform.jumpStart, getToPlateform.data);
-                switchTo(intructionsToGetThere);
+                instructionsToGetThere = InstructionFactory.makeRunJump(this, getToPlateform.jumpStart, getToPlateform.data);
             } else {
                 Vector3 runto = getToPlateform.jumpStart;
                 runto.x += ((int)data.direction * data.moveHoldingLenght);
-                Instruction intructionsToGetThere = new RunToInstruction(this, runto);
-                switchTo(intructionsToGetThere);
+                instructionsToGetThere = new RunToInstruction(this, runto);
+                
             }
+
+			if(xToGo !=getToPlateform.jumpStart.x){
+				//Debug.Log("Must overRun to get there :)  " + xToGo );
+				Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, getToPlateform.jumpStart.y, 0));
+				overRun.nextInstruction = instructionsToGetThere;
+				switchTo(overRun);
+			}else{
+				switchTo(instructionsToGetThere);
+			}
         }
     }
 

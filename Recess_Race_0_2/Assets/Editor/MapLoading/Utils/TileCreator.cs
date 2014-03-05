@@ -78,7 +78,7 @@ public class TileCreator {
         GameObject newCollider = GameObjectFactory.createGameObject("Collider", collidersParent);
         newCollider.layer = LayerMask.NameToLayer("normalCollisions");
         newCollider.AddComponent<BoxCollider2D>();
-        BoxCollider2D box = newCollider.GetComponent<BoxCollider2D>();
+        //BoxCollider2D box = newCollider.GetComponent<BoxCollider2D>();
         float width = tileMaxX - tileMinX;
         float center = width / 2;
         newCollider.transform.Translate(tileMinX + center, tileY, 0);
