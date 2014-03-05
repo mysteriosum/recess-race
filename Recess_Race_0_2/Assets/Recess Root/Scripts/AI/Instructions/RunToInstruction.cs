@@ -2,14 +2,12 @@
 using System.Collections;
 
 public class RunToInstruction : Instruction {
-
-    private Vector3 targetLocation;
-    private float distanceToGetBy;
+	    
+	private float targetX;
     private float direction;
 
-    public RunToInstruction(Agent agent, Vector3 targetLocation, float distanceToGetBy = 1f) : base(agent){
-        this.targetLocation = targetLocation;
-        this.distanceToGetBy = distanceToGetBy;
+    public RunToInstruction(Agent agent, Vector3 targetLocation) : base(agent){
+		this.targetX = targetLocation.x;
         if (targetLocation.x > agent.transform.position.x) {
             direction = 1;
         } else {
@@ -31,10 +29,14 @@ public class RunToInstruction : Instruction {
     }
 
     private bool isInRange() {
-        return (this.agent.transform.position - targetLocation).magnitude < distanceToGetBy;
+        if (direction == -1) {
+            return this.agent.transform.position.x < targetX;
+        } else {
+            return this.agent.transform.position.x > targetX;
+        }
     }
 
     public override string ToString() {
-        return "RunToInstruction, run to (" + targetLocation.x + "," + targetLocation.y + ")";
+        return "RunToInstruction, run to (x=" + targetX + ")";
     }
 }

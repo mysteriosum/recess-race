@@ -14,9 +14,10 @@ public enum MenuEnum{
 public class MainMenu : MonoBehaviour {
 	
 	public GUISkin skin;
+	public Texture2D mainPic;
+	public Texture2D credits;
 	
-	
-	private MenuEnum currentMenu = MenuEnum.intro;
+	private MenuEnum currentMenu = MenuEnum.title;
 	public Vector2 mainButtonOffset = Vector2.zero;
 	
 	public GUIContent[] mainMenu = new GUIContent[]{ new GUIContent("Play"), new GUIContent("Credits")};
@@ -28,10 +29,10 @@ public class MainMenu : MonoBehaviour {
 		//set up menus, make sure the menu skin is correct...
 	}
 	
+	
 	// Update is called once per frame
 	void OnGUI () {
 		//start with intro animation: credits, logos, etc.
-		
 		switch(currentMenu){
 		case MenuEnum.intro:
 			//play intro animation!
@@ -42,23 +43,33 @@ public class MainMenu : MonoBehaviour {
 			break;
 		case MenuEnum.title:
 			//render background (animated?! or just one long animated texture that loops?)
+			
+			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mainPic);
+			
 			Texture2D buttonTex = skin.button.normal.background;
-			Rect playRect = new Rect(Screen.width/2 - buttonTex.width/2 + mainButtonOffset.x, Screen.height/2 - buttonTex.width/2 + mainButtonOffset.y, buttonTex.width *2, buttonTex.height);
-			bool pressPlay = GUI.Button(playRect, mainMenu[0], skin.button);
+			
+			Rect playRect = new Rect(mainButtonOffset.x * Screen.width, Screen.height * mainButtonOffset.y, 200, 100);
+			bool pressPlay = GUI.Button(playRect, mainMenu[0], skin.customStyles[2]);
 			if (pressPlay){
 				Application.LoadLevel (firstLevelName);
 			}
 			
-			Rect creditsRect = new RectOffset(0, 0, -buttonTex.width, buttonTex.width).Add (playRect);
-			bool pressCredits = GUI.Button (creditsRect, mainMenu[1], skin.button);
+			Rect creditsRect = new RectOffset(0, 0, -150, 100).Add (playRect);
+			bool pressCredits = GUI.Button (creditsRect, mainMenu[1], skin.customStyles[2]);
 			if (pressCredits){
-				Debug.Log ("Load credits!");
+				currentMenu = MenuEnum.credits;
 			}
 			break;
 		case MenuEnum.main:
 			
 			break;
 		case MenuEnum.credits:
+			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mainPic);
+			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), credits);
+			
+			if (Input.GetKeyDown (KeyCode.Escape) || Input.GetMouseButtonDown(0)){
+				currentMenu = MenuEnum.title;
+			}
 			
 			break;
 		case MenuEnum.options:

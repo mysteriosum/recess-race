@@ -3,18 +3,22 @@ using System.Collections;
 
 public class AgentInstructionTrigger : MonoBehaviour {
 
+	public bool jump;
 	public float jumpHoldingLenght = 13;
 	public float moveHoldingLenght = 13;
 
 	public Direction direction = Direction.right;
 
-
-
 	public Instruction getInstruction(Agent agent){
-		Vector3 runto = this.transform.position;
-		runto.x += (int)direction;
-
-		return InstructionFactory.makeRunJump(agent, runto, direction, jumpHoldingLenght, moveHoldingLenght) ;
+		if (jump) {
+			Vector3 runto = this.transform.position;
+			runto.x += (int)direction;
+			return InstructionFactory.makeRunJump (agent, runto, direction, jumpHoldingLenght, moveHoldingLenght);
+		} else {
+			Vector3 runto = this.transform.position;
+			runto.x += ((int)direction) * moveHoldingLenght;
+			return new RunToInstruction(agent, runto);
+		}
 	}
 
 
@@ -29,9 +33,9 @@ public class AgentInstructionTrigger : MonoBehaviour {
 			size = (Vector3)derCollider.size;
 
 		if (direction.Equals (Direction.left)) {
-			myColor = new Color (this.jumpHoldingLenght / 13f * 255, 0, 0, alpha);
+			myColor = new Color (this.jumpHoldingLenght / 13f , 255, 0, alpha);
 		} else {
-			myColor = new Color (0, 0, this.jumpHoldingLenght / 13f, alpha);
+            myColor = new Color(255, 0, this.jumpHoldingLenght / 13f, alpha);
 		
 		}
 

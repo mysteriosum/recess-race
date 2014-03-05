@@ -16,4 +16,8 @@ public class Dimension {
 		this.width = width;
 		this.height = height;
 	}
+
+    public override string ToString() {
+        return "Dimension ( width= " + width + ", height= " + height + " )";
+    }
 }
