@@ -10,6 +10,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     public Color color;
     public int id;
 	public int waypointId;
+    public bool showGismos = true;
 
 	public bool isUnder(Plateform p2){
 		Vector3 v1 = this.transform.position; 
@@ -32,6 +33,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     }
 
 	void OnDrawGizmos(){
+        if (!showGismos) return;
 
         foreach (var linked in linkedJumpPlateform) {
             if (linked == null || !linked.plateform) continue;

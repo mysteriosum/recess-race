@@ -176,6 +176,7 @@ public class PlateformGenerator {
     public void hideAllPlatefoms() {
         foreach (var plateform in this.plateforms) {
             GameObject.DestroyImmediate(plateform.GetComponent<SpriteRenderer>());
+            plateform.showGismos = false;
         }
     }
 

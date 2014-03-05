@@ -19,7 +19,7 @@ public class MapLoaderEditor : EditorWindow {
 		}
 		GUILayout.EndHorizontal ();
 
-        MapLoader.inDebugMode = GUILayout.Toggle(MapLoader.inDebugMode, "Is in debug mod (show Plateform)");
+        MapLoader.inDebugMode = GUILayout.Toggle(MapLoader.inDebugMode, "Is in debug mod (show Plateform Gizmos)");
         MapLoader.verbose = GUILayout.Toggle(MapLoader.verbose, "Verbose");
 		if (fileName.Length == 0) {
 			GUI.enabled = false;
