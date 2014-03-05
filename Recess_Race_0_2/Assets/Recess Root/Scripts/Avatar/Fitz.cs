@@ -405,6 +405,9 @@ public class Fitz : Movable {
 		ottoAnim.SetActive(false);
 		renderer.enabled = true;
 		//r.color = Color.white;
+		
+		//TEMP Play audio on camera
+		RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.losePower);
 	}
 	
 	protected override Vector2 Move (Vector2 currentVelocity, float input)
@@ -480,20 +483,22 @@ public class Fitz : Movable {
 	void OnTriggerEnter2D (Collider2D other){
 		DamageScript dmgScript = other.GetComponent<DamageScript>();
 		
-		if (dmgScript && dmgScript.enabled){
+		if (dmgScript && dmgScript.enabled && !hurt){
+			if (debug){
+				Debug.Log("I have a collision with a tennis ball!");
+			}
 			if (anim){
 				anim.Play (a.hurt);
 			}
-			dmgScript.SendMessage("CollideWithFitz", t);
 			
-			if (boogerBoy){
-				return;
+			if (!boogerBoy){
+				CanControl = false;
+				stunTimer = dmgScript.StunDuration;
+				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 			}
-			
-			CanControl = false;
-			stunTimer = dmgScript.StunDuration;
-			velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 		}
+		
+		other.SendMessage("CollideWithFitz", SendMessageOptions.DontRequireReceiver);
 	}
 	
 	void PlayRestAnim (){

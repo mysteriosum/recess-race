@@ -15,7 +15,6 @@ public class QuestionMark : MonoBehaviour {
 	
 	void OnTriggerEnter2D(Collider2D other){
 		if (other.GetComponent<Fitz>()){
-			Debug.Log("Yeah");
 			Roulette.Instance.StartRoulette();
 			Destroy(gameObject);
 			

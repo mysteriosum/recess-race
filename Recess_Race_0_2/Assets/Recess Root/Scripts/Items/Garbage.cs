@@ -16,9 +16,10 @@ public class Garbage : MonoBehaviour {
 	
 	void OnTriggerEnter2D(Collider2D other){
 		Fitz fitz = other.GetComponent<Fitz>();
-		if (fitz != null)
+		if (fitz != null){
 			RecessManager.AddGarbageToScore();
-	
+			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.camera);
+		}
 		Destroy(gameObject);
 	}
 }
