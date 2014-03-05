@@ -18,7 +18,7 @@ public class FinishLine : MonoBehaviour {
 		if (fitz){
 			fitz.FinishRace();
 			RecessCamera.cam.FinishRace();
-		
+			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.children);
 		}
 	}
 }

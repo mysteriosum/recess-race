@@ -8,6 +8,9 @@ public class RecessCamera : MonoBehaviour {
 	private Transform fitzNode;
 	private Transform box;
 	
+	public AudioSource audio;
+	public Sounds sounds;
+	
 	public static RecessCamera cam;
 	const int scrnHeight = 480;
 	const int scrnWidth = 640;
@@ -129,6 +132,7 @@ public class RecessCamera : MonoBehaviour {
 	}
 	void Start () {
 		t = transform;
+		audio = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
 		try{
 			fitzNode = GameObject.Find("Fitzwilliam").GetComponentInChildren<GizmoDad>().transform;
@@ -137,6 +141,7 @@ public class RecessCamera : MonoBehaviour {
 			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like");
 		}
 		
+		sounds = gameObject.AddComponent<Sounds>();
 		
 		Bully[] bullies = FindObjectsOfType<Bully>();
 		List<Transform> tlist = new List<Transform>();
@@ -147,6 +152,10 @@ public class RecessCamera : MonoBehaviour {
 		racers = tlist.ToArray();
 		
 		Vector3 defaultPosition = new Vector3(minimumDistance, t.position.y, bgDistance);
+		
+		
+		Transform roulette = GetComponentInChildren<Roulette>().transform;
+		roulette.localPosition = new Vector3(roulette.localPosition.x, camera.orthographicSize * 0.8f, roulette.localPosition.z);
 		
 		
 		//---------------------------------------------------------------\\
@@ -293,7 +302,6 @@ public class RecessCamera : MonoBehaviour {
 			//GUI.TextArea (rankRect, RankString, hud.skin.textArea);
 			
 			
-			GUI.Box(new Rect(0, 0, 100, 50), RecessManager.Score.ToString());
 			//time of race
 			Rect timeRect = new Rect(hud.timeBorder.x, Screen.height - hud.timeBorder.y - 60, 125, 60);
 			GUI.TextArea (timeRect, RecessManager.TimeString, hud.skin.customStyles[0]);
@@ -323,18 +331,18 @@ public class RecessCamera : MonoBehaviour {
 				boxStyle.contentOffset = new Vector2(0, 35);
 				GUI.Box (new Rect(0, yValue, congratsWidth, congratsHeight), "Congratulations!", boxStyle);
 			}
-			yValue += 125;
+			yValue += congratsHeight * 0.25f;
 			if (finishedTimer > placeAt){
 				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 50), "You came in " + RankString + " place!", hud.skin.textArea);
 			}
-			yValue += 150;
+			yValue += congratsHeight * 0.15f;
 			if (finishedTimer > scoredAt){
 				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 50), "You scored: " + (finishedTimer > showScoreAt? RecessManager.Score.ToString() : ""), hud.skin.textArea);
 			}
-			yValue += 100;
+			yValue += congratsHeight * 0.1f;
 			if (finishedTimer > tryAgainAt){
 				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "Try again?", hud.skin.textArea);
-				yValue += 70;
+				yValue += congratsHeight * 0.1f;
 				
 				
 				//input: change cursor
@@ -386,6 +394,11 @@ public class RecessCamera : MonoBehaviour {
 			}
 			GUI.EndGroup();
 		}
+	}
+	
+	public void PlaySound(AudioClip clip){
+		audio.clip = clip;
+		audio.Play();
 	}
 	
 	public void FinishRace(){

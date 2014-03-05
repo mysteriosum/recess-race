@@ -127,7 +127,8 @@ public class TennisBall : Movable {
 		box = new Rect(t.position.x - circle.radius, t.position.y - circle.radius, circle.radius * 2, circle.radius * 2);
 	}
 	
-	void CollideWithFitz(Transform fitz){
+	void CollideWithFitz(){
+		Transform fitz = Fitz.fitz.transform;
 		hasGravity = true;
 		velocity = new Vector2(collideVelocity.x * (fitz.position.x > t.position.x? -1 : 1), collideVelocity.y);
 		DamageScript dmg = GetComponent<DamageScript>();
