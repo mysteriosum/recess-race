@@ -15,7 +15,7 @@ public class RecessCamera : MonoBehaviour {
 	const int scrnHeight = 480;
 	const int scrnWidth = 640;
 	
-	private Transform[] parallaxes;
+	public Transform[] parallaxes;
 	public Sprite[] backgroundElements;
 	public Sprite silhouette;
 	public Sprite fence; 
@@ -28,6 +28,8 @@ public class RecessCamera : MonoBehaviour {
 	private float silhouetteYOffset = 1;
 	private float fenceYOffset = -2;
 	private float fenceDistance = 27;
+	private int fenceAmount = 85;
+	private int houseAmount = 85;
 	
 	
 	private float lerpAmount = 0.1f;
@@ -163,7 +165,7 @@ public class RecessCamera : MonoBehaviour {
 		//---------------------------------------------------------------\\
 		List<Transform> parallaxen = new List<Transform>();
 		
-		for (int i = 0; i < minimumAtStart; i++) {
+		for (int i = 0; i < houseAmount; i++) {
 			GameObject newGuy = new GameObject("background" + i.ToString());
 			SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
 			int rando = UnityEngine.Random.Range (0, backgroundElements.Length);
@@ -188,7 +190,7 @@ public class RecessCamera : MonoBehaviour {
 		
 		Vector3 fencePosition = new Vector3(minimumDistance, t.position.y + fenceYOffset, fenceDistance);
 		
-		for (int i = 0; i < minimumAtStart; i++) {
+		for (int i = 0; i < fenceAmount; i++) {
 			GameObject newGuy = new GameObject("background" + i.ToString());
 			SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
 			newSprite.sprite = fence;
@@ -197,6 +199,11 @@ public class RecessCamera : MonoBehaviour {
 			newSprite.sortingLayerName = "Background";
 			parallaxen.Add (newGuy.transform);
 		}
+		
+		foreach (Transform item in parallaxes) {
+			parallaxen.Add(item);
+		}
+		
 		parallaxes = parallaxen.ToArray();
 		
 		foreach(Transform tr in parallaxes){
