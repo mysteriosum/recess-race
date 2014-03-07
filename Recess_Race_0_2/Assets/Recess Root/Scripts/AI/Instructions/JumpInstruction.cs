@@ -51,7 +51,7 @@ public class JumpInstruction : Instruction {
 			agent.stopJumping();
 		}
 
-
+		 
 		if (moving && Mathf.Abs (startX - agent.transform.position.x) >= moveLenght) {
 			moving = false;
 			agent.setMovingStrenght(0);
