@@ -205,12 +205,14 @@ public class PlateformGenerator {
                 bool[,] pathingMap;
                 SplitDirection splitDirection;
                 SplitDirection checkDirection;
-                if (from.x < to.x) {
+                if (from.x < to.x) { // To is on right
                     splitDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
                     checkDirection = (from.y > to.y) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
+					if(map.pathingMap[(int)(x-1)][(int)from.y]) continue;
                 } else {
                     splitDirection = (from.y > to.y) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
                     checkDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
+					if(map.pathingMap[(int)(x+1)][(int)from.y]) continue;
 				}
                 if (from.y > to.y) { // Drop down
                     pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, Math.Abs(distanceY) + 2));

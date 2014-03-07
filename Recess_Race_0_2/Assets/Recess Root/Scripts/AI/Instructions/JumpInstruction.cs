@@ -39,7 +39,6 @@ public class JumpInstruction : Instruction {
     public override void update() {
 		if(Mathf.Abs(lastX - agent.transform.position.x) < 0.007){
 			stockCounter--;
-			Debug.Log(stockCounter + " - " + (lastX - agent.transform.position.x));
 		}else{
 			stockCounter = 10;
 		}
@@ -47,6 +46,7 @@ public class JumpInstruction : Instruction {
 		this.lastX = agent.transform.position.x;
 		if (stockCounter <= 0) {
 			moving = false;
+			this.isDone = true;
 			agent.setMovingStrenght(0);	
 			agent.stopJumping();
 		}

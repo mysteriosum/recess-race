@@ -28,7 +28,6 @@ public class RunToInstruction : Instruction {
 	public override void update() {
 		if(Mathf.Abs(lastX - agent.transform.position.x) < 0.007){
 			stockCounter--;
-			Debug.Log(stockCounter + " - " + (lastX - agent.transform.position.x));
 		}else{
 			stockCounter = 10;
 		}
