@@ -53,12 +53,12 @@ public class MainMenu : MonoBehaviour {
 			if (pressPlay){
 				Application.LoadLevel (firstLevelName);
 			}
-			
+			/*
 			Rect creditsRect = new RectOffset(0, 0, -150, 100).Add (playRect);
 			bool pressCredits = GUI.Button (creditsRect, mainMenu[1], skin.customStyles[2]);
 			if (pressCredits){
 				currentMenu = MenuEnum.credits;
-			}
+			}*/
 			break;
 		case MenuEnum.main:
 			
