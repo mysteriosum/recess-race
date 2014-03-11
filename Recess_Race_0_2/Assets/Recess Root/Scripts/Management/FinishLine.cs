@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class FinishLine : MonoBehaviour {
-
+	bool finished = false;
 	// Use this for initialization
 	void Start () {
 	
@@ -15,10 +15,11 @@ public class FinishLine : MonoBehaviour {
 	
 	void OnTriggerEnter2D (Collider2D other){
 		Fitz fitz = other.gameObject.GetComponent<Fitz>();
-		if (fitz){
+		if (!finished && fitz){
 			fitz.FinishRace();
 			RecessCamera.cam.FinishRace();
 			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.children);
+			finished = true;
 		}
 	}
 }

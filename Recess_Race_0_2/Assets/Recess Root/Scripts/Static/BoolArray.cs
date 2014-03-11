@@ -8,7 +8,13 @@ public class BoolArray  {
 
     public bool this[int index] {
         get {
-            return boolArray[index];
+			try{
+				return boolArray[index];
+			}
+            catch{
+				Debug.LogError("Trying to find an index, but it's too big: " + index + ". Returning false");
+				return false;
+			}
         }
 
         set {

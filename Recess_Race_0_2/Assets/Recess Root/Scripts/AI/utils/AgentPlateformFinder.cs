@@ -36,7 +36,7 @@ public class AgentPlateformFinder {
 				}
 			//}
         }
-        Debug.Log("From plateform #" + plateform.id + " to wp #" + targetWayPointId + " in " + min + " jumps (trys " + trys + ").");
+		//Debug.Log("From plateform #" + plateform.id + " to wp #" + targetWayPointId + " in " + min + " jumps (trys " + trys + ").");
         if (minPlateform != null) {
             //Debug.Log("use plateform #" + minPlateform.plateform.id + " from " + minPlateform.jumpStart.ToString());
          }

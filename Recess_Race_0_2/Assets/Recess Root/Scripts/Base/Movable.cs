@@ -352,7 +352,7 @@ public class Movable : MonoBehaviour {
 	}
 	
 	protected virtual float Accelerate(float input){
-		float newX = velocity.x + input * (MaxSpeed / (SecondsToMax)) * Time.deltaTime;
+		float newX = velocity.x + input * (MaxSpeed / SecondsToMax) * Time.deltaTime;
 		newX = Mathf.Clamp(newX, -MaxSpeed, MaxSpeed);
 		return newX;
 	}

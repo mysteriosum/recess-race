@@ -43,6 +43,23 @@ public class Fitz : Movable {
 	
 	private float itemTimer							= 0;
 	
+	private float speedBoostMod						= 1.7f;
+	private float tempMaxSpeed						= 0;
+	private bool speedBoosting						= false;
+	private float speedBoostTimer					= 0;
+	private float falloffAfter						= 1.7f;
+	private float speedBoostSec2Max					= 0.125f;
+	private int speedBoostDirection					= 0;
+	private float noBoostFor						= 0.3f;
+	
+	private float SpeedBoostFalloff {
+		get{
+			float result = maxSpeed / secondsToMax * Time.deltaTime;
+			Debug.Log(result);
+			return result;
+		}
+	}
+	
 	private GameObject pinkyAnim;
 	private GameObject boogerAnim;
 	private GameObject ottoAnim;
@@ -88,13 +105,15 @@ public class Fitz : Movable {
 	
 	protected override float MaxSpeed {
 		get {
+			float baseResult = speedBoosting? tempMaxSpeed : base.MaxSpeed;
+			
 			if (pinky){
-				return base.MaxSpeed * (spinFalling? spinFallMoveMod : 1);
+				return baseResult * (spinFalling? spinFallMoveMod : 1);
 			}
 			if (boogerBoy){
-				return base.MaxSpeed * bBoySpeedMod;
+				return baseResult * bBoySpeedMod;
 			}
-			return base.MaxSpeed;
+			return baseResult;
 		}
 	}
 	
@@ -111,6 +130,9 @@ public class Fitz : Movable {
 	
 	protected override float SecondsToMax {
 		get {
+			if (speedBoosting){
+				return speedBoostSec2Max;
+			}
 			if (boogerBoy){
 				return boogerBoySecToMax;
 			}
@@ -352,6 +374,28 @@ public class Fitz : Movable {
 			}
 		}
 		
+		
+	//--------------------------------------------------------------------------\\
+	//-------------------------Speed Boost Falloff------------------------------\\
+	//--------------------------------------------------------------------------\\
+		
+		if (speedBoosting){
+			speedBoostTimer += Time.deltaTime;
+			
+			
+			if (speedBoostTimer > falloffAfter){
+				tempMaxSpeed -= SpeedBoostFalloff;
+				
+			}
+			
+			if (tempMaxSpeed < maxSpeed || 
+				velocity.x == 0 || 
+				((speedBoostDirection > 0 && controller.hAxis <= 0) || (speedBoostDirection < 0 && controller.hAxis >= 0))){
+				
+				speedBoosting = false;
+				speedBoostTimer = 0;
+			}
+		}
 	}
 	
 	void ChangeToPinky(){
@@ -481,6 +525,10 @@ public class Fitz : Movable {
 	
 	
 	void OnTriggerEnter2D (Collider2D other){
+		
+		
+		//get hurt by stuff!
+		
 		DamageScript dmgScript = other.GetComponent<DamageScript>();
 		
 		if (dmgScript && dmgScript.enabled && !hurt){
@@ -496,6 +544,15 @@ public class Fitz : Movable {
 				stunTimer = dmgScript.StunDuration;
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 			}
+		}
+				//enter a speed boost object!
+		if ((speedBoostTimer > noBoostFor ^ !speedBoosting) && other.gameObject.tag == "SpeedBoost" && controller.hAxis != 0){
+			other.GetComponent<Animator>().Play(0);
+			tempMaxSpeed = maxSpeed * speedBoostMod;
+			speedBoosting = true;
+			speedBoostTimer = 0;
+			speedBoostDirection = Mathf.RoundToInt(controller.hAxis);
+			Debug.Log("My new max speed is " + tempMaxSpeed);
 		}
 		
 		other.SendMessage("CollideWithFitz", SendMessageOptions.DontRequireReceiver);

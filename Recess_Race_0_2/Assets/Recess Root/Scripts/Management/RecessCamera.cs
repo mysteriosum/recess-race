@@ -86,6 +86,9 @@ public class RecessCamera : MonoBehaviour {
 	
 	public HUDTextures hud;
 	
+	public bool produceBackground = true;
+	public bool toReadySetGo = true;
+	
 	private Transform[] racers;
 	private Transform fitz;
 	
@@ -159,73 +162,94 @@ public class RecessCamera : MonoBehaviour {
 		Transform roulette = GetComponentInChildren<Roulette>().transform;
 		roulette.localPosition = new Vector3(roulette.localPosition.x, camera.orthographicSize * 0.8f, roulette.localPosition.z);
 		
-		
+		if (!toReadySetGo){
+			goTimer = goTime;
+			
+		}
 		//---------------------------------------------------------------\\
 		//--------------------------place bg tiles-----------------------\\
 		//---------------------------------------------------------------\\
-		List<Transform> parallaxen = new List<Transform>();
-		
-		for (int i = 0; i < houseAmount; i++) {
-			GameObject newGuy = new GameObject("background" + i.ToString());
-			SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
-			int rando = UnityEngine.Random.Range (0, backgroundElements.Length);
-			newSprite.sprite = backgroundElements[rando];
-			newGuy.transform.position = defaultPosition + Vector3.right * newSprite.sprite.bounds.size.x;
-			defaultPosition = newGuy.transform.position;
-			newSprite.sortingLayerName = "Background";
-			parallaxen.Add (newGuy.transform);
-		}
-		
-		Vector3 silhouettePosition = new Vector3(minimumDistance, t.position.y + silhouetteYOffset, silhouetteDistance);
-		
-		for (int i = 0; i < minimumAtStart; i++) {
-			GameObject newGuy = new GameObject("background" + i.ToString());
-			SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
-			newSprite.sprite = silhouette;
-			newGuy.transform.position = silhouettePosition + Vector3.right * newSprite.sprite.bounds.size.x;
-			silhouettePosition = newGuy.transform.position;
-			newSprite.sortingLayerName = "Background";
-			parallaxen.Add (newGuy.transform);
-		}
-		
-		Vector3 fencePosition = new Vector3(minimumDistance, t.position.y + fenceYOffset, fenceDistance);
-		
-		for (int i = 0; i < fenceAmount; i++) {
-			GameObject newGuy = new GameObject("background" + i.ToString());
-			SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
-			newSprite.sprite = fence;
-			newGuy.transform.position = fencePosition + Vector3.right * newSprite.sprite.bounds.size.x;
-			fencePosition = newGuy.transform.position;
-			newSprite.sortingLayerName = "Background";
-			parallaxen.Add (newGuy.transform);
-		}
-		
-		foreach (Transform item in parallaxes) {
-			parallaxen.Add(item);
-		}
-		
-		parallaxes = parallaxen.ToArray();
-		
-		foreach(Transform tr in parallaxes){
-			if (tr.position.z > furthestParalaxZ){
-				furthestParalaxZ = tr.position.z;
-				Debug.Log ("Furthest is " + furthestParalaxZ);
+		if (produceBackground){
+				
+			
+			List<Transform> parallaxen = new List<Transform>();
+			Transform bgs = new GameObject("Backgrounds").transform;
+			
+			Transform houses = new GameObject("Houses").transform;
+			houses.parent = bgs;
+			for (int i = 0; i < houseAmount; i++) {
+				GameObject newGuy = new GameObject("background" + i.ToString());
+				SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
+				int rando = UnityEngine.Random.Range (0, backgroundElements.Length);
+				newSprite.sprite = backgroundElements[rando];
+				newGuy.transform.position = defaultPosition + Vector3.right * newSprite.sprite.bounds.size.x;
+				defaultPosition = newGuy.transform.position;
+				newSprite.sortingLayerName = "Background";
+				parallaxen.Add (newGuy.transform);
+				newGuy.transform.parent = houses;
 			}
+			
+			Vector3 silhouettePosition = new Vector3(minimumDistance, t.position.y + silhouetteYOffset, silhouetteDistance);
+			
+			Transform silhouettes = new GameObject("Silhouettes").transform;
+			silhouettes.parent = bgs;
+			for (int i = 0; i < minimumAtStart; i++) {
+				GameObject newGuy = new GameObject("background" + i.ToString());
+				SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
+				newSprite.sprite = silhouette;
+				newGuy.transform.position = silhouettePosition + Vector3.right * newSprite.sprite.bounds.size.x;
+				silhouettePosition = newGuy.transform.position;
+				newSprite.sortingLayerName = "Background";
+				parallaxen.Add (newGuy.transform);
+				newGuy.transform.parent = silhouettes;
+			}
+			
+			Vector3 fencePosition = new Vector3(minimumDistance, t.position.y + fenceYOffset, fenceDistance);
+			Transform fences = new GameObject("Fences").transform;
+			fences.parent = bgs;
+			
+			for (int i = 0; i < fenceAmount; i++) {
+				GameObject newGuy = new GameObject("background" + i.ToString());
+				SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
+				newSprite.sprite = fence;
+				newGuy.transform.position = fencePosition + Vector3.right * newSprite.sprite.bounds.size.x;
+				fencePosition = newGuy.transform.position;
+				newSprite.sortingLayerName = "Background";
+				parallaxen.Add (newGuy.transform);
+				newGuy.transform.parent = fences;
+			}
+			
+	//		foreach (Transform item in parallaxes) {
+	//			parallaxen.Add(item);
+	//		}
+			parallaxen.Add(silhouettes);
+			parallaxen.Add(houses);
+			parallaxen.Add(fences);
+			
+			parallaxes = parallaxen.ToArray();
+			
+			foreach(Transform tr in parallaxes){
+				if (tr.position.z > furthestParalaxZ){
+					furthestParalaxZ = tr.position.z;
+					Debug.Log ("Furthest is " + furthestParalaxZ);
+				}
+			}
+			
 		}
 	}
-	
+	void StartRace() {
+		raceBegun = true;
+		foreach (Movable mov in FindObjectsOfType(typeof(Movable)) as Movable[]){
+			mov.setActivated();
+		}
+	}
 	// Update is called once per frame
 	void FixedUpdate () {
 		
 		if (goTimer < noMoreGoTime){
 			goTimer += Time.deltaTime;
-			
-			if (goTimer > goTime){
-				raceBegun = true;
-				foreach (Movable mov in FindObjectsOfType(typeof(Movable)) as Movable[]){
-					mov.setActivated();
-				}
-			}
+			if (goTimer > goTime)
+				StartRace();
 		}
 		
 		

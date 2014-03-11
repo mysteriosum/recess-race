@@ -15,11 +15,13 @@ public class Garbage : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter2D(Collider2D other){
+		
 		Fitz fitz = other.GetComponent<Fitz>();
 		if (fitz != null){
 			RecessManager.AddGarbageToScore();
 			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.camera);
 		}
+		//gameObject.SetActive(false);
 		Destroy(gameObject);
 	}
 }

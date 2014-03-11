@@ -69,6 +69,7 @@ public class MapLoader {
         loadGarbage();
         loadTennisBalls();
         loadQuestionMark();
+		loadSpeedBoosts();
         print("Loaded Objects");
 
         if(!MapLoader.inDebugMode){
@@ -86,8 +87,8 @@ public class MapLoader {
         GameObject tennisBallParent = GameObjectFactory.createGameObject("Tennis Ball Group", worldRootGameObject.transform);
 
         foreach (var element in tennisBalls) {
-            float x = (float) parse(element.Attribute("x").Value) / map.tileDimension.width;
-            float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            float x = (float) parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
+            float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
             GameObject tennisBall = GameObjectFactory.createCopyGameObject(tennisBallPrefab, "Tennis Ball", tennisBallParent);
             tennisBall.transform.Translate(x,y,0);
             string value;
@@ -118,8 +119,8 @@ public class MapLoader {
         IEnumerable<XElement> garbages = getAllObjectFromObjectGroup("Garbages");
         GameObject GarbageParent = GameObjectFactory.createGameObject("Garbage Group", worldRootGameObject.transform);
         foreach (var element in garbages) {
-            float x = (float) parse(element.Attribute("x").Value) / map.tileDimension.width;
-            float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
+            float x = (float) parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
+            float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
             GameObject garbage = GameObjectFactory.createCopyGameObject(garbagePrefab, "Garbage", GarbageParent);
             garbage.transform.Translate(x, y, 0);
         }
@@ -130,13 +131,25 @@ public class MapLoader {
         IEnumerable<XElement> questionMarks = getAllObjectFromObjectGroup("QuestionMarks");
 		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject.transform);
 		foreach (var element in questionMarks) {
-            float x = (float)parse(element.Attribute("x").Value) / map.tileDimension.width;
-            float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / map.tileDimension.height;
-			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "Garbage", questionMarkParent);
+            float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
+            float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
+			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "QuestionMark", questionMarkParent);
 			garbage.transform.Translate(x, y, 0);
 		}
 	}
-
+	
+	private void loadSpeedBoosts() {
+        GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/SpeedBoost");
+        IEnumerable<XElement> speedBoosts = getAllObjectFromObjectGroup("SpeedBoosts");
+		GameObject speedBoostParent = GameObjectFactory.createGameObject("Speed Boost Group", worldRootGameObject.transform);
+		foreach (var element in speedBoosts) {
+            float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
+            float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
+			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "SpeedBoost", speedBoostParent);
+			garbage.transform.Translate(x, y, 0);
+		}
+	}
+	
     private IEnumerable<XElement> getAllObjectFromObjectGroup(string name) {
         try {
             return document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == name).Descendants().Where(e => e.Name == "object");
