@@ -6,7 +6,7 @@ public enum Direction { left = -1 , right = 1}
 
 public class JumpInstruction : Instruction {
 
-    private float distanceToGetBy;
+    //private float distanceToGetBy;
     private Direction direction;
 	private float holdLenght;
 	private bool holding;
@@ -19,7 +19,7 @@ public class JumpInstruction : Instruction {
 
 	public JumpInstruction(Agent agent, Direction direction, float holdLenght = 13, float moveLenght = 13, float distanceToGetBy = 1f)
         : base(agent) {
-        this.distanceToGetBy = distanceToGetBy;
+        //this.distanceToGetBy = distanceToGetBy;
 		this.direction = direction;
 		this.holdLenght = holdLenght;
 		this.moveLenght = moveLenght;

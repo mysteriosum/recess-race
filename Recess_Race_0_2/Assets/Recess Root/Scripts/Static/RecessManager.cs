@@ -23,7 +23,7 @@ public class RecessManager {
 	}
 	public static string TimeString{
 		get { 
-			int minutes = (int) Mathf.Floor(currentTime/60);
+			//int minutes = (int) Mathf.Floor(currentTime/60);
 			int seconds = (int) Mathf.Floor(currentTime % 60);
 			float centiSeconds = (int) Mathf.Floor((currentTime - (int) currentTime) * 100);
 			return Mathf.Floor(currentTime/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + ":" + centiSeconds.ToString();}

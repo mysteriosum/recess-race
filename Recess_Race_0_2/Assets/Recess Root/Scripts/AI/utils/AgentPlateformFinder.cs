@@ -21,7 +21,7 @@ public class AgentPlateformFinder {
             if (tryiedPlateform.Contains(link.plateform)) {
                 continue;
             }
-			float xToGo = getXToGetToMakeTheJump(agent,link);
+			//float xToGo = getXToGetToMakeTheJump(agent,link);
 			//if(canMakeItToTheJumpLocationAtFullSpeed(agent, xToGo)){
 				tryiedPlateform.Add(link.plateform);
 				if (link.plateform.waypointId == targetWayPointId) {

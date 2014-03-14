@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Sounds : MonoBehaviour{
 	
-	public AudioClip camera;
+	public AudioClip cameraSound;
 	public AudioClip birds;
 	public AudioClip children ;
 	public AudioClip gun;
@@ -14,7 +14,7 @@ public class Sounds : MonoBehaviour{
 	public AudioClip losePower;
 	
 	void Start(){
-		camera = Resources.Load("Sounds/Camera 2") as AudioClip;
+		cameraSound = Resources.Load("Sounds/Camera 2") as AudioClip;
 		birds = Resources.Load("Sounds/birds_001") as AudioClip;
 		children = Resources.Load("Sounds/Children Cheer") as AudioClip;
 		gun = Resources.Load("Sounds/Gun Hand Shot 3") as AudioClip;
