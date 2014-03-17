@@ -16,7 +16,7 @@ public class AgentInstructionTrigger : MonoBehaviour {
 
 	public float distanceToStartRunningAgain;
 	public Direction endDirection = Direction.right;
-	public float totalDropOff;
+	public float totalDistanceAfterMoveAgain;
 
 	public Instruction getInstruction(Agent agent){
 		Instruction instruction = null;
@@ -43,11 +43,11 @@ public class AgentInstructionTrigger : MonoBehaviour {
 	}
 
 	public Instruction makeJumpInstruction(Agent agent){
-		return new JumpInstruction (agent, direction, jumpHoldingLenght, moveHoldingLenght);
+		return new JumpInstruction (agent, direction, jumpHoldingLenght, moveHoldingLenght, this.distanceToStartRunningAgain, this.endDirection, this.totalDistanceAfterMoveAgain);
 	}
 
 	public Instruction makeDropOffInstruction(Agent agent){
-		return new DropOffInstruction (agent, direction, moveHoldingLenght, totalDropOff, distanceToStartRunningAgain, endDirection);
+		return new DropOffInstruction (agent, direction, moveHoldingLenght, totalDistanceAfterMoveAgain, distanceToStartRunningAgain, endDirection);
 	}
 
 

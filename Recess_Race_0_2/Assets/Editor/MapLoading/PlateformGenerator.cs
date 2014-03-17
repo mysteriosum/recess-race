@@ -261,7 +261,7 @@ public class PlateformGenerator {
 				foreach (JumpRunCreationData jump in possibleJumps) {
                     print(jump.jumpingPath.ToString());
                     if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
-						fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(jump.direction, from, toPlateform, jump.instruction));
+						fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
                     }
 
                 }

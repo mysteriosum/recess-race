@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
-    public List<LinkedJumpPlateform> linkedJumpPlateform;
+    public List<LinkedPlateform> linkedJumpPlateform;
 
     public Color color;
     public int id;
@@ -77,13 +77,13 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 }
 
 [Serializable]
-public class LinkedJumpPlateform {
+public class LinkedPlateform {
     public Vector3 startLocation;
     public Plateform plateform;
 	public InstructionCreationData instruction;
 	public Direction startingDirection;
 
-	public LinkedJumpPlateform(Direction startingDirection, Vector3 startLocation, Plateform plateform, InstructionCreationData instruction) {
+	public LinkedPlateform(Direction startingDirection, Vector3 startLocation, Plateform plateform, InstructionCreationData instruction) {
         this.startLocation = startLocation;
         this.plateform = plateform;
         this.instruction = instruction;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Agent : Movable {
@@ -52,7 +52,7 @@ public class Agent : Movable {
 
 
     private void handlePlateform(Plateform plateform) {
-        LinkedJumpPlateform getToPlateform = AgentPlateformFinder.generateMove(this, plateform);
+        LinkedPlateform getToPlateform = AgentPlateformFinder.generateMove(this, plateform);
         if (getToPlateform == null) {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {

@@ -2,8 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public abstract class InstructionCreationData : ScriptableObject{
+public abstract class InstructionCreationData{
 	public InstructionCreationData nextInstructionCreationData;
-
-	public void OnEnable() { hideFlags = HideFlags.HideAndDontSave; }
+	public bool needRunCharge = false;
 }

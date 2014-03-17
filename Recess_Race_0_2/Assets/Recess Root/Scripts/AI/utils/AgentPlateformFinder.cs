@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +9,10 @@ public class AgentPlateformFinder {
     private static int currentDepth;
     private static int maxDepth = 10;
 
-    public static LinkedJumpPlateform generateMove(Agent agent, Plateform plateform) {
+    public static LinkedPlateform generateMove(Agent agent, Plateform plateform) {
         trys = 0;
 
-        LinkedJumpPlateform minPlateform = null;
+        LinkedPlateform minPlateform = null;
         int min = maxDepth;
 
         int targetWayPointId = agent.currentWayPoint + 1;
@@ -43,7 +43,7 @@ public class AgentPlateformFinder {
         return minPlateform;
     }
 
-	public static float getXToGetToMakeTheJump(Agent agent, LinkedJumpPlateform link){
+	public static float getXToGetToMakeTheJump(Agent agent, LinkedPlateform link){
 		float xToGo = link.startLocation.x;
 		float direction = (float)link.startingDirection;
 		if (agent.transform.position.x > link.startLocation.x) { // agent on right of target

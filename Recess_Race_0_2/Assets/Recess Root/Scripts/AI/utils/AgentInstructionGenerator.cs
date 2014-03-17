@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class AgentInstructionGenerator {
@@ -7,7 +7,7 @@ public class AgentInstructionGenerator {
     private static Map map;
 
 
-    public static Instruction findInstruction(Agent agent, Plateform from, LinkedJumpPlateform to) {
+    public static Instruction findInstruction(Agent agent, Plateform from, LinkedPlateform to) {
         if (map == null) map = (Map) GameObject.FindObjectOfType<Map>();
 
         //bool[,] pathing = map.splitToRight(from.getRightCornerPosition(), new Dimension(13, 7));

@@ -3,12 +3,12 @@ using System.Collections;
 
 public class InstructionFactory {
 	    
-    public static Instruction makeRunJump(Agent agent, Vector3 runTo, Direction direction, float jumpHoldLenght, float jumpMoveLenght){
+    /*public static Instruction makeRunJump(Agent agent, Vector3 runTo, Direction direction, float jumpHoldLenght, float jumpMoveLenght){
 		Instruction run = new RunToInstruction(agent, runTo);
 		Instruction jump = new JumpInstruction(agent, direction, jumpHoldLenght, jumpMoveLenght);
 		run.nextInstruction = jump;
 		return run;
-	}
+	}*/
 
 	public static Instruction makeInstruction(Agent agent, InstructionCreationData creationData){
 		Instruction instruction = null;
@@ -19,7 +19,8 @@ public class InstructionFactory {
 			instruction = new RunToInstruction(agent,p);
 		} else if (creationData is JumpInstruction.CreationData) {
 			JumpInstruction.CreationData jumpData = (JumpInstruction.CreationData) creationData;		
-			instruction = new JumpInstruction(agent, jumpData.startingDirection,jumpData.holdLenght, jumpData.moveLenght);
+			instruction = new JumpInstruction(agent, jumpData.startingDirection,jumpData.holdLenght, jumpData.moveLenght
+			                                  , jumpData.moveAgainAfterYMoved, jumpData.moveAgainDirection, jumpData.moveAgainMoveLenght);
 		}
 
 		if (instruction != null && creationData.nextInstructionCreationData != null) {

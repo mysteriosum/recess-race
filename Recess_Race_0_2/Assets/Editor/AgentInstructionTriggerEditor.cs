@@ -37,15 +37,16 @@ public class AgentInstructionTriggerEditor : Editor {
 		target.moveHoldingLenght = EditorGUILayout.FloatField ("hold move lenght (x)", target.moveHoldingLenght);
 		target.jumpHoldingLenght = EditorGUILayout.FloatField ("hold jump lenght (x)", target.jumpHoldingLenght);
 
-		if (target.runBeforeInstruction != 0) {
-			string code = "makeRunJump (direction: Direction." + target.direction.ToString () + ", runDistance : " + target.runBeforeInstruction 
-					+ "f, moveHoldingLenght: " + target.moveHoldingLenght + "f, jumpHoldingLenght: " + target.jumpHoldingLenght + "f);";		
-			EditorGUILayout.TextArea (code);
-		} else {
-			string code = "new JumpInstruction.CreationData () {startingDirection=Direction." + target.direction.ToString () 
-				+ ", holdLenght="+target.jumpHoldingLenght+"f, moveLenght="+target.moveHoldingLenght+"f};" ;
-			EditorGUILayout.TextArea (code);
-		}
+		target.distanceToStartRunningAgain = EditorGUILayout.FloatField ("Move Again After Y Moved (y)", target.distanceToStartRunningAgain);
+		target.endDirection = (Direction) EditorGUILayout.EnumPopup ("Move Again Direction", target.endDirection);
+		target.totalDistanceAfterMoveAgain = EditorGUILayout.FloatField ("Move Again distance(x)", target.totalDistanceAfterMoveAgain);
+
+		string needRunCharge = (target.runBeforeInstruction != 0)?"true":"false";
+		string code = "new JumpInstruction.CreationData () {startingDirection=Direction." + target.direction.ToString () 
+			+ ", moveAgainAfterYMoved ="+target.distanceToStartRunningAgain+"f, endDirection="+ target.endDirection.ToString () 
+			+ ", moveAgainMoveLenght=" + target.totalDistanceAfterMoveAgain + "f"
+			+ ", holdLenght="+target.jumpHoldingLenght+"f, moveLenght="+target.moveHoldingLenght+"f, needRunCharge="+needRunCharge+"};" ;
+		EditorGUILayout.TextArea (code);
 
 	}
 
@@ -55,19 +56,12 @@ public class AgentInstructionTriggerEditor : Editor {
 
 		target.distanceToStartRunningAgain = EditorGUILayout.FloatField ("Drop Lenght To Start Moving Again (x)", target.distanceToStartRunningAgain);
 		target.endDirection = (Direction) EditorGUILayout.EnumPopup ("End Drop Direction", target.endDirection);
+		target.totalDistanceAfterMoveAgain = EditorGUILayout.FloatField ("Total Drop Off (y)", target.totalDistanceAfterMoveAgain);
 
-		target.totalDropOff = EditorGUILayout.FloatField ("Total Drop Off (y)", target.totalDropOff);
-
-		if (target.runBeforeInstruction != 0) {
-			string code = "makeDropOff(Direction." + target.direction.ToString () + ", " + target.runBeforeInstruction 
-				+ "f, " + target.moveHoldingLenght + "f, Direction." + target.endDirection.ToString () 
-					+ ", " + target.distanceToStartRunningAgain + "f, " + target.totalDropOff + "f);";
-			EditorGUILayout.TextArea (code);
-		} else {
-			string code = "new DropOffInstruction.CreationData (){firstDirection=Direction." + target.direction.ToString () 
-				+ ", moveXLenght=" + target.moveHoldingLenght + "f,moveAgainAfterYMoved=" + target.distanceToStartRunningAgain 
-					+ "f, endDropDirection=Direction." + target.endDirection.ToString () + ", totalDrop=" + target.totalDropOff + "f};" ;
-			EditorGUILayout.TextArea (code);
-		}
+		string needRunCharge = (target.runBeforeInstruction != 0)?"true":"false";
+		string code = "new DropOffInstruction.CreationData (){firstDirection=Direction." + target.direction.ToString () + ", moveXLenght=" 
+			+ target.moveHoldingLenght + "f,moveAgainAfterYMoved=" + target.distanceToStartRunningAgain + "f, endDropDirection=Direction." 
+				+ target.endDirection.ToString () + ", totalDrop=" + target.totalDistanceAfterMoveAgain + "f, needRunCharge="+needRunCharge+"};" ;
+		EditorGUILayout.TextArea (code);
 	}
 }
