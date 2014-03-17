@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Raylayers{
+public static class Raylayers{
 	public static readonly int onlyCollisions;
 	public static readonly int upRay;
 	public static readonly int downRay;
