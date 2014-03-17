@@ -19,7 +19,7 @@ public class Garbage : MonoBehaviour {
 		Fitz fitz = other.GetComponent<Fitz>();
 		if (fitz != null){
 			RecessManager.AddGarbageToScore();
-			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.camera);
+			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.cameraSound);
 		}
 		//gameObject.SetActive(false);
 		Destroy(gameObject);

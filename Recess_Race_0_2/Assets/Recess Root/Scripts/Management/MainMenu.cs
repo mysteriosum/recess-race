@@ -46,7 +46,7 @@ public class MainMenu : MonoBehaviour {
 			
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mainPic);
 			
-			Texture2D buttonTex = skin.button.normal.background;
+			//Texture2D buttonTex = skin.button.normal.background;
 			
 			Rect playRect = new Rect(mainButtonOffset.x * Screen.width, Screen.height * mainButtonOffset.y, 200, 100);
 			bool pressPlay = GUI.Button(playRect, mainMenu[0], skin.customStyles[2]);

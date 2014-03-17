@@ -8,7 +8,7 @@ public class RecessCamera : MonoBehaviour {
 	private Transform fitzNode;
 	private Transform box;
 	
-	public AudioSource audio;
+	public AudioSource audioSource;
 	public Sounds sounds;
 	
 	public static RecessCamera cam;
@@ -137,7 +137,7 @@ public class RecessCamera : MonoBehaviour {
 	}
 	void Start () {
 		t = transform;
-		audio = GetComponent<AudioSource>();
+		audioSource = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
 		try{
 			fitzNode = GameObject.Find("Fitzwilliam").GetComponentInChildren<GizmoDad>().transform;
@@ -329,7 +329,7 @@ public class RecessCamera : MonoBehaviour {
 			GUI.DrawTexture(miniRect, miniTexture);
 			
 			//text showing place
-			Rect rankRect = new Rect(miniRect.xMin + hud.rankOffsetFromMini.x, miniRect.yMax + hud.rankOffsetFromMini.y, 100,100);
+			//Rect rankRect = new Rect(miniRect.xMin + hud.rankOffsetFromMini.x, miniRect.yMax + hud.rankOffsetFromMini.y, 100,100);
 			//GUI.TextArea (rankRect, RankString, hud.skin.textArea);
 			
 			
@@ -428,8 +428,8 @@ public class RecessCamera : MonoBehaviour {
 	}
 	
 	public void PlaySound(AudioClip clip){
-		audio.clip = clip;
-		audio.Play();
+		audioSource.clip = clip;
+		audioSource.Play();
 	}
 	
 	public void FinishRace(){

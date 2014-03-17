@@ -19,6 +19,8 @@ public class LightoutCollisionEditor : Editor {
             collision.resetColors();
         }
 
+
+		EditorGUILayout.LabelField ("Collision Map");
         EditorGUILayout.TextArea(generateLightoutCollision(collision));
     }
 

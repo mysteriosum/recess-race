@@ -132,7 +132,7 @@ public class PathingMap {
 		return false;
 	}
 
-    public string ToString() {
+    public override string ToString() {
         string outStr = "";
         for (int y = pathingMap[0].boolArray.Length - 1; y >= 0 ; y--) {
             for (int x = 0; x < pathingMap.Length; x++) {

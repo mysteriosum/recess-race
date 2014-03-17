@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Instruction {
+public abstract class Instruction{
 
     public Instruction nextInstruction;
     public Agent agent;
@@ -20,4 +20,5 @@ public abstract class Instruction {
 
     abstract public void start();
     abstract public void update();
+	abstract public Direction getStartingDirection ();
 }

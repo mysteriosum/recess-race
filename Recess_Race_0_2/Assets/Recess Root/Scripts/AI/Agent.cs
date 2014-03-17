@@ -56,29 +56,25 @@ public class Agent : Movable {
         if (getToPlateform == null) {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {
+			Instruction instructionsToGetThere = InstructionFactory.makeInstruction(this,getToPlateform.instruction);
+			setInstructionAgentToThis(instructionsToGetThere);
+
 			float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, getToPlateform);
-
-			Instruction instructionsToGetThere;
-            JumpRunCreationData data = getToPlateform.data;
-            if (data.jump){ 
-                instructionsToGetThere = InstructionFactory.makeRunJump(this, getToPlateform.jumpStart, getToPlateform.data);
-            } else {
-                Vector3 runto = getToPlateform.jumpStart;
-                runto.x += ((int)data.direction * data.moveHoldingLenght);
-                instructionsToGetThere = new RunToInstruction(this, runto);
-                
-            }
-
-			if(xToGo !=getToPlateform.jumpStart.x){
-				//Debug.Log("Must overRun to get there :)  " + xToGo );
-				Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, getToPlateform.jumpStart.y, 0));
+			if(xToGo !=getToPlateform.startLocation.x){
+				Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, getToPlateform.startLocation.y, 0));
 				overRun.nextInstruction = instructionsToGetThere;
 				switchTo(overRun);
-			}else{
+			} else {
 				switchTo(instructionsToGetThere);
 			}
         }
     }
+
+	private void setInstructionAgentToThis(Instruction instruction){
+		if (instruction == null) return;
+		instruction.agent = this;
+		setInstructionAgentToThis (instruction.nextInstruction);
+	}
 
 
     void debugLog(string message) {

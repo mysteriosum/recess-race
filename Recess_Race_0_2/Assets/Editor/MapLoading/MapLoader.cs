@@ -46,6 +46,8 @@ public class MapLoader {
 		XElement mapElement = document.Elements ().First();
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
         XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
+		XElement AIPlateformRemoves = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "AIPlateformRemove");
+
         print("Set-up");
 
         loadTileset(mapElement.Descendants().Where(e => e.Name == "tileset"));
@@ -59,8 +61,9 @@ public class MapLoader {
         loadTiles(tilesLayer);
         print("Loaded tiles");
 
+		plateformGenerator.loadAIPlateformRemove(AIPlateformRemoves, this.map);
         plateformGenerator.loadWaypoints(waypoints, this.map);
-        print("Loadied Waypoints");
+        print("Loaded Waypoints");
         
 		plateformGenerator.linkPlateforms ();
         print("Loaded Ai instructions");

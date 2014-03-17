@@ -1,25 +1,31 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-[SerializeField]
 public enum Direction { left = -1 , right = 1}
 
+[System.Serializable]
 public class JumpInstruction : Instruction {
 
-    private float distanceToGetBy;
-    private Direction direction;
-	private float holdLenght;
-	private bool holding;
-	private float moveLenght;
-	private bool moving;
-	private float startX;
+	[System.Serializable]
+	public class CreationData : InstructionCreationData{
+		public Direction startingDirection;
+		public float holdLenght;
+		public float moveLenght;
+	}
+
+    public Direction direction;
+	public float holdLenght;
+	public float moveLenght;
+
+	public bool holding;
+	public bool moving;
+	public float startX;
 	
 	private float lastX;
 	private int stockCounter;
 
-	public JumpInstruction(Agent agent, Direction direction, float holdLenght = 13, float moveLenght = 13, float distanceToGetBy = 1f)
+	public JumpInstruction(Agent agent, Direction direction, float holdLenght = 13, float moveLenght = 13)
         : base(agent) {
-        this.distanceToGetBy = distanceToGetBy;
 		this.direction = direction;
 		this.holdLenght = holdLenght;
 		this.moveLenght = moveLenght;
@@ -66,7 +72,11 @@ public class JumpInstruction : Instruction {
         }
     }
 
+	public override Direction getStartingDirection (){
+		return this.direction;
+	}
+
     public override string ToString() {
-        return "JumpInstruction, Jump )";
+        return "JumpInstruction, Jump";
     }
 }

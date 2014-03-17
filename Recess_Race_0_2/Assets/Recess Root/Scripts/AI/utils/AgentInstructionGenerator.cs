@@ -10,7 +10,7 @@ public class AgentInstructionGenerator {
     public static Instruction findInstruction(Agent agent, Plateform from, LinkedJumpPlateform to) {
         if (map == null) map = (Map) GameObject.FindObjectOfType<Map>();
 
-        bool[,] pathing = map.splitToRight(from.getRightCornerPosition(), new Dimension(13, 7));
+        //bool[,] pathing = map.splitToRight(from.getRightCornerPosition(), new Dimension(13, 7));
         // printBoolArray(pathing);
         Instruction instruction = null;
 

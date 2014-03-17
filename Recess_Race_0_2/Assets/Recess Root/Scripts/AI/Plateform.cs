@@ -37,37 +37,30 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
         foreach (var linked in linkedJumpPlateform) {
             if (linked == null || !linked.plateform) continue;
-			Vector3 v2,v3;
-			int direction = (int) linked.data.direction;
-            float finalX;
-            float r =0 , g =0, b=0;
-            float aproximativeJumpHeight;
-            if (linked.data.jump) {
-                finalX = linked.jumpStart.x +  direction * (linked.data.moveHoldingLenght + 2 - (linked.data.moveHoldingLenght / 13));
-                aproximativeJumpHeight = 3 + 2 * (linked.data.jumpHoldingLenght / 13);
-                v2 = new Vector3((finalX + linked.jumpStart.x) / 2, linked.jumpStart.y + aproximativeJumpHeight, 0);
-                v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
-                g = 1;
-                r = (linked.data.moveHoldingLenght / 13);
-            } else {
-                finalX = linked.jumpStart.x + direction * (linked.data.moveHoldingLenght + 0.5f);
-                aproximativeJumpHeight = 0;
-                v2 = new Vector3((finalX + linked.jumpStart.x) / 2, linked.jumpStart.y + aproximativeJumpHeight, 0);
-                v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
-                b = 1;
-                r = 1;
-            }
 
-            Gizmos.color = new Color(r, g, b, 0.8f);
-            Gizmos.DrawSphere(linked.jumpStart, 0.1f);
-            Gizmos.color = new Color(r - 0.1f, g - 0.1f, b - 0.1f, 0.8f);
-            Gizmos.DrawLine(linked.jumpStart, v2);
-            Gizmos.DrawSphere(linked.jumpStart, 0.1f);
-            Gizmos.color = new Color(r - 0.4f, g - 0.4f, b - 0.4f, 0.8f);
-            Gizmos.DrawLine(v2, v3);
-            Gizmos.DrawSphere(v2, 0.12f);
-            Gizmos.color = new Color(r - 0.7f, g - 0.7f, b - 0.7f, 0.8f);
-            Gizmos.DrawSphere(v3, 0.14f);
+			Vector3 v2,v3;
+
+			if(linked.instruction is JumpInstruction.CreationData){
+				JumpInstruction.CreationData jump = (JumpInstruction.CreationData) linked.instruction;
+				Gizmos.color = new Color(1, 0, 0, 0.8f);
+				int direction = (int)jump.startingDirection;
+				float finalX = linked.startLocation.x +  direction * (jump.moveLenght);
+				float aproximativeJumpHeight = 3 + 2 * (jump.holdLenght / 13);
+
+				v2 = new Vector3((finalX + linked.startLocation.x) / 2, linked.startLocation.y + aproximativeJumpHeight, 0);
+				v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
+				Gizmos.DrawLine(linked.startLocation, v2);
+				Gizmos.DrawLine(v2, v3);
+
+			} else if( linked.instruction is RunToInstruction.CreationData) {
+				RunToInstruction.CreationData run = (RunToInstruction.CreationData) linked.instruction;
+				Gizmos.color = new Color(1, 1, 0, 0.8f);
+
+				v2 = new Vector3(linked.startLocation.x + run.runDistance, linked.startLocation.y, 0);
+				Gizmos.DrawLine(linked.startLocation, v2);
+			}
+
+			Gizmos.DrawSphere(linked.startLocation, 0.1f);
 		}
 	}
 
@@ -85,13 +78,15 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
 [Serializable]
 public class LinkedJumpPlateform {
-    public Vector3 jumpStart;
+    public Vector3 startLocation;
     public Plateform plateform;
-    public JumpRunCreationData data;
+	public InstructionCreationData instruction;
+	public Direction startingDirection;
 
-    public LinkedJumpPlateform(Vector3 jumpStart, Plateform plateform, JumpRunCreationData data) {
-        this.jumpStart = jumpStart;
+	public LinkedJumpPlateform(Direction startingDirection, Vector3 startLocation, Plateform plateform, InstructionCreationData instruction) {
+        this.startLocation = startLocation;
         this.plateform = plateform;
-        this.data = data;
+        this.instruction = instruction;
+		this.startingDirection = startingDirection;
     }
 }
