@@ -26,11 +26,15 @@ public class PossibleJumpMaps {
     static PossibleJumpMaps() {
 		InstructionCreationData creationData;
         
-		List<JumpRunCreationData> list6_3 = new List<JumpRunCreationData>();
-		creationData = makeRunJump (direction: Direction.right, runDistance : 2f, moveHoldingLenght: 1f, jumpHoldingLenght: 2f);
-		list6_3.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x6_y3));
-		possibles[6, getIndexFromY(3)] = list6_3;
+		List<JumpRunCreationData> list7_0 = new List<JumpRunCreationData>();
+		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.Jump,direction=Direction.right, distanceToStartRunningAgain =1.75f, endDirection=Direction.right, totalDistanceAfterMoveAgain=4.54f, jumpHoldingLenght=0f, moveHoldingLenght=0f, needRunCharge=true};
+		list7_0.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x7_y0));
+		possibles[7, getIndexFromY(0)] = list7_0;
 
+		List<JumpRunCreationData> list7_4 = new List<JumpRunCreationData>();
+		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.Jump,direction=Direction.right, distanceToStartRunningAgain =0f, endDirection=Direction.right, totalDistanceAfterMoveAgain=0f, jumpHoldingLenght=2.23f, moveHoldingLenght=6.51f, needRunCharge=true};
+		list7_4.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x7_y4));
+		possibles[7, getIndexFromY(4)] = list7_4;
 
 		generateReversedJumps ();
 
@@ -49,22 +53,6 @@ public class PossibleJumpMaps {
 				}
 			}	
 		}
-	}
-
-	private static InstructionCreationData makeRunJump(Direction direction, float runDistance, float jumpHoldingLenght, float moveHoldingLenght){
-		JumpInstruction.CreationData jump = new JumpInstruction.CreationData ()
-			{startingDirection=direction, holdLenght= jumpHoldingLenght, moveLenght = moveHoldingLenght};
-		RunToInstruction.CreationData run = new RunToInstruction.CreationData (){runDistance = runDistance};
-		run.nextInstructionCreationData = jump;
-		return run;
-	}
-
-	private static InstructionCreationData makeDropOff(Direction direction, float runDistance, float moveHoldingLenght, Direction endDirection, float moveAgainAfterYMoved, float totalDropOff){
-		DropOffInstruction.CreationData dropOff = new DropOffInstruction.CreationData ()
-		{firstDirection=direction, moveXLenght=moveHoldingLenght,moveAgainAfterYMoved=moveAgainAfterYMoved, endDropDirection=endDirection, totalDrop=totalDropOff};
-		RunToInstruction.CreationData run = new RunToInstruction.CreationData (){runDistance = runDistance};
-		run.nextInstructionCreationData = dropOff;
-		return run;
 	}
 
 	private static List<JumpRunCreationData> cloneInverseList(List<JumpRunCreationData> toClone){

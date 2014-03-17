@@ -82,8 +82,7 @@ public class PlateformGenerator {
 	}
 
 
-    private void addTileHover()
-    {
+    private void addTileHover(){
         if (!workingOnATile) return;
 		GameObject newTileHover = (GameObject)GameObject.Instantiate (this.tileHoverPrefab);
         newTileHover.name = "Plateform " + nextTileId;
@@ -139,6 +138,7 @@ public class PlateformGenerator {
 
 
 	public void loadAIPlateformRemove(XElement listToRemove, Map map){
+		if (listToRemove == null)return;
 		removed = 0;
 		int tileHeight = map.tileDimension.height;
 		foreach (var item in listToRemove.Elements ()) {
@@ -239,11 +239,9 @@ public class PlateformGenerator {
                 if (from.x < to.x) { // To is on right
                     splitDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
                     checkDirection = (from.y > to.y) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
-					if(map.pathingMap[(int)(x-1)][(int)from.y]) continue;
                 } else {
                     splitDirection = (from.y > to.y) ? SplitDirection.TopLeft : SplitDirection.BottomLeft;
                     checkDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
-					if(map.pathingMap[(int)(x+1)][(int)from.y]) continue;
 				}
                 if (from.y > to.y) { // Drop down
                     pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, Math.Abs(distanceY) + 2));
@@ -260,6 +258,13 @@ public class PlateformGenerator {
                 if (possibleJumps == null) continue;
 				foreach (JumpRunCreationData jump in possibleJumps) {
                     print(jump.jumpingPath.ToString());
+					if(jump.instruction.needRunCharge){
+						if (from.x < to.x){
+							if(!canOverRunFromLeft(x,from.y))  continue;
+						}else{
+							if(!canOverRunFromRight(x,from.y)) continue;
+						}
+					}
                     if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
 						fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
                     }
@@ -270,6 +275,20 @@ public class PlateformGenerator {
 			
 	}
 
+	private bool canOverRunFromLeft(float x, float y){
+		if(x-1 < 0 || map.pathingMap[(int)x-1][(int)y]) return false; 
+		if(y-1 < 0 || !map.pathingMap[(int)x-1][(int)y-1]) return false;
+		if(x-2 < 0 || map.pathingMap[(int)x-2][(int)y]) return false; 
+		if(!map.pathingMap[(int)x-2][(int)y-1]) return false;
+		return true;
+	}
+	private bool canOverRunFromRight(float x, float y){
+		if(x+1 > map.pathingMap.Length || map.pathingMap[(int)x+1][(int)y]) return false; 
+		if(y-1 < 0 || !map.pathingMap[(int)x+1][(int)y-1]) return false;
+		if(x+2 > map.pathingMap.Length || map.pathingMap[(int)x+2][(int)y]) return false; 
+		if(!map.pathingMap[(int)x+2][(int)y-1]) return false;
+		return true;
+	}
 
 	private bool isInMaximumJumpPosibility(Plateform from, Plateform to){
 		Vector3 vFromLeft, vToLeft, vFromRight, vToRight;

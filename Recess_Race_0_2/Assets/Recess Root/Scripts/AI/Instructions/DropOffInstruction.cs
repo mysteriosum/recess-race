@@ -4,15 +4,6 @@ using System.Collections;
 [System.Serializable]
 public class DropOffInstruction : Instruction {
 
-	[System.Serializable]
-	public class CreationData : InstructionCreationData{
-		public Direction firstDirection;
-		public float moveXLenght;
-		public float totalDrop;
-		public float moveAgainAfterYMoved;
-		public Direction endDropDirection;
-	}
-
 	public Direction firstDirection;
 	public float moveXLenght;
 	public float totalDrop;

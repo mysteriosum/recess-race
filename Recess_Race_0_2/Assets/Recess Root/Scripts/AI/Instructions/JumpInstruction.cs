@@ -6,16 +6,6 @@ public enum Direction { left = -1 , right = 1}
 [System.Serializable]
 public class JumpInstruction : Instruction {
 
-	[System.Serializable]
-	public class CreationData : InstructionCreationData{
-		public Direction startingDirection;
-		public float holdLenght;
-		public float moveLenght;
-		public float moveAgainAfterYMoved;
-		public Direction moveAgainDirection;
-		public float moveAgainMoveLenght;
-	}
-
     public Direction direction;
 	public float holdLenght;
 	public float moveLenght;

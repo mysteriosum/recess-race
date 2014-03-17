@@ -34,7 +34,7 @@ public class TileCreator {
     }
 
     public void addTile(int id, int x, int y) {
-        GameObject newTile = GameObjectFactory.createGameObject("Tile", tilesParent);
+       	GameObject newTile = GameObjectFactory.createGameObject("Tile", tilesParent);
         newTile.AddComponent<SpriteRenderer>();
         SpriteRenderer spriteRenderer = newTile.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = this.tilesData[id].sprite;

@@ -19,8 +19,7 @@ public class MapLoader {
     private MapLoader(){
     }
 
-    public static void loadFromFile(string file)
-    {
+    public static void loadFromFile(string file){
         string text = System.IO.File.ReadAllText(file);
         instance.load(text);
     }
@@ -45,8 +44,12 @@ public class MapLoader {
 		document = XDocument.Parse (mapText);
 		XElement mapElement = document.Elements ().First();
 		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
-        XElement waypoints = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "Waypoints");
-		XElement AIPlateformRemoves = document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == "AIPlateformRemove");
+        XElement waypoints = getObjectGroupElement("Waypoints");
+		if (waypoints == null) {
+			UnityEngine.Debug.Log("Missing important tag : Waypoints");
+			return;
+		}
+		XElement AIPlateformRemoves = getObjectGroupElement("AIPlateformRemove");
 
         print("Set-up");
 
@@ -60,6 +63,10 @@ public class MapLoader {
 
         loadTiles(tilesLayer);
         print("Loaded tiles");
+		
+		plateformGenerator.doneLoadingTiles ();
+		tileCreator.doneLoadingTiles();
+		print("Loaded tiles/CleanUp");
 
 		plateformGenerator.loadAIPlateformRemove(AIPlateformRemoves, this.map);
         plateformGenerator.loadWaypoints(waypoints, this.map);
@@ -226,9 +233,6 @@ public class MapLoader {
 			y--;
 			loadLayerLine(y, tilesLines[i]);
 		}
-		
-		plateformGenerator.doneLoadingTiles ();
-        tileCreator.doneLoadingTiles();
 	}
 
     private void loadLayerLine(int y, string tileLine){
@@ -255,6 +259,14 @@ public class MapLoader {
 		return -1;
 	}
 
+	private XElement getObjectGroupElement(string name){
+		try{
+			return document.Elements().Descendants().First(e => e.Name == "objectgroup" && e.Attribute("name").Value == name);
+		}catch(InvalidOperationException){
+			UnityEngine.Debug.LogError("The objectGroupe " + name + " is missing.");
+		}
+		return null;
+	}
 	
 
     private Stopwatch stopwatch;

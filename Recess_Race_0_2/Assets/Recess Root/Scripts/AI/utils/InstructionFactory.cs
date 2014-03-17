@@ -10,23 +10,17 @@ public class InstructionFactory {
 		return run;
 	}*/
 
-	public static Instruction makeInstruction(Agent agent, InstructionCreationData creationData){
+	public static Instruction makeInstruction(Agent agent, InstructionCreationData data){
 		Instruction instruction = null;
 
-		if (creationData is RunToInstruction.CreationData) {
-			RunToInstruction.CreationData runData = (RunToInstruction.CreationData) creationData;
-			Vector3 p = new Vector3(agent.transform.position.x + runData.runDistance, agent.transform.position.y);
+		if (data.type.Equals(InstructionCreationData.InstructionType.Run)) {
+			Vector3 p = new Vector3(agent.transform.position.x + data.moveHoldingLenght, agent.transform.position.y);
 			instruction = new RunToInstruction(agent,p);
-		} else if (creationData is JumpInstruction.CreationData) {
-			JumpInstruction.CreationData jumpData = (JumpInstruction.CreationData) creationData;		
-			instruction = new JumpInstruction(agent, jumpData.startingDirection,jumpData.holdLenght, jumpData.moveLenght
-			                                  , jumpData.moveAgainAfterYMoved, jumpData.moveAgainDirection, jumpData.moveAgainMoveLenght);
+		} else if (data.type.Equals(InstructionCreationData.InstructionType.Jump)) {
+			instruction = new JumpInstruction(agent, data.direction,data.jumpHoldingLenght, data.moveHoldingLenght
+											, data.distanceToStartRunningAgain, data.endDirection, data.totalDistanceAfterMoveAgain);
 		}
 
-		if (instruction != null && creationData.nextInstructionCreationData != null) {
-			instruction.nextInstruction = makeInstruction(agent, creationData.nextInstructionCreationData);		
-		}
 		return instruction;
-
 	}
 }

@@ -20,7 +20,6 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
-			//Debug.Log (instruction.ToString());
         }
         this.currentInstruction = instruction;
     }
@@ -52,23 +51,34 @@ public class Agent : Movable {
 
 
     private void handlePlateform(Plateform plateform) {
-        LinkedPlateform getToPlateform = AgentPlateformFinder.generateMove(this, plateform);
-        if (getToPlateform == null) {
+        LinkedPlateform linkedPlateform = AgentPlateformFinder.generateMove(this, plateform);
+        if (linkedPlateform == null) {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {
-			Instruction instructionsToGetThere = InstructionFactory.makeInstruction(this,getToPlateform.instruction);
-			setInstructionAgentToThis(instructionsToGetThere);
-
-			float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, getToPlateform);
-			if(xToGo !=getToPlateform.startLocation.x){
-				Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, getToPlateform.startLocation.y, 0));
-				overRun.nextInstruction = instructionsToGetThere;
-				switchTo(overRun);
-			} else {
+			Instruction instructionsToGetThere = InstructionFactory.makeInstruction(this,linkedPlateform.instruction);
+			if(linkedPlateform.instruction.needRunCharge){
+				makeRunCharge(linkedPlateform,instructionsToGetThere);
+			}else{
 				switchTo(instructionsToGetThere);
 			}
         }
     }
+
+	private void makeRunCharge(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere){
+		float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, linkedPlateform);
+		if (xToGo != linkedPlateform.startLocation.x) {
+			Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, linkedPlateform.startLocation.y, 0));
+			Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+			overRun.nextInstruction = run;
+			run.nextInstruction = instructionsToGetThere;
+			switchTo(overRun);
+		} else {
+			Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+			run.nextInstruction = instructionsToGetThere;
+			switchTo(run);
+		}
+
+	}
 
 	private void setInstructionAgentToThis(Instruction instruction){
 		if (instruction == null) return;

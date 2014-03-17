@@ -4,11 +4,6 @@ using System.Collections;
 [System.Serializable]
 public class RunToInstruction : Instruction {
 
-	[System.Serializable]
-	public class CreationData : InstructionCreationData{
-		public float runDistance;
-	}
-
 	public float targetX;
 	public Direction direction;
 	public float lastX;

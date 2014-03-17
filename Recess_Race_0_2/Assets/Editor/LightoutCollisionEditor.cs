@@ -25,7 +25,7 @@ public class LightoutCollisionEditor : Editor {
     }
 
     private string generateLightoutCollision(LightoutCollision collision) {
-        string text = "{";
+		string text = "public static PathingMap jump_x_y = new PathingMap(true, new bool[,] {\n{";
         LightoutBox[] boxs = collision.gameObject.GetComponentsInChildren<LightoutBox>();
         int x = 0;
         foreach(LightoutBox box in boxs){
@@ -40,7 +40,7 @@ public class LightoutCollisionEditor : Editor {
             }
             x++;
         }
-        text += "}";
+		text += "}\n});";
 
         return text;
     }
