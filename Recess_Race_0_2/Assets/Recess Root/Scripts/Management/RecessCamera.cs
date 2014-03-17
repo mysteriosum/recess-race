@@ -372,7 +372,8 @@ public class RecessCamera : MonoBehaviour {
 			}
 			yValue += congratsHeight * 0.1f;
 			if (finishedTimer > tryAgainAt){
-				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "Try again?", hud.skin.textArea);
+				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "Next race?", hud.skin.textArea);
+
 				yValue += congratsHeight * 0.1f;
 				
 				
@@ -407,7 +408,8 @@ public class RecessCamera : MonoBehaviour {
 				}
 				bool no = GUI.Button (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 30), noContent, yesnoStyle);
 				
-				if (Input.GetKeyDown (KeyCode.KeypadEnter) || Input.GetKeyDown (KeyCode.Return)){
+				if (Input.GetKeyDown (KeyCode.KeypadEnter) || Input.GetKeyDown (KeyCode.Return) || Input.GetButtonDown("Jump")){
+
 					if (hud.CursorIndex == 0)
 						yes = true;
 					if (hud.CursorIndex == 1)
@@ -416,11 +418,11 @@ public class RecessCamera : MonoBehaviour {
 				
 				if (yes){
 					RecessManager.SaveStatistics(true);
-					Application.LoadLevel(Application.loadedLevel);
+					Application.LoadLevel(Application.loadedLevel + 1);
 				}
 				if (no){
 					RecessManager.SaveStatistics(true);
-					Application.Quit();
+					Application.LoadLevel(0);
 				}
 			}
 			GUI.EndGroup();

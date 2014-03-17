@@ -225,8 +225,8 @@
   <object x="20109" y="855" width="24" height="24"/>
   <object x="20097" y="889" width="24" height="24"/>
   <object x="20321" y="858" width="24" height="24"/>
-  <object x="21651" y="977" width="24" height="24"/>
-  <object x="21696" y="959" width="24" height="24"/>
+  <object x="21159" y="821" width="24" height="24"/>
+  <object x="21288" y="767" width="24" height="24"/>
   <object x="21762" y="989" width="24" height="24"/>
   <object x="21816" y="962" width="24" height="24"/>
   <object x="21846" y="989" width="24" height="24"/>
@@ -285,6 +285,11 @@
   <object x="28055" y="165" width="24" height="24"/>
   <object x="28003" y="169" width="24" height="24"/>
   <object x="32656" y="2060"/>
+  <object x="21645" y="988" width="24" height="24"/>
+  <object x="21465" y="788" width="24" height="24"/>
+  <object x="21581" y="1056" width="24" height="24"/>
+  <object x="21581" y="1100" width="24" height="24"/>
+  <object x="21693" y="980" width="24" height="24"/>
  </objectgroup>
  <objectgroup color="#ffff00" name="TennisBalls" width="1050" height="60">
   <object type="TennisBall" x="12710" y="476" width="20" height="20">

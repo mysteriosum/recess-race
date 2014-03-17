@@ -1,9 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Roulette : MonoBehaviour {
 	
 	public Item[] items;
+	public Item[] secretItems;
+	public bool bananaUnlocked;
+	public Sprite[] bananaSprites;
+	
+	private int bananaMax = 3;
+	private int currentBanana = 3;
+	
 	private Item currentItem;
 	private SpriteRenderer display;
 	private int index = 0;
@@ -46,6 +54,22 @@ public class Roulette : MonoBehaviour {
 	void Start () {
 		//StartRoulette();
 		display = GetComponentInChildren<SpriteRenderer>();
+		
+		List<Item> tempList = new List<Item>();
+		
+		if (bananaUnlocked){
+			foreach (Item item in secretItems){
+				if (item.name == "Banana"){
+					tempList.Add(item);
+				}
+			}
+		}
+		
+		foreach (Item item in items){
+			tempList.Add(item);
+		}
+		
+		items = tempList.ToArray();
 	}
 	
 	// Update is called once per frame
@@ -53,8 +77,14 @@ public class Roulette : MonoBehaviour {
 		
 		if (currentItem != null && Input.GetButtonDown("Run")){
 			currentItem.Activate();
-			currentItem = null;
-			display.sprite = null;
+			Debug.Log("Current name is " + currentItem.name);
+			if (currentItem.name == "Banana" && currentBanana > 0){
+				currentBanana --;
+				display.sprite = bananaSprites[currentBanana - 1];
+			} else {
+				currentItem = null;
+				display.sprite = null;
+			}
 			
 		}
 		
