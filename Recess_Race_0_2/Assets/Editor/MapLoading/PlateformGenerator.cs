@@ -24,6 +24,7 @@ public class PlateformGenerator {
     private Map map;
 
     public static bool debug = false;
+	public static int removed = 0;
 
 	public PlateformGenerator(Map map){
         this.mapDimension = map.mapDimension;
@@ -136,6 +137,36 @@ public class PlateformGenerator {
 	}
 
 
+
+	public void loadAIPlateformRemove(XElement listToRemove, Map map){
+		removed = 0;
+		int tileHeight = map.tileDimension.height;
+		foreach (var item in listToRemove.Elements ()) {
+			float x = Int32.Parse(item.Attribute("x").Value) / (float)tileHeight;
+			float y = map.mapDimension.height - Int32.Parse(item.Attribute("y").Value) / (float)tileHeight - 1;
+			removePlateform(x, y);
+		}
+		verbose ("plateform removed " + removed + " / " + listToRemove.Elements().Count());
+	}
+
+	private void removePlateform(float x, float y){
+		int idToRemove = -1;
+		Bounds bound = new Bounds(new Vector3(x,y,0), new Vector3(2,2,0));
+		for (int i = 0; i < this.plateforms.Count; i++) {
+			Bounds plateformBound = this.plateforms[i].getBound();
+			if(bound.Intersects(plateformBound)){
+				idToRemove = i;
+				GameObject.DestroyImmediate(this.plateforms[i].gameObject);
+			}
+		}
+		if (idToRemove != -1) {
+			removed ++;
+			this.plateforms.RemoveAt(idToRemove);		
+		}
+	}
+
+
+
 	public void loadWaypoints(XElement waypoints, Map map){
 		var objects = waypoints.Elements ();
 		int tileHeight = map.tileDimension.height;
@@ -155,8 +186,8 @@ public class PlateformGenerator {
 	}
 
 	private void createWaypoint(int x, int y, int id, int nbWayPoints){
+		Bounds bound = new Bounds(new Vector3(x,y,0), new Vector3(2,2,0));
 		foreach (var plateform in this.plateforms) {
-			Bounds bound = new Bounds(new Vector3(x,y,0), new Vector3(2,2,0));
 			Bounds plateformBound = plateform.getBound();
 			if(bound.Intersects(plateformBound)){
 				var spriteRenderer = plateform.transform.gameObject.GetComponent<SpriteRenderer>();
@@ -258,6 +289,12 @@ public class PlateformGenerator {
         if (debug) {
             Debug.Log(str);
         }
-    }
+	}
+	
+	private void verbose(string str) {
+		if (MapLoader.verbose) {
+			Debug.Log("PlateformGenerator : " + str);
+		}
+	}
 
 }

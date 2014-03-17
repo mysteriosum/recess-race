@@ -158,4 +158,7 @@
  </objectgroup>
  <objectgroup name="Garbages" width="100" height="100"/>
  <objectgroup name="QuestionMarks" width="100" height="100"/>
+ <objectgroup color="#51ff00" name="AIPlateformRemove" width="100" height="100">
+  <object x="617" y="3070"/>
+ </objectgroup>
 </map>
