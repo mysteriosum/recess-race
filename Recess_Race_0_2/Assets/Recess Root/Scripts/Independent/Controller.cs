@@ -7,6 +7,11 @@ public class Controller {
 	public bool getRunDown;
 	public bool getRunUp;
 	
+	public float lastRunDownTime;
+	private bool getRunLast;
+	public bool isSpammingRun;
+	private readonly float spamResetTimer = 0.3f;
+	
 	public bool getJump;
 	public bool getJumpDown;
 	public bool getJumpUp;
@@ -55,7 +60,12 @@ public class Controller {
 		getRunDown = Input.GetButtonDown("Run");
 		getRunUp = Input.GetButtonUp("Run");
 		
-		
+		if (getRunDown){
+			isSpammingRun = Time.time - lastRunDownTime < spamResetTimer;
+			
+			lastRunDownTime = Time.time;
+			
+		}
 		
 		getJump = Input.GetButton("Jump");
 		getJumpUp = Input.GetButtonUp("Jump");

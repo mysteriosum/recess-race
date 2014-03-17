@@ -35,6 +35,8 @@ public class TennisBall : Movable {
 	private float deceleration = 0.0125f;
 	private float gravityScale = 0.75f;
 	
+	public const float catchBallLeeway = 0.15f;
+	
 	protected override void Start () {
 		base.Start();
 		
@@ -128,10 +130,15 @@ public class TennisBall : Movable {
 	}
 	
 	void CollideWithFitz(){
-		Transform fitz = Fitz.fitz.transform;
-		hasGravity = true;
-		velocity = new Vector2(collideVelocity.x * (fitz.position.x > t.position.x? -1 : 1), collideVelocity.y);
-		DamageScript dmg = GetComponent<DamageScript>();
-		dmg.enabled = false;
+		Fitz fitz = Fitz.fitz;
+		
+		if (!fitz.CheckCaughtTennisBall(catchBallLeeway)){
+			Transform fitzT = fitz.transform;
+			hasGravity = true;
+			velocity = new Vector2(collideVelocity.x * (fitzT.position.x > t.position.x? -1 : 1), collideVelocity.y);
+			DamageScript dmg = GetComponent<DamageScript>();
+			dmg.enabled = false;
+		}
+		
 	}
 }

@@ -365,6 +365,10 @@ public class Movable : MonoBehaviour {
 		return newVel;
 	}
 	
+	public void SetVelocity (Vector2 newVelocity){
+		velocity = newVelocity;
+	}
+	
 	void OnDrawGizmos(){
 		if (running && debug){
 			Gizmos.DrawLine(box.center, box.center + new Vector2(0, box.height / -2 + velocity.y * Time.deltaTime));

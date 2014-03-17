@@ -19,7 +19,7 @@ public class Fitz : Movable {
 	private bool spinFalling						= false;
 	private float spinFallMod						= 0.5f;
 	private float spinFallMoveMod					= 0.575f;
-	//readonly private float propelTiming				= 0.3f;
+	readonly private float propelTiming				= 0.3f;
 	private float propelTimer						= 0f;
 	private float propellerTimePenalty				= 0.25f;
 	private float pinkyDoubleJumpMode				= 0.5f;
@@ -38,8 +38,15 @@ public class Fitz : Movable {
 	
 	private bool otto								= false;
 	//protected bool tailFalling						= false;
-	private float tailFallMod						= 0.25f;
-	private float ottoTiming						= 20f;
+	private float tailFallMod						= 0.175f;
+	private float ottoTiming						= 45f;
+	
+	private bool dust								= false;
+	private float dustGravityMod					= 0.7f;
+	private float dustMaxFallMod					= 0.5f;
+	private bool dustStorming						= false;
+	private float dustTiming						= 15f;
+	
 	
 	private float itemTimer							= 0;
 	
@@ -73,6 +80,9 @@ public class Fitz : Movable {
 			if (pinky){
 				return base.Gravity * (propelling? propelGravMod : 1);
 			}
+			if (dust){
+				return base.MaxFallSpeed * (dustStorming? dustGravityMod : 1);
+			}
 			return base.Gravity;
 		}
 	}
@@ -87,6 +97,10 @@ public class Fitz : Movable {
 			}
 			if (boogerBoy){
 				return base.MaxFallSpeed * (wallHanging? wallHangFallMod : 1);
+			}
+			
+			if (dust){
+				return base.MaxFallSpeed * (dustStorming? dustMaxFallMod : 1);
 			}
 			return base.MaxFallSpeed;
 		}
@@ -259,6 +273,10 @@ public class Fitz : Movable {
 		
 		if (Input.GetKey(KeyCode.Alpha3)){
 			ChangeToBoogerBoy();
+		}
+		
+		if (Input.GetKey(KeyCode.Alpha4)){
+			ChangeToDust();
 		}
 		
 	//------------------------------------------------------\\
@@ -454,6 +472,19 @@ public class Fitz : Movable {
 		RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.losePower);
 	}
 	
+	void ChangeToDust (){
+		CancelInvoke("ChangeToFitz");
+		pinky = false;
+		otto = false;
+		boogerBoy = false;
+		
+		pinkyAnim.SetActive (false);
+		boogerAnim.SetActive(false);
+		ottoAnim.SetActive(false);
+		renderer.enabled = true;
+		Invoke("ChangeToFitz", dustTiming);
+	}
+	
 	protected override Vector2 Move (Vector2 currentVelocity, float input)
 	{
 		
@@ -532,14 +563,14 @@ public class Fitz : Movable {
 		DamageScript dmgScript = other.GetComponent<DamageScript>();
 		
 		if (dmgScript && dmgScript.enabled && !hurt){
-			if (debug){
-				Debug.Log("I have a collision with a tennis ball!");
-			}
-			if (anim){
-				anim.Play (a.hurt);
-			}
 			
-			if (!boogerBoy){
+			
+			if (other.GetComponent<TennisBall>() != null && CheckCaughtTennisBall(TennisBall.catchBallLeeway)){
+				Destroy(other.gameObject);
+			} else if (!boogerBoy){
+				if (anim){
+					anim.Play (a.hurt);
+				}
 				CanControl = false;
 				stunTimer = dmgScript.StunDuration;
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
@@ -548,11 +579,7 @@ public class Fitz : Movable {
 				//enter a speed boost object!
 		if ((speedBoostTimer > noBoostFor ^ !speedBoosting) && other.gameObject.tag == "SpeedBoost" && controller.hAxis != 0){
 			other.GetComponent<Animator>().Play(0);
-			tempMaxSpeed = maxSpeed * speedBoostMod;
-			speedBoosting = true;
-			speedBoostTimer = 0;
-			speedBoostDirection = Mathf.RoundToInt(controller.hAxis);
-			Debug.Log("My new max speed is " + tempMaxSpeed);
+			SpeedBoost();
 		}
 		
 		other.SendMessage("CollideWithFitz", SendMessageOptions.DontRequireReceiver);
@@ -562,5 +589,23 @@ public class Fitz : Movable {
 		if (anim && grounded){
 			anim.Play(a.rest);
 		}
+	}
+	
+	public bool CheckCaughtTennisBall(float leeway){
+		if (controller.isSpammingRun) return false;
+		
+		return Time.time - controller.lastRunDownTime < leeway;
+	}
+	
+	public void SpeedBoost(){
+		tempMaxSpeed = maxSpeed * speedBoostMod;
+		speedBoosting = true;
+		speedBoostTimer = 0;
+		speedBoostDirection = Mathf.RoundToInt(controller.hAxis);
+	}
+	
+	public void BananaBoost(){
+		SpeedBoost();
+		Instantiate(Resources.Load("BananaPeel"), t.position + Vector3.up * box.height, t.rotation);
 	}
 }
