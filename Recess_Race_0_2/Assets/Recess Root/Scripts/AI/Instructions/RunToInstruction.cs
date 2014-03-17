@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class RunToInstruction : Instruction {
-	    
-	private float targetX;
-    private float direction;
-	private float lastX;
-	private int stockCounter;
+
+	[System.Serializable]
+	public class CreationData : InstructionCreationData{
+		public float runDistance;
+	}
+
+	public float targetX;
+	public Direction direction;
+	public float lastX;
+	public int stockCounter;
 
     public RunToInstruction(Agent agent, Vector3 targetLocation) : base(agent){
 		this.targetX = targetLocation.x;
@@ -16,11 +22,11 @@ public class RunToInstruction : Instruction {
 
     public override void start() {
 		if (targetX > agent.transform.position.x) {
-			direction = 1;
+			direction = Direction.right;
 		} else {
-			direction = -1;
+			direction = Direction.left;
 		}
-        agent.setMovingStrenght(direction);
+        agent.setMovingStrenght((int)direction);
 		this.lastX = agent.transform.position.x;
     }
 
@@ -40,12 +46,16 @@ public class RunToInstruction : Instruction {
     }
 
     private bool isInRange() {
-        if (direction == -1) {
+        if (direction == Direction.left) {
             return this.agent.transform.position.x < targetX;
         } else {
             return this.agent.transform.position.x > targetX;
         }
     }
+
+	public override Direction getStartingDirection (){
+		return this.direction;	
+	}
 
     public override string ToString() {
         return "RunToInstruction, run to (x=" + targetX + ")";

@@ -44,9 +44,9 @@ public class AgentPlateformFinder {
     }
 
 	public static float getXToGetToMakeTheJump(Agent agent, LinkedJumpPlateform link){
-		float xToGo = link.jumpStart.x;
-		float direction = (float)link.data.direction;
-		if (agent.transform.position.x > link.jumpStart.x) { // agent on right of target
+		float xToGo = link.startLocation.x;
+		float direction = (float)link.startingDirection;
+		if (agent.transform.position.x > link.startLocation.x) { // agent on right of target
 			if(direction > 0){
 				xToGo -= 1.5f;
 			}

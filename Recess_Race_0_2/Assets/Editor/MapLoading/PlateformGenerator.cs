@@ -227,10 +227,10 @@ public class PlateformGenerator {
 
                 List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
                 if (possibleJumps == null) continue;
-                foreach (var jump in possibleJumps) {
+				foreach (JumpRunCreationData jump in possibleJumps) {
                     print(jump.jumpingPath.ToString());
                     if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
-                        fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(from, toPlateform, jump));
+						fromPlateform.linkedJumpPlateform.Add(new LinkedJumpPlateform(jump.direction, from, toPlateform, jump.instruction));
                     }
 
                 }
