@@ -37,8 +37,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
         foreach (var linked in linkedJumpPlateform) {
             if (linked == null || !linked.plateform) continue;
-
-			Vector3 v2,v3;
+		
 			InstructionCreationData data = linked.instruction;
 			if(linked.instruction.type.Equals(InstructionCreationData.InstructionType.Jump)){
 				Gizmos.color = new Color(1, 1, 0, 0.8f);
@@ -46,16 +45,16 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 				float finalX = linked.startLocation.x +  direction * (data.moveHoldingLenght + data.totalDistanceAfterMoveAgain + 1);
 				float aproximativeJumpHeight = 3 + 2 * (data.jumpHoldingLenght / 13);
 
-				v2 = new Vector3((finalX + linked.startLocation.x) / 2, linked.startLocation.y + aproximativeJumpHeight, 0);
-				v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
-				Gizmos.DrawLine(linked.startLocation, v2);
-				Gizmos.DrawLine(v2, v3);
+				Vector3 v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
+				Gizmos.DrawLine(linked.startLocation, v3);
 
 			} else if( linked.instruction.type.Equals(InstructionCreationData.InstructionType.Run)) {
 				Gizmos.color = new Color(1, 0, 1, 0.8f);
-
-				v2 = new Vector3(linked.startLocation.x + data.moveHoldingLenght, linked.startLocation.y, 0);
+				Vector3 v2 = new Vector3(linked.startLocation.x + data.moveHoldingLenght, linked.startLocation.y, 0);
 				Gizmos.DrawLine(linked.startLocation, v2);
+			} else if(linked.instruction.type.Equals(InstructionCreationData.InstructionType.DropOff)){
+				Gizmos.color = new Color(0, 1, 1, 0.8f);
+				Gizmos.DrawLine(linked.startLocation, linked.plateform.transform.position);
 			}
 
 			Gizmos.DrawSphere(linked.startLocation, 0.15f);

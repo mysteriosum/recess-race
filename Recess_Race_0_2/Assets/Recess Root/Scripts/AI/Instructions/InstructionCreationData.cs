@@ -15,4 +15,17 @@ public class InstructionCreationData{
 	public float distanceToStartRunningAgain;
 	public Direction endDirection = Direction.right;
 	public float totalDistanceAfterMoveAgain;
+
+	public InstructionCreationData cloneRevesedDirections(){
+		InstructionCreationData newI = new InstructionCreationData ();
+		newI.type = type;
+		newI.needRunCharge = needRunCharge;
+		newI.jumpHoldingLenght = jumpHoldingLenght;
+		newI.moveHoldingLenght = moveHoldingLenght;
+		newI.direction = (direction.Equals (Direction.left)) ? Direction.right : Direction.left;
+		newI.distanceToStartRunningAgain = distanceToStartRunningAgain;
+		newI.endDirection = (endDirection.Equals (Direction.left)) ? Direction.right : Direction.left;
+		newI.totalDistanceAfterMoveAgain = totalDistanceAfterMoveAgain;
+		return newI;
+	}
 }

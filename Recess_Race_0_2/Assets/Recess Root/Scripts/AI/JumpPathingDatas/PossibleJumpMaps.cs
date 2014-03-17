@@ -26,6 +26,11 @@ public class PossibleJumpMaps {
     static PossibleJumpMaps() {
 		InstructionCreationData creationData;
         
+		List<JumpRunCreationData> list1_m4 = new List<JumpRunCreationData>();
+		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.DropOff,direction=Direction.right, distanceToStartRunningAgain =0.15f, endDirection=Direction.left, totalDistanceAfterMoveAgain=4f, jumpHoldingLenght=2.23f, moveHoldingLenght=0f, needRunCharge=true};
+		list1_m4.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x1_ym4));
+		possibles[1, getIndexFromY(-4)] = list1_m4;
+
 		List<JumpRunCreationData> list7_0 = new List<JumpRunCreationData>();
 		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.Jump,direction=Direction.right, distanceToStartRunningAgain =1.75f, endDirection=Direction.right, totalDistanceAfterMoveAgain=4.54f, jumpHoldingLenght=0f, moveHoldingLenght=0f, needRunCharge=true};
 		list7_0.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x7_y0));
@@ -57,10 +62,11 @@ public class PossibleJumpMaps {
 
 	private static List<JumpRunCreationData> cloneInverseList(List<JumpRunCreationData> toClone){
 		List<JumpRunCreationData> cloned = new List<JumpRunCreationData> ();
-		//foreach (JumpRunCreationData item in toClone) {
-			//JumpRunCreationData newJump = new JumpRunCreationData(item.jump,Direction.left, item.jumpHoldingLenght, item.moveHoldingLenght, item.jumpingPath.getXRevertedMap());
-			//cloned.Add (newJump);
-		//}
+		foreach (JumpRunCreationData item in toClone) {
+			InstructionCreationData data = item.instruction.cloneRevesedDirections();
+			JumpRunCreationData newJump = new JumpRunCreationData(item.direction, data, item.jumpingPath);
+			cloned.Add (newJump);
+		}
 		return cloned;
 	}
 }

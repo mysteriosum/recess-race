@@ -244,7 +244,8 @@ public class PlateformGenerator {
                     checkDirection = (from.y > to.y) ? SplitDirection.TopRight : SplitDirection.BottomRight;
 				}
                 if (from.y > to.y) { // Drop down
-                    pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, Math.Abs(distanceY) + 2));
+					Vector3 vDrop = new Vector3(from.x, from.y +1, 0);
+                    pathingMap = this.map.splitTo(splitDirection, vDrop, new Dimension(13, Math.Abs(distanceY) + 3));
                 } else {
                     pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, 6));
                 }
