@@ -233,7 +233,6 @@ public class PlateformGenerator {
 				if (distanceX == 0 || Mathf.Abs(distanceX) > 13 || distanceY >= PossibleJumpMaps.yUpHeightIncludingZero 
 					|| distanceY < -PossibleJumpMaps.yDownHeight) continue;
 
-				Debug.Log ("Jump of " + distanceX + "," + distanceY);
 				List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
 				if (possibleJumps == null) continue;
 				foreach (JumpRunCreationData jump in possibleJumps) {
@@ -242,13 +241,11 @@ public class PlateformGenerator {
 					SplitDirection checkDirection;
 					if (from.y > to.y) { // Drop down
 						if(jump.instruction.type.Equals(InstructionCreationData.InstructionType.Jump)){
-							Debug.Log("drop jump");
 							splitDirection = (from.x < to.x) ? SplitDirection.BottomRight : SplitDirection.BottomLeft;
 							checkDirection = (from.x < to.x) ? SplitDirection.BottomLeft : SplitDirection.BottomRight;
 							Vector3 vJump = new Vector3(from.x, from.y - Math.Abs(distanceY) , 0);
-							pathingMap = this.map.splitTo(splitDirection, vJump, new Dimension(13, Math.Abs(distanceY) + 8));
+							pathingMap = this.map.splitTo(splitDirection, vJump, new Dimension(13, Math.Abs(distanceY) + 7));
 						}else{
-							Debug.Log("drop down");
 							splitDirection = (from.x < to.x) ? SplitDirection.TopRight : SplitDirection.TopLeft;
 							checkDirection = (from.x < to.x) ? SplitDirection.TopLeft : SplitDirection.TopRight;
 							Vector3 vDrop = new Vector3(from.x, from.y +1, 0);
@@ -257,7 +254,7 @@ public class PlateformGenerator {
 					}else{ // Going up
 						splitDirection = (from.x < to.x) ? SplitDirection.BottomRight : SplitDirection.BottomLeft;
 						checkDirection = (from.x < to.x) ? SplitDirection.BottomLeft : SplitDirection.BottomRight;
-						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, 6));
+						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, 7));
 					}
 
 					if(jump.instruction.needRunCharge){
@@ -269,31 +266,8 @@ public class PlateformGenerator {
 					}
 					if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
 						fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
-					}
-					
+					}	
 				}
-				
-
-                /*print(fromPlateform.name + " to " + toPlateform.name);
-                print(splitDirection.ToString() + " - " + checkDirection.ToString());
-                print((new PathingMap(pathingMap)).ToString()); 
-
-                List<JumpRunCreationData> possibleJumps = PossibleJumpMaps.getPossible(distanceX, distanceY);
-                if (possibleJumps == null) continue;
-				foreach (JumpRunCreationData jump in possibleJumps) {
-                    print(jump.jumpingPath.ToString());
-					if(jump.instruction.needRunCharge){
-						if (from.x < to.x){
-							if(!canOverRunFromLeft(x,from.y))  continue;
-						}else{
-							if(!canOverRunFromRight(x,from.y)) continue;
-						}
-					}
-                    if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
-						fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
-                    }
-
-                }*/
             }
         }
 			
