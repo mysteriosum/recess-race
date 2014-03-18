@@ -67,12 +67,14 @@ public class Agent : Movable {
 	private void makeRunCharge(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere){
 		float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, linkedPlateform);
 		if (xToGo != linkedPlateform.startLocation.x) {
+			Debug.Log("Making a run charge prepositioning");
 			Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, linkedPlateform.startLocation.y, 0));
 			Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
 			overRun.nextInstruction = run;
 			run.nextInstruction = instructionsToGetThere;
 			switchTo(overRun);
 		} else {
+			Debug.Log("RUN");
 			Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
 			run.nextInstruction = instructionsToGetThere;
 			switchTo(run);

@@ -49,12 +49,17 @@ public class AgentPlateformFinder {
 		if (agent.transform.position.x > link.startLocation.x) { // agent on right of target
 			if(direction > 0){
 				xToGo -= 1.5f;
+			}else if(agent.transform.position.x - link.startLocation.x < 1.5f){
+				xToGo += 1.5f;
 			}
 		} else {
 			if(direction < 0){
 				xToGo += 1.5f;
+			}else if(agent.transform.position.x - link.startLocation.x > -1.5f){
+				xToGo -= 1.5f;
 			}	
 		}
+		Debug.Log ("location : " + agent.transform.position.x  + ", wanted : " + link.startLocation.x + " -- xToGo: " + xToGo);
 		return xToGo;
 	}
 
