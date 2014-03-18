@@ -81,7 +81,7 @@ public class Fitz : Movable {
 				return base.Gravity * (propelling? propelGravMod : 1);
 			}
 			if (dust){
-				return base.MaxFallSpeed * (dustStorming? dustGravityMod : 1);
+				return base.Gravity * (dustStorming? dustGravityMod : 1);
 			}
 			return base.Gravity;
 		}
@@ -369,6 +369,18 @@ public class Fitz : Movable {
 		
 		
 	//--------------------------------------------------------------------------\\
+	//---------------------------Dust related checks----------------------------\\
+	//--------------------------------------------------------------------------\\
+		
+		if (dust){
+			if (!dustStorming && !grounded && controller.getRunDown){
+				dustStorming = true;
+			} else if (dustStorming && !controller.getRun){
+				dustStorming = false;
+			}
+		}
+		
+	//--------------------------------------------------------------------------\\
 	//-----------------------------hurt & blinking------------------------------\\
 	//--------------------------------------------------------------------------\\
 		
@@ -437,6 +449,7 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = false;
 		boogerBoy = true;
+		dust = false;
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(true);
 		ottoAnim.SetActive(false);
@@ -450,6 +463,7 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = true;
 		boogerBoy = false;
+		dust = false;
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(false);
 		ottoAnim.SetActive(true);
@@ -462,6 +476,7 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = false;
 		boogerBoy = false;
+		dust = false;
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(false);
 		ottoAnim.SetActive(false);
@@ -477,6 +492,7 @@ public class Fitz : Movable {
 		pinky = false;
 		otto = false;
 		boogerBoy = false;
+		dust = true;
 		
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(false);
