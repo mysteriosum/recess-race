@@ -8,6 +8,7 @@ public class Roulette : MonoBehaviour {
 	public Item[] secretItems;
 	public bool bananaUnlocked;
 	public Sprite[] bananaSprites;
+	public bool ahrahUnlocked;
 	
 	private int bananaMax = 3;
 	private int currentBanana = 3;
@@ -60,6 +61,13 @@ public class Roulette : MonoBehaviour {
 		if (bananaUnlocked){
 			foreach (Item item in secretItems){
 				if (item.name == "Banana"){
+					tempList.Add(item);
+				}
+			}
+		}
+		if (ahrahUnlocked){
+			foreach (Item item in secretItems){
+				if (item.name == "Ahrah"){
 					tempList.Add(item);
 				}
 			}
