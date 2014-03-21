@@ -59,7 +59,13 @@ public class Agent : Movable {
 			if(linkedPlateform.instruction.needRunCharge){
 				makeRunCharge(linkedPlateform,instructionsToGetThere);
 			}else{
-				switchTo(instructionsToGetThere);
+				if(Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05){
+					switchTo(instructionsToGetThere);
+				}else{
+					Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+					run.nextInstruction = instructionsToGetThere;
+					switchTo(run);
+				}
 			}
         }
     }
