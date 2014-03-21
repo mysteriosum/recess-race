@@ -24,7 +24,6 @@ public class RecessCamera : MonoBehaviour {
 			effectiveBorder = new RectOffset((int) camera.orthographicSize * Screen.width/Screen.height,(int)  camera.orthographicSize * Screen.width/Screen.height,
 				(int) camera.orthographicSize,(int)  camera.orthographicSize).Remove(effectiveBorder);
 			
-			Debug.Log("Before: " + border + " and After: " + effectiveBorder);
 		}
 	}
 	
@@ -357,7 +356,7 @@ public class RecessCamera : MonoBehaviour {
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , t.position.z);
 			t.position = Vector3.Lerp(t.position, target, lerpAmount);
 			
-			if (!effectiveBorder.Contains((Vector2)t.position)){
+			if (effectiveBorder != null && !effectiveBorder.Contains((Vector2)t.position)){
 				t.position = new Vector3(Mathf.Clamp(t.position.x, effectiveBorder.xMin, effectiveBorder.xMax),
 										Mathf.Clamp(t.position.y, effectiveBorder.yMin, effectiveBorder.yMax), t.position.z);
 			}

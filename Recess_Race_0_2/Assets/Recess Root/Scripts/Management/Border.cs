@@ -35,7 +35,6 @@ public class Border : MonoBehaviour {
 			Debug.LogWarning("The border in your scene is not set correctly");
 		}
 		
-		Debug.Log(border);
 	}
 	
 	// Update is called once per frame
