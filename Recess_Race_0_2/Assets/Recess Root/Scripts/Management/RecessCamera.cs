@@ -14,6 +14,19 @@ public class RecessCamera : MonoBehaviour {
 	public static RecessCamera cam;
 	const int scrnHeight = 480;
 	const int scrnWidth = 640;
+	private Rect border;
+	private Rect effectiveBorder;
+	public Rect Border {
+		get{ return border; }
+		set{ 
+			border = value; 
+			effectiveBorder = new Rect(border);
+			effectiveBorder = new RectOffset((int) camera.orthographicSize * Screen.width/Screen.height,(int)  camera.orthographicSize * Screen.width/Screen.height,
+				(int) camera.orthographicSize,(int)  camera.orthographicSize).Remove(effectiveBorder);
+			
+			Debug.Log("Before: " + border + " and After: " + effectiveBorder);
+		}
+	}
 	
 	
 	// parallax members
@@ -303,7 +316,6 @@ public class RecessCamera : MonoBehaviour {
 			foreach(Transform tr in parallaxes){
 				if (tr.position.z > furthestParalaxZ){
 					furthestParalaxZ = tr.position.z;
-					Debug.Log ("Furthest is " + furthestParalaxZ);
 				}
 			}
 			
@@ -344,6 +356,11 @@ public class RecessCamera : MonoBehaviour {
 		if (fitzNode != null && raceBegun){
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , t.position.z);
 			t.position = Vector3.Lerp(t.position, target, lerpAmount);
+			
+			if (!effectiveBorder.Contains((Vector2)t.position)){
+				t.position = new Vector3(Mathf.Clamp(t.position.x, effectiveBorder.xMin, effectiveBorder.xMax),
+										Mathf.Clamp(t.position.y, effectiveBorder.yMin, effectiveBorder.yMax), t.position.z);
+			}
 		}
 		Vector3 postPos = t.position;
 		

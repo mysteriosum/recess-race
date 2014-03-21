@@ -11,7 +11,6 @@ public class FinishLine : MonoBehaviour {
 	void Start () {
 		BoxCollider2D boxCol = GetComponent<BoxCollider2D>(); 
 		box = new Rect(transform.position.x + boxCol.center.x - boxCol.size.x/2, transform.position.y + boxCol.center.y - boxCol.size.y/2, boxCol.size.x, boxCol.size.y);
-		Debug.Log("ymin is " + box.yMin + " and max is " + box.yMax);
 	}
 	
 	// Update is called once per frame

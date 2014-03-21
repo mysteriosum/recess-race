@@ -225,8 +225,8 @@
   <object x="20109" y="855" width="24" height="24"/>
   <object x="20097" y="889" width="24" height="24"/>
   <object x="20321" y="858" width="24" height="24"/>
-  <object x="21159" y="821" width="24" height="24"/>
-  <object x="21288" y="767" width="24" height="24"/>
+  <object x="21163" y="885" width="24" height="24"/>
+  <object x="21292" y="831" width="24" height="24"/>
   <object x="21762" y="989" width="24" height="24"/>
   <object x="21816" y="962" width="24" height="24"/>
   <object x="21846" y="989" width="24" height="24"/>
@@ -286,10 +286,49 @@
   <object x="28003" y="169" width="24" height="24"/>
   <object x="32656" y="2060"/>
   <object x="21645" y="988" width="24" height="24"/>
-  <object x="21465" y="788" width="24" height="24"/>
-  <object x="21581" y="1056" width="24" height="24"/>
-  <object x="21581" y="1100" width="24" height="24"/>
+  <object x="21469" y="852" width="24" height="24"/>
+  <object x="21577" y="1120" width="24" height="24"/>
+  <object x="21577" y="1164" width="24" height="24"/>
   <object x="21693" y="980" width="24" height="24"/>
+  <object x="25974" y="692" width="24" height="24"/>
+  <object x="23859" y="671" width="24" height="24"/>
+  <object x="24058" y="980" width="24" height="24"/>
+  <object x="24280" y="1844" width="24" height="24"/>
+  <object x="23842" y="1652" width="24" height="24"/>
+  <object x="24310" y="1838" width="24" height="24"/>
+  <object x="25360" y="1706" width="24" height="24"/>
+  <object x="25378" y="1706" width="24" height="24"/>
+  <object x="25762" y="1724" width="24" height="24"/>
+  <object x="25822" y="1706" width="24" height="24"/>
+  <object x="26368" y="1718" width="24" height="24"/>
+  <object x="26416" y="1718" width="24" height="24"/>
+  <object x="26386" y="1712" width="24" height="24"/>
+  <object x="27010" y="1466" width="24" height="24"/>
+  <object x="22450" y="1562" width="24" height="24"/>
+  <object x="22774" y="1562" width="24" height="24"/>
+  <object x="22132" y="1556" width="24" height="24"/>
+  <object x="23056" y="1550" width="24" height="24"/>
+  <object x="23350" y="1550" width="24" height="24"/>
+  <object x="10855" y="816" width="24" height="24"/>
+  <object x="11067" y="820" width="24" height="24"/>
+  <object x="11151" y="828" width="24" height="24"/>
+  <object x="11539" y="760" width="24" height="24"/>
+  <object x="11943" y="820" width="24" height="24"/>
+  <object x="11987" y="824" width="24" height="24"/>
+  <object x="12219" y="700" width="24" height="24"/>
+  <object x="12735" y="848" width="24" height="24"/>
+  <object x="22598" y="218" width="24" height="24"/>
+  <object x="22694" y="164" width="24" height="24"/>
+  <object x="22394" y="278" width="24" height="24"/>
+  <object x="22548" y="972" width="24" height="24"/>
+  <object x="22908" y="852" width="24" height="24"/>
+  <object x="25304" y="660" width="24" height="24"/>
+  <object x="27110" y="722" width="24" height="24"/>
+  <object x="27506" y="506" width="24" height="24"/>
+  <object x="27146" y="314" width="24" height="24"/>
+  <object x="27344" y="188" width="24" height="24"/>
+  <object x="26648" y="850" width="24" height="24"/>
+  <object x="21576" y="1212" width="24" height="24"/>
  </objectgroup>
  <objectgroup color="#ffff00" name="TennisBalls" width="1050" height="60">
   <object type="TennisBall" x="12710" y="476" width="20" height="20">
@@ -377,10 +416,111 @@
    <ellipse/>
   </object>
  </objectgroup>
- <objectgroup name="Waypoints" width="1050" height="60"/>
+ <objectgroup color="#b30000" name="Waypoints" width="1050" height="60">
+  <object x="4476" y="422" width="78" height="54">
+   <properties>
+    <property name="id" value="1"/>
+   </properties>
+  </object>
+  <object x="7314" y="422" width="78" height="54">
+   <properties>
+    <property name="id" value="2"/>
+   </properties>
+  </object>
+  <object x="8634" y="491" width="78" height="54">
+   <properties>
+    <property name="id" value="3"/>
+   </properties>
+  </object>
+  <object x="10499" y="791" width="78" height="54">
+   <properties>
+    <property name="id" value="4"/>
+   </properties>
+  </object>
+  <object x="11807" y="735" width="78" height="54">
+   <properties>
+    <property name="id" value="5"/>
+   </properties>
+  </object>
+  <object x="12839" y="831" width="78" height="54">
+   <properties>
+    <property name="id" value="6"/>
+   </properties>
+  </object>
+  <object x="14033" y="771" width="78" height="54">
+   <properties>
+    <property name="id" value="7"/>
+   </properties>
+  </object>
+  <object x="15185" y="903" width="78" height="54">
+   <properties>
+    <property name="id" value="8"/>
+   </properties>
+  </object>
+  <object x="16541" y="741" width="78" height="54">
+   <properties>
+    <property name="id" value="9"/>
+   </properties>
+  </object>
+  <object x="18011" y="915" width="78" height="54">
+   <properties>
+    <property name="id" value="10"/>
+   </properties>
+  </object>
+  <object x="21245" y="1233" width="78" height="54">
+   <properties>
+    <property name="id" value="11"/>
+   </properties>
+  </object>
+  <object x="22919" y="1589" width="24" height="24">
+   <properties>
+    <property name="id" value="12"/>
+   </properties>
+  </object>
+  <object x="24523" y="1845" width="78" height="54">
+   <properties>
+    <property name="id" value="13"/>
+   </properties>
+  </object>
+  <object x="26527" y="1581" width="78" height="54">
+   <properties>
+    <property name="id" value="14"/>
+   </properties>
+  </object>
+  <object x="27829" y="1077" width="78" height="54">
+   <properties>
+    <property name="id" value="15"/>
+   </properties>
+  </object>
+  <object x="28681" y="723" width="78" height="54">
+   <properties>
+    <property name="id" value="16"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup color="#a40080" name="QuestionMarks" width="1050" height="60">
   <object type="QuestionMark" x="16564" y="712">
    <polyline points="0,0 9,-9 18,-6 24,0 18,9 9,12 9,27"/>
+  </object>
+ </objectgroup>
+ <objectgroup color="#ffffff" name="AIPlateformRemove" width="1050" height="60">
+  <object x="28064" y="714" width="56" height="80">
+   <ellipse/>
+  </object>
+  <object x="10407" y="363" width="48" height="108">
+   <ellipse/>
+  </object>
+  <object x="30028" y="652" width="56" height="80">
+   <ellipse/>
+  </object>
+  <object x="30612" y="669" width="56" height="80">
+   <ellipse/>
+  </object>
+  <object x="31284" y="705" width="56" height="80">
+   <ellipse/>
+  </object>
+  <object x="31595" y="559" width="56" height="80">
+   <ellipse/>
   </object>
  </objectgroup>
 </map>
