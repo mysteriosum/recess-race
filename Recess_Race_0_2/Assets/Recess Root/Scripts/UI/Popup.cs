@@ -9,22 +9,40 @@ public class Popup {
 	private float timeShown;
 	
 	//not to be set in a constructor
-	private float timeToGetToMaxSize = 0.65f;
+	private float timeToGetToMaxSize = 0.25f;
 	private GameObject go;
 	private TextMesh tm;
 	private Transform t;
 	private float growTimer = 0;
 	private float showTimer = 0;
 	
-	public Popup(string text, Color colour, int maxSize, float timeShown, Vector2 position){
+	public bool IsActive{
+		get { return go != null; }
+	}
+	
+	public Popup (){
+		
+	}
+	public void Initiate(string text, Color colour, int maxSize, float timeShown, Vector3 position, float rotation){
+		if (go){
+			GameObject.Destroy (go);
+			Debug.Log ("DESTROY");
+		}
+		growTimer = 0;
+		showTimer = 0;
+		
 		this.maxSize = maxSize;
 		this.timeShown = timeShown;
 		
-		go = new GameObject("Popup");
+		go = GameObject.Instantiate (RecessCamera.cam.hud.normalTextMesh) as GameObject;
 		t = go.transform;
-		tm = go.AddComponent<TextMesh>();
+		tm = go.GetComponent<TextMesh>();
 		
-		t.position = position;
+		
+		t.parent = RecessCamera.cam.transform;
+		t.localPosition = position;
+		t.Rotate (Vector3.forward * rotation);
+		
 		tm.text = text;
 		tm.renderer.material.color = colour;
 		tm.fontSize = 1;
@@ -34,7 +52,23 @@ public class Popup {
 		if (growTimer < timeToGetToMaxSize && showTimer < timeShown){
 			growTimer += Time.deltaTime;
 			tm.fontSize = Mathf.Max(1, (int) Mathf.Lerp(1, maxSize, growTimer/timeToGetToMaxSize));
+		} else if (showTimer < timeShown){
+			showTimer += Time.deltaTime;
+		} else if (growTimer > 0){
+			growTimer -= Time.deltaTime;
+			tm.fontSize = Mathf.Max(1, (int) Mathf.Lerp(1, maxSize, growTimer/timeToGetToMaxSize));
+			
+		}else if (growTimer <= 0){
+			GameObject.Destroy (go);
 			
 		}
 	}
+	
+	public void ExtendPopup(){
+		if (showTimer > 0){
+			showTimer = 0;
+			growTimer = timeToGetToMaxSize;
+		}
+	}
+	
 }

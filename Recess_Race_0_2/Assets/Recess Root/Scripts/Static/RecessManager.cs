@@ -51,6 +51,10 @@ public class RecessManager {
 		garbage ++;
 	}
 	
+	public static void AddScore (int value){
+		score += value;
+	}
+	
 	public static void SaveStatistics(bool eraseCurrent){
 		if (score > highScore){
 			PlayerPrefs.SetInt("highScore", score);

@@ -15,7 +15,9 @@ public class RecessCamera : MonoBehaviour {
 	const int scrnHeight = 480;
 	const int scrnWidth = 640;
 	
-	public Transform[] parallaxes;
+	
+	// parallax members
+	public Transform[] parallaxes;	
 	public Sprite[] backgroundElements;
 	public Sprite silhouette;
 	public Sprite fence; 
@@ -31,10 +33,11 @@ public class RecessCamera : MonoBehaviour {
 	private int fenceAmount = 85;
 	private int houseAmount = 85;
 	
-	
 	private float lerpAmount = 0.1f;
 	private float maxParallax = 0.3f;
 	private float furthestParalaxZ;
+	
+	//race variables
 	
 	private bool raceBegun = false;
 	private float readyTime = 1.0f;
@@ -51,6 +54,71 @@ public class RecessCamera : MonoBehaviour {
 	private float showScoreAt = 4.3f;
 	private float tryAgainAt = 6.5f;
 	
+	
+	
+	//popups and other points stuff: combos, etc
+	
+	Popup comboPopup = new Popup();
+	int baseGarbageValue = 10;
+	int garbageMaxMultiplier = 5;
+	int garbageCurrentMultiplier = 1;
+	int garbageMinMultiplier = 1;
+	
+	Vector3 comboPosition {
+		get{
+			float x = camera.orthographicSize * 0.9f * (Screen.width / Screen.height);
+			float y = camera.orthographicSize * 0.3f;
+			return new Vector3(x, y, 5f);
+		}
+	}
+	Color[] comboColours = new Color[5] { Color.white, Color.cyan, Color.blue, Color.magenta, Color.red };
+	int[] comboSizes = new int[5] { 10, 11, 12, 14, 17 };
+	
+	float comboTimer = 0;
+	float comboTiming = 2.5f;
+	int comboIncrement = 3;
+	int comboCounter = 0;
+	float comboRotation = 15f;
+	
+	float timeLimit = 300f;
+	float currentTime;
+	int pointsPerSecondLeft = 5;
+	
+	
+	Popup bonusPopup = new Popup();
+	int topFlagValue = 500;
+	int midFlagValue = 200;
+	
+	Vector3 BonusPosition {
+		get{
+			float x = camera.orthographicSize * 0.9f * (Screen.width / Screen.height);
+			float y = camera.orthographicSize * (comboPopup.IsActive? 0 : 0.3f);
+			return new Vector3(x, y, 5f);
+		}
+	}
+	Color bonusColour = Color.yellow;
+	int bonusSize = 14;
+	float showBonusFor = 2.0f;
+	float bonusRotation = 15f;
+	
+	StyleManager pointsManager = new StyleManager();
+	
+	public float TimeRemaining{
+		get { return timeLimit - currentTime; }
+	}
+	
+	public string TimeRemainingString{
+		get { 
+			int seconds = (int) Mathf.Floor(TimeRemaining % 60);
+			float centiSeconds = (int) Mathf.Floor((currentTime - (int) currentTime) * 100);
+			return Mathf.Floor(TimeRemaining/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + (centiSeconds < 10? ":0" : ":") + centiSeconds.ToString();}
+	}
+	
+	public int TimeRemainingPoints{
+		get {
+			return (int) TimeRemaining * pointsPerSecondLeft;
+		}
+	}
 	
 	[System.SerializableAttribute]
 	public class HUDTextures{
@@ -76,6 +144,8 @@ public class RecessCamera : MonoBehaviour {
 		
 		public GUISkin skin;
 		
+		public Font font;
+		public GameObject normalTextMesh;
 		
 		private int cursorIndex = 0;
 		public int CursorIndex {
@@ -91,6 +161,7 @@ public class RecessCamera : MonoBehaviour {
 	
 	private Transform[] racers;
 	private Transform fitz;
+	private List<Popup> popups = new List<Popup>();
 	
 	private Controller controller = new Controller();
 	
@@ -136,6 +207,7 @@ public class RecessCamera : MonoBehaviour {
 		}
 	}
 	void Start () {
+		
 		t = transform;
 		audioSource = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
@@ -236,6 +308,8 @@ public class RecessCamera : MonoBehaviour {
 			}
 			
 		}
+		
+		
 	}
 	void StartRace() {
 		raceBegun = true;
@@ -252,6 +326,19 @@ public class RecessCamera : MonoBehaviour {
 				StartRace();
 		}
 		
+		foreach (Popup popup in popups){
+			popup.Update ();
+		}
+		if (comboTimer > 0){
+			comboTimer -= Time.deltaTime;
+			if (comboTimer <= 0){
+				garbageCurrentMultiplier = 1;
+				comboCounter = 0;
+			}
+		}
+		if (comboPopup.IsActive){
+			comboPopup.Update ();
+		}
 		
 		Vector3 forepos = t.position;
 		if (fitzNode != null && raceBegun){
@@ -279,6 +366,7 @@ public class RecessCamera : MonoBehaviour {
 		
 		if (raceBegun && !raceFinished){
 			RecessManager.CurrentTime += Time.deltaTime;
+			currentTime += Time.deltaTime;
 		}
 		if (raceFinished){
 			finishedTimer += Time.deltaTime;
@@ -335,7 +423,9 @@ public class RecessCamera : MonoBehaviour {
 			
 			//time of race
 			Rect timeRect = new Rect(hud.timeBorder.x, Screen.height - hud.timeBorder.y - 60, 125, 60);
-			GUI.TextArea (timeRect, RecessManager.TimeString, hud.skin.customStyles[0]);
+			//TODO: specify between time trial and not time trial
+			//GUI.TextArea (timeRect, RecessManager.TimeString, hud.skin.customStyles[0]);
+			GUI.TextArea (timeRect, TimeRemainingString, hud.skin.customStyles[0]);
 			
 			//score areas
 			int numberHeight = 50;
@@ -366,11 +456,21 @@ public class RecessCamera : MonoBehaviour {
 			if (finishedTimer > placeAt){
 				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 50), "You came in " + RankString + " place!", hud.skin.textArea);
 			}
-			yValue += congratsHeight * 0.15f;
-			if (finishedTimer > scoredAt){
-				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 50), "You scored: " + (finishedTimer > showScoreAt? RecessManager.Score.ToString() : ""), hud.skin.textArea);
-			}
 			yValue += congratsHeight * 0.1f;
+			if (finishedTimer > scoredAt){		//TODO: Make this prettier (make sounds happen and count up and appear one at a time and the total should be last
+				string stringy = "Your score";
+				if (finishedTimer > showScoreAt){
+					stringy += ": " + RecessManager.Score.ToString() + Environment.NewLine + 
+						"Garbage: " + pointsManager.garbagePoints.ToString() + Environment.NewLine +
+						"Rank: " + pointsManager.rankPoints.ToString() + Environment.NewLine +
+						"Style: " + pointsManager.stylePoints.ToString() + Environment.NewLine +
+						"Time: " + pointsManager.timePoints.ToString();
+				}
+					
+				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 150), stringy, hud.skin.textArea);
+			
+			}
+			yValue += congratsHeight * 0.3f;
 			if (finishedTimer > tryAgainAt){
 				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "Next race?", hud.skin.textArea);
 
@@ -438,6 +538,61 @@ public class RecessCamera : MonoBehaviour {
 		raceFinished = true;
 		fitzNode.parent = null;
 		
+		//TODO : display the point amounts (maybe make a class of what I earn points for?
+		//class for points?
+		//points for class B)
+		
 		RecessManager.Score += RankPoints;
+		RecessManager.Score += TimeRemainingPoints;
+		pointsManager.timePoints += TimeRemainingPoints;
+		pointsManager.rankPoints += RankPoints;
+	}
+	
+	public void AddGarbage(){
+		comboTimer = comboTiming;
+		comboCounter ++;
+		if (comboCounter % comboIncrement == 0){
+			
+			garbageCurrentMultiplier ++;
+			garbageCurrentMultiplier = Mathf.Clamp (garbageCurrentMultiplier, garbageMinMultiplier, garbageMaxMultiplier);
+			comboPopup.Initiate("Combo x " + garbageCurrentMultiplier.ToString(), 
+					comboColours[garbageCurrentMultiplier - 1], 
+					comboSizes[garbageCurrentMultiplier - 1], 
+					comboTiming, 
+					comboPosition,
+					comboRotation);
+			
+		} else if (comboPopup.IsActive){
+			comboPopup.ExtendPopup();	
+		}
+		
+		RecessManager.AddScore (baseGarbageValue * garbageCurrentMultiplier);
+		pointsManager.garbagePoints += baseGarbageValue * garbageCurrentMultiplier;
+		
+	}
+	
+	public void ExtraFlagTouchPoints (bool topOfPole){
+		int points = topOfPole? topFlagValue : midFlagValue;
+		RecessManager.AddScore(points);
+		comboPopup.Initiate("Flag Bonus! " + Environment.NewLine + points.ToString(), 
+					bonusColour, 
+					bonusSize, 
+					showBonusFor, 
+					BonusPosition,
+					bonusRotation);
+		
+		pointsManager.stylePoints += points;
+	}
+	
+	public void MiscellaneousBonusPoints (string bonusName, int value){
+		RecessManager.AddScore(value);
+		comboPopup.Initiate(bonusName + Environment.NewLine + value.ToString(), 
+					bonusColour, 
+					bonusSize, 
+					showBonusFor, 
+					BonusPosition,
+					bonusRotation);
+		
+		pointsManager.stylePoints += value;
 	}
 }

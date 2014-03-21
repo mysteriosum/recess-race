@@ -88,7 +88,8 @@ public class Roulette : MonoBehaviour {
 			Debug.Log("Current name is " + currentItem.name);
 			if (currentItem.name == "Banana" && currentBanana > 0){
 				currentBanana --;
-				display.sprite = bananaSprites[currentBanana - 1];
+				if (currentBanana > 0)
+					display.sprite = bananaSprites[currentBanana - 1];
 			} else {
 				currentItem = null;
 				display.sprite = null;

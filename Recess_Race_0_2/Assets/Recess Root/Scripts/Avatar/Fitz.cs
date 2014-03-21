@@ -62,7 +62,6 @@ public class Fitz : Movable {
 	private float SpeedBoostFalloff {
 		get{
 			float result = maxSpeed / secondsToMax * Time.deltaTime;
-			Debug.Log(result);
 			return result;
 		}
 	}
@@ -567,7 +566,9 @@ public class Fitz : Movable {
 		lockControls = true;
 		controller.getR = true;
 		controller.ResetJumpInput();
-		
+		controller.hAxis = 0;
+		controller.getR = false;
+		controller.getL = false;
 	}
 	
 	
