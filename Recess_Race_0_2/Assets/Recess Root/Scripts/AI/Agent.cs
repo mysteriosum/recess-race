@@ -62,9 +62,21 @@ public class Agent : Movable {
 				if(Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05){
 					switchTo(instructionsToGetThere);
 				}else{
-					Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
-					run.nextInstruction = instructionsToGetThere;
-					switchTo(run);
+					if((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
+					   || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))){
+						Debug.Log("On va attendre");
+						Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+						Instruction wait = new WaitInstruction(this, 0.6f);
+						run.nextInstruction = wait;
+						wait.nextInstruction = instructionsToGetThere;
+						switchTo(run);
+					}else{
+						Debug.Log("On attend pas");
+						Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+						run.nextInstruction = instructionsToGetThere;
+						switchTo(run);
+					}
+					
 				}
 			}
         }
