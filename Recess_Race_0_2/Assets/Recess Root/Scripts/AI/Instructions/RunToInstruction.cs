@@ -4,13 +4,16 @@ using System.Collections;
 [System.Serializable]
 public class RunToInstruction : Instruction {
 
-	public float targetX;
+    public float targetX;
+    public float speed;
+
 	public Direction direction;
 	public float lastX;
 	public int stockCounter;
 
-    public RunToInstruction(Agent agent, Vector3 targetLocation) : base(agent){
+    public RunToInstruction(Agent agent, Vector3 targetLocation, float speed = 1) : base(agent){
 		this.targetX = targetLocation.x;
+        this.speed = speed;
 		stockCounter = 10;
     }
 
@@ -21,13 +24,13 @@ public class RunToInstruction : Instruction {
 		} else {
 			direction = Direction.left;
 		}
-        agent.setMovingStrenght((int)direction);
+        agent.setMovingStrenght((int)direction * speed);
 		this.lastX = agent.transform.position.x;
     }
 
 
 	public override void update() {
-		if(Mathf.Abs(lastX - agent.transform.position.x) < 0.007){
+		if( Mathf.Abs(lastX - agent.transform.position.x) < 0.007){
 			stockCounter--;
 		}else{
 			stockCounter = 10;
@@ -53,6 +56,6 @@ public class RunToInstruction : Instruction {
 	}
 
     public override string ToString() {
-        return "RunToInstruction, run to (x=" + targetX + ")";
+        return "RunToInstruction (targetX=" + targetX + ", speed=" + this.speed + ")";
     }
 }

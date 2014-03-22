@@ -20,6 +20,7 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
+            Debug.Log(instruction.ToString());
         }
         this.currentInstruction = instruction;
     }
@@ -59,26 +60,35 @@ public class Agent : Movable {
 			if(linkedPlateform.instruction.needRunCharge){
 				makeRunCharge(linkedPlateform,instructionsToGetThere);
 			}else{
-				if(Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05){
-					switchTo(instructionsToGetThere);
-				}else{
-					if((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
-					   || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))){
-						Debug.Log("On va attendre");
-						Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
-						Instruction wait = new WaitInstruction(this, 0.6f);
-						run.nextInstruction = wait;
-						wait.nextInstruction = instructionsToGetThere;
-						switchTo(run);
-					}else{
-						Debug.Log("On attend pas");
-						Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
-						run.nextInstruction = instructionsToGetThere;
-						switchTo(run);
-					}
-					
-				}
+                makeJump(linkedPlateform, instructionsToGetThere);
+				
 			}
+        }
+    }
+
+    private void makeJump(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere) {
+        if (Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05) {
+            switchTo(instructionsToGetThere);
+        } else {
+            if ((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
+               || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
+                Debug.Log("On va attendre");
+                Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+                Instruction wait = new WaitInstruction(this, 0.3f);
+                Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation,0.2f);
+                Instruction wait2 = new WaitInstruction(this, 0.1f);
+                run.nextInstruction = wait;
+                wait.nextInstruction = makeSurRun;
+                makeSurRun.nextInstruction = wait2;
+                wait2.nextInstruction = instructionsToGetThere;
+                switchTo(run);
+            } else {
+                Debug.Log("On attend pas");
+                Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+                run.nextInstruction = instructionsToGetThere;
+                switchTo(run);
+            }
+
         }
     }
 

@@ -21,30 +21,33 @@ public class JumpPathingMaps {
 		{false,true,true}
 	});
 
-	public static PathingMap jump_x1_y2 = new PathingMap(true, new bool[,] {
-		{true,true},
-		{true,true},
-		{true,true},
-		{true,false},
-		{true,false}
-	});
-	public static PathingMap jump_x1_y3 = new PathingMap(true, new bool[,] {
-		{true,true},
-		{true,true},
-		{true,true},
-		{true,false},
-		{true,false},
-		{true,false}
-	});
 
-	public static PathingMap jump_x1_y4 = new PathingMap(true, new bool[,] {
-		{true,true},
-		{true,true},
-		{true,false},
-		{true,false},
-		{true,false},
-		{true,false}
-	});
+
+    public static PathingMap jump_x2_y2 = new PathingMap(true, new bool[,] {
+        {true,true,true},
+        {true,true,true},
+        {true,true,true},
+        {true,false,false},
+        {true,false,false}
+    });
+
+    public static PathingMap jump_x2_y3 = new PathingMap(true, new bool[,] {
+        {true,true,true},
+        {true,true,true},
+        {true,true,true},
+        {true,true,false},
+        {true,false,false},
+        {true,false,false}
+    });
+
+    public static PathingMap jump_x2_y4 = new PathingMap(true, new bool[,] {
+        {true,true,true},
+        {true,true,true},
+        {true,true,false},
+        {true,true,false},
+        {true,false,false},
+        {true,false,false}
+    });
 
 	public static PathingMap jump_x2_ym16 = new PathingMap(true, new bool[,] {
 		{true,true,true,true},

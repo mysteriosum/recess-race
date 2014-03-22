@@ -26,4 +26,8 @@ public class WaitInstruction : Instruction {
 	public override Direction getStartingDirection (){
 		return Direction.right;
 	}
+
+    public override string ToString() {
+        return "WaitInstruction (waitTime=" + waitTime + ")";
+    }
 }

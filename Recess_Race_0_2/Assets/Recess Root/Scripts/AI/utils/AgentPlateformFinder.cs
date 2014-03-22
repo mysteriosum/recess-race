@@ -53,7 +53,6 @@ public class AgentPlateformFinder {
 				xToGo += 1.5f;
 			}
 		} else {
-			Debug.Log(link.startingDirection);
 			if(link.startingDirection.Equals(Direction.left)){
 				Debug.Log("aaww");
 				xToGo += 1.5f;
