@@ -6,6 +6,7 @@ public class Agent : Movable {
     private Instruction currentInstruction;
     private Plateform lastPlateform;
     public int currentWayPoint = 0;
+    public float speedFactor = 1;
 
 
     void Update() {
@@ -28,7 +29,8 @@ public class Agent : Movable {
     protected override void FixedUpdate() {
 		if (!activated) return;
         base.FixedUpdate();
-        velocity = Move(velocity, controller.hAxis);
+        velocity = Move(velocity, controller.hAxis * speedFactor);
+        Debug.Log(controller.hAxis * speedFactor);
     }
 
 
@@ -73,14 +75,14 @@ public class Agent : Movable {
             if ((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
                || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
                 Debug.Log("On va attendre");
-                Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
-                Instruction wait = new WaitInstruction(this, 0.3f);
-                Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation,0.2f);
+                Instruction run = new RunToInstruction(this, linkedPlateform.startLocation, true);
+                /*Instruction wait = new WaitInstruction(this, 0f);
+                Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
                 Instruction wait2 = new WaitInstruction(this, 0.1f);
                 run.nextInstruction = wait;
                 wait.nextInstruction = makeSurRun;
-                makeSurRun.nextInstruction = wait2;
-                wait2.nextInstruction = instructionsToGetThere;
+                makeSurRun.nextInstruction = wait2;*/
+                run.nextInstruction = instructionsToGetThere;
                 switchTo(run);
             } else {
                 Debug.Log("On attend pas");
@@ -160,4 +162,8 @@ public class Agent : Movable {
         controller.getJump = false;
     }*/
 
+
+    internal bool isGrounded() {
+        return this.grounded;
+    }
 }

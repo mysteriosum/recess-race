@@ -21,6 +21,17 @@ public class JumpPathingMaps {
 		{false,true,true}
 	});
 
+    public static PathingMap jump_x1_ym6 = new PathingMap(true, new bool[,] {
+		{true,true,true},
+		{true,true,true},
+		{false,true,true},
+		{false,true,true},
+		{false,true,true},
+		{false,true,true},
+		{false,true,true},
+		{false,true,true}
+	});
+
 
 
     public static PathingMap jump_x2_y2 = new PathingMap(true, new bool[,] {
