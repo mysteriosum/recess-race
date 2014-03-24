@@ -79,6 +79,8 @@ public class MapLoader {
         plateformGenerator.linkPlateforms();
         print("Loaded Ai instructions");
 
+		loadPositions ();
+		print("Loaded Positions");
 
         loadGarbage();
         loadTennisBalls();
@@ -104,6 +106,7 @@ public class MapLoader {
         createBorder("bottom", new Vector3(map.mapDimension.width / 2, -1, 0), this.map.mapDimension.width+1, 1, parent);
         createBorder("left", new Vector3(map.mapDimension.width + 1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
         createBorder("right", new Vector3(-1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
+		recessCamera.Border = new Rect (0, 0, map.mapDimension.width, map.mapDimension.height);
     }
 
     private void createBorder(string name, Vector3 position,int width, int height, Transform parent) {
@@ -112,6 +115,7 @@ public class MapLoader {
         newBorder.transform.localScale = new Vector3(width, height);
         newBorder.transform.Translate(position);
         newBorder.AddComponent<GizmoDad>();
+		newBorder.layer = LayerMask.NameToLayer("normalCollisions");
         GizmoDad dad = (GizmoDad)newBorder.GetComponent<GizmoDad>();
         dad.size = new Vector3(1, 1, 1);
         dad.myColour = Couleur.white;
@@ -120,6 +124,24 @@ public class MapLoader {
 
     private void loadAssets() {
     }
+
+	private void loadPositions(){
+		Transform parent = GameObjectFactory.createGameObject("PositionsStuff", worldRootGameObject.transform).transform;
+		IEnumerable<XElement> positions = getAllObjectFromObjectGroup("Positions");
+		loadObject (positions, "End", "FinishLine","Finish Line", parent);
+		loadObject (positions, "Player", "Fitzwilliam","Fitz William", parent);
+	}
+
+	private void loadObject(IEnumerable<XElement> xElement, string objectToTreatName, string prefabName, string unityObjectName, Transform parent){
+		XElement element = xElement.First(e => e.Attribute("name").Value.Equals(objectToTreatName));
+
+		GameObject prefab = Resources.Load<GameObject>(prefabName);
+		GameObject obj = GameObjectFactory.createCopyGameObject(prefab, unityObjectName, parent.gameObject);
+
+		float x = (float) parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
+		float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
+		obj.transform.Translate(x,y,0);
+	}
 
     private void loadTennisBalls() {
         GameObject tennisBallPrefab = Resources.Load<GameObject>("Objects/TennisBall");

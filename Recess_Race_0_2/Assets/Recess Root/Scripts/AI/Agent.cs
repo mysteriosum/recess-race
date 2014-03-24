@@ -30,7 +30,7 @@ public class Agent : Movable {
 		if (!activated) return;
         base.FixedUpdate();
         velocity = Move(velocity, controller.hAxis * speedFactor);
-        Debug.Log(controller.hAxis * speedFactor);
+        //Debug.Log(controller.hAxis * speedFactor);
     }
 
 

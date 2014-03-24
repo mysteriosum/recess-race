@@ -43,7 +43,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 				Gizmos.color = new Color(1, 1, 0, 0.8f);
 				int direction = (int)data.direction;
 				float finalX = linked.startLocation.x +  direction * (data.moveHoldingLenght + data.totalDistanceAfterMoveAgain + 1);
-				float aproximativeJumpHeight = 3 + 2 * (data.jumpHoldingLenght / 13);
+				//float aproximativeJumpHeight = 3 + 2 * (data.jumpHoldingLenght / 13);
 
 				Vector3 v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
 				Gizmos.DrawLine(linked.startLocation, v3);

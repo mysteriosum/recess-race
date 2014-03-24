@@ -8,8 +8,7 @@ public class RunToInstruction : Instruction {
     public bool arriveWithSpeedZero;
 
 	public Direction direction;
-    private float moveSpeed = 0;
-	public float lastX;
+    public float lastX;
     private float ranDistance = 0;
 	public int stockCounter;
 

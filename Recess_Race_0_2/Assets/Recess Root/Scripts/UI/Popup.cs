@@ -26,7 +26,6 @@ public class Popup {
 	public void Initiate(string text, Color colour, int maxSize, float timeShown, Vector3 position, float rotation){
 		if (go){
 			GameObject.Destroy (go);
-			Debug.Log ("DESTROY");
 		}
 		growTimer = 0;
 		showTimer = 0;

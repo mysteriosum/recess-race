@@ -93,7 +93,7 @@
   <object x="862" y="1150"/>
  </objectgroup>
  <objectgroup name="SpeedBoosts" width="100" height="40"/>
- <objectgroup color="#ffff00" name="MapSettings" width="100" height="40">
+ <objectgroup color="#ffff00" name="Positions" width="100" height="40">
   <object name="Player" x="289" y="1101" width="32" height="32">
    <ellipse/>
   </object>
