@@ -65,9 +65,8 @@ public class Popup {
 	}
 	
 	public void ExtendPopup(){
-		if (showTimer > 0){
+		if (showTimer > 0 && growTimer >= timeToGetToMaxSize){
 			showTimer = 0;
-			growTimer = timeToGetToMaxSize;
 		}
 	}
 	

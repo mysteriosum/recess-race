@@ -25,9 +25,9 @@ public class Fitz : Movable {
 	private float pinkyDoubleJumpMode				= 0.5f;
 	
 	private bool boogerBoy							= false;
-	private float boogerBoySecToMax					= 0.158f;
+	private float boogerBoySecToMax					= 0.178f;
 	private float bBoyDecelMod						= 2.0f;
-	private float boogerBoyTiming					= 18f;
+	private float boogerBoyTiming					= 28.5f;
 	private float bBoySpeedMod						= 0.85f;
 	private bool wallHanging						= false;
 	private float wallHangFallMod					= 0.15f;
@@ -37,15 +37,15 @@ public class Fitz : Movable {
 	private float wallJumpTimePenalty				= 0.5f;
 	
 	private bool otto								= false;
-	//protected bool tailFalling						= false;
 	private float tailFallMod						= 0.175f;
-	private float ottoTiming						= 45f;
+	private float ottoTiming						= 38f;
 	
 	private bool dust								= false;
 	private float dustGravityMod					= 0.7f;
 	private float dustMaxFallMod					= 0.5f;
 	private bool dustStorming						= false;
 	private float dustTiming						= 15f;
+	private GameObject windArea;
 	
 	
 	private float itemTimer							= 0;
@@ -195,6 +195,16 @@ public class Fitz : Movable {
 		get { return hurt; }
 	}
 	
+	public bool DustStorming{
+		get{
+			return dustStorming;
+		}
+		set{
+			dustStorming = value;
+			windArea.SetActive(value);
+		}
+	}
+	
 	//--------------------------------------------------------------------------\\
 	//-----------------------------Stunning/Damage------------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -231,6 +241,7 @@ public class Fitz : Movable {
 		
 		ball = Resources.Load("devBall");
 		
+		//Find the animations from Fitz's children
 		foreach(Transform anims in GetComponentsInChildren<Transform>()){
 			if (anims.name.Contains ("Pinky")){
 				pinkyAnim = anims.gameObject;
@@ -244,6 +255,20 @@ public class Fitz : Movable {
 				ottoAnim = anims.gameObject;
 				ottoAnim.SetActive (false);
 			}
+		}
+		
+		
+		//find the object that makes Dust's wind effect work
+		for (int i = 0; i < t.childCount; i++) {
+			GameObject child = t.GetChild(i).gameObject;
+			if (child.tag == "WindArea"){
+				windArea = child;
+				windArea.SetActive(false);
+			}
+		}
+		
+		if (windArea == null){
+			Debug.LogWarning("There's no wind area object on the Avatar so Dust won't work");
 		}
 	}
 	
@@ -373,9 +398,13 @@ public class Fitz : Movable {
 		
 		if (dust){
 			if (!dustStorming && !grounded && controller.getRunDown){
-				dustStorming = true;
+				DustStorming = true;
 			} else if (dustStorming && !controller.getRun){
-				dustStorming = false;
+				DustStorming = false;
+			}
+			
+			if (grounded){
+				DustStorming = false;
 			}
 		}
 		
@@ -449,9 +478,12 @@ public class Fitz : Movable {
 		otto = false;
 		boogerBoy = true;
 		dust = false;
+		
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(true);
 		ottoAnim.SetActive(false);
+		windArea.SetActive(false);
+		
 		renderer.enabled = false;
 		//r.color = new Color(0.1f, 0.9f, 0.25f, 1f);
 		Invoke("ChangeToFitz", boogerBoyTiming);
@@ -463,9 +495,12 @@ public class Fitz : Movable {
 		otto = true;
 		boogerBoy = false;
 		dust = false;
+		
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(false);
 		ottoAnim.SetActive(true);
+		windArea.SetActive(false);
+		
 		renderer.enabled = false;
 		//r.color = new Color(0.18f, 0.18f, 0.18f, 1f);
 		Invoke("ChangeToFitz", ottoTiming);
@@ -476,9 +511,14 @@ public class Fitz : Movable {
 		otto = false;
 		boogerBoy = false;
 		dust = false;
+		
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(false);
 		ottoAnim.SetActive(false);
+		
+		DustStorming = false;
+		spinFalling = false;
+		
 		renderer.enabled = true;
 		//r.color = Color.white;
 		
@@ -496,6 +536,7 @@ public class Fitz : Movable {
 		pinkyAnim.SetActive (false);
 		boogerAnim.SetActive(false);
 		ottoAnim.SetActive(false);
+		
 		renderer.enabled = true;
 		Invoke("ChangeToFitz", dustTiming);
 	}

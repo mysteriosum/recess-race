@@ -16,6 +16,13 @@ public class Garbage : MonoBehaviour {
 	
 	void OnTriggerEnter2D(Collider2D other){
 		
+		if (other.tag.Equals("WindArea", System.StringComparison.OrdinalIgnoreCase)){
+			GarbagePhysics garbageScript = gameObject.AddComponent<GarbagePhysics>();
+		
+			garbageScript.FollowTransform(other.transform);
+			return;
+		}
+		
 		Fitz fitz = other.GetComponent<Fitz>();
 		if (fitz != null){
 			RecessCamera.cam.AddGarbage();
@@ -23,5 +30,15 @@ public class Garbage : MonoBehaviour {
 		}
 		//gameObject.SetActive(false);
 		Destroy(gameObject);
+	}
+	
+	void OnTriggerExit2D (Collider2D other){
+		GarbagePhysics garbageScript = GetComponent<GarbagePhysics>();
+		bool ahrah = other.tag == "WindArea";
+		
+		if (ahrah){
+			garbageScript.Deactivate();
+			
+		}
 	}
 }

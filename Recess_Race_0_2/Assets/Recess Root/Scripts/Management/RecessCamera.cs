@@ -75,11 +75,13 @@ public class RecessCamera : MonoBehaviour {
 	int garbageMaxMultiplier = 5;
 	int garbageCurrentMultiplier = 1;
 	int garbageMinMultiplier = 1;
+	float popupXOffset = 0.9f;
+	float popupYOffset = 0.3f;
 	
 	Vector3 comboPosition {
 		get{
-			float x = camera.orthographicSize * 0.9f * (Screen.width / Screen.height);
-			float y = camera.orthographicSize * 0.3f;
+			float x = camera.orthographicSize * popupXOffset * (Screen.width / Screen.height);
+			float y = camera.orthographicSize * popupYOffset;
 			return new Vector3(x, y, 5f);
 		}
 	}
@@ -103,8 +105,8 @@ public class RecessCamera : MonoBehaviour {
 	
 	Vector3 BonusPosition {
 		get{
-			float x = camera.orthographicSize * 0.9f * (Screen.width / Screen.height);
-			float y = camera.orthographicSize * (comboPopup.IsActive? 0 : 0.3f);
+			float x = camera.orthographicSize * popupXOffset * (Screen.width / Screen.height);
+			float y = camera.orthographicSize * (comboPopup.IsActive? 0 : popupYOffset);
 			return new Vector3(x, y, 5f);
 		}
 	}
