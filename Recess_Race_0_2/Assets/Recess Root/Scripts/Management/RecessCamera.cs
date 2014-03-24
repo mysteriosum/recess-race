@@ -128,7 +128,6 @@ public class RecessCamera : MonoBehaviour {
 		public Texture2D ottoMini;
 		public Texture2D pinkyMini;
 		public Texture2D boogerBoyMini;
-		public Texture2D stunnedMini;
 		
 		public Vector2 miniBorder = new Vector2(12, 12);
 		public float miniScreenProportion = 0.3f;
@@ -335,9 +334,7 @@ public class RecessCamera : MonoBehaviour {
 		if (!raceFinished){
 			Texture2D miniTexture = hud.fitzMini;;
 			
-			if (Fitz.fitz.IsHurt){
-				miniTexture = hud.stunnedMini;
-			} else if (Fitz.fitz.IsOtto){
+			 if (Fitz.fitz.IsOtto){
 				miniTexture = hud.ottoMini;
 			} else if (Fitz.fitz.IsPinky){
 				miniTexture = hud.pinkyMini;
