@@ -18,13 +18,7 @@ public class RecessCamera : MonoBehaviour {
 	private Rect effectiveBorder;
 	public Rect Border {
 		get{ return border; }
-		set{ 
-			border = value; 
-			effectiveBorder = new Rect(border);
-			effectiveBorder = new RectOffset((int) camera.orthographicSize * Screen.width/Screen.height,(int)  camera.orthographicSize * Screen.width/Screen.height,
-				(int) camera.orthographicSize,(int)  camera.orthographicSize).Remove(effectiveBorder);
-			
-		}
+		set{ border = value; }
 	}
 	
 	
@@ -208,7 +202,11 @@ public class RecessCamera : MonoBehaviour {
 		}
 	}
 	void Start () {
-		
+
+		effectiveBorder = new Rect(border);
+		effectiveBorder = new RectOffset((int) camera.orthographicSize * Screen.width/Screen.height,(int)  camera.orthographicSize * Screen.width/Screen.height,
+		                                 (int) camera.orthographicSize,(int)  camera.orthographicSize).Remove(effectiveBorder);
+
 		trans = transform;
 		audioSource = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
@@ -216,7 +214,7 @@ public class RecessCamera : MonoBehaviour {
 			fitzNode = GameObject.Find("Fitzwilliam").GetComponentInChildren<GizmoDad>().transform;
 		}
 		catch{
-			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like");
+			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like it");
 		}
 		
 		sounds = gameObject.AddComponent<Sounds>();
@@ -473,7 +471,8 @@ public class RecessCamera : MonoBehaviour {
 		//TODO : display the point amounts (maybe make a class of what I earn points for?
 		//class for points?
 		//points for class B)
-		
+
+
 		RecessManager.Score += RankPoints;
 		RecessManager.Score += TimeRemainingPoints;
 		pointsManager.timePoints += TimeRemainingPoints;
