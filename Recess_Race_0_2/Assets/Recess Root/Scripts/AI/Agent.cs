@@ -21,7 +21,7 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
-            Debug.Log(instruction.ToString());
+            //Debug.Log(instruction.ToString());
         }
         this.currentInstruction = instruction;
     }

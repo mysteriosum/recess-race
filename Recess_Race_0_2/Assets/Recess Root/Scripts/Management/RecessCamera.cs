@@ -7,7 +7,7 @@ public class RecessCamera : MonoBehaviour {
 	private Transform trans;
 	private Transform fitzNode;
 	private Transform box;
-	
+
 	public AudioSource audioSource;
 	public Sounds sounds;
 	
@@ -18,13 +18,7 @@ public class RecessCamera : MonoBehaviour {
 	private Rect effectiveBorder;
 	public Rect Border {
 		get{ return border; }
-		set{ 
-			border = value; 
-			effectiveBorder = new Rect(border);
-			effectiveBorder = new RectOffset((int) camera.orthographicSize * Screen.width/Screen.height,(int)  camera.orthographicSize * Screen.width/Screen.height,
-				(int) camera.orthographicSize,(int)  camera.orthographicSize).Remove(effectiveBorder);
-			
-		}
+		set{ border = value; }
 	}
 	
 	
@@ -103,7 +97,6 @@ public class RecessCamera : MonoBehaviour {
 	int bonusSize = 14;
 	float showBonusFor = 2.0f;
 	float bonusRotation = 15f;
-	
 	StyleManager pointsManager = new StyleManager();
 	
 	public float TimeRemaining{
@@ -129,7 +122,6 @@ public class RecessCamera : MonoBehaviour {
 		public Texture2D ottoMini;
 		public Texture2D pinkyMini;
 		public Texture2D boogerBoyMini;
-		public Texture2D stunnedMini;
 		
 		public Vector2 miniBorder = new Vector2(12, 12);
 		public float miniScreenProportion = 0.3f;
@@ -210,7 +202,11 @@ public class RecessCamera : MonoBehaviour {
 		}
 	}
 	void Start () {
-		
+
+		effectiveBorder = new Rect(border);
+		effectiveBorder = new RectOffset((int) camera.orthographicSize * Screen.width/Screen.height,(int)  camera.orthographicSize * Screen.width/Screen.height,
+		                                 (int) camera.orthographicSize,(int)  camera.orthographicSize).Remove(effectiveBorder);
+
 		trans = transform;
 		audioSource = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
@@ -218,7 +214,7 @@ public class RecessCamera : MonoBehaviour {
 			fitzNode = GameObject.Find("Fitzwilliam").GetComponentInChildren<GizmoDad>().transform;
 		}
 		catch{
-			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like");
+			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like it");
 		}
 		
 		sounds = gameObject.AddComponent<Sounds>();
@@ -276,7 +272,7 @@ public class RecessCamera : MonoBehaviour {
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , trans.position.z);
 			trans.position = Vector3.Lerp(trans.position, target, lerpAmount);
 			
-			if (effectiveBorder != null && !effectiveBorder.Contains((Vector2)trans.position)){
+			if (effectiveBorder.width > 1 && !effectiveBorder.Contains((Vector2)trans.position)){
 				trans.position = new Vector3(Mathf.Clamp(trans.position.x, effectiveBorder.xMin, effectiveBorder.xMax),
 										Mathf.Clamp(trans.position.y, effectiveBorder.yMin, effectiveBorder.yMax), trans.position.z);
 			}
@@ -336,9 +332,7 @@ public class RecessCamera : MonoBehaviour {
 		if (!raceFinished){
 			Texture2D miniTexture = hud.fitzMini;;
 			
-			if (Fitz.fitz.IsHurt){
-				miniTexture = hud.stunnedMini;
-			} else if (Fitz.fitz.IsOtto){
+			 if (Fitz.fitz.IsOtto){
 				miniTexture = hud.ottoMini;
 			} else if (Fitz.fitz.IsPinky){
 				miniTexture = hud.pinkyMini;
@@ -477,7 +471,8 @@ public class RecessCamera : MonoBehaviour {
 		//TODO : display the point amounts (maybe make a class of what I earn points for?
 		//class for points?
 		//points for class B)
-		
+
+
 		RecessManager.Score += RankPoints;
 		RecessManager.Score += TimeRemainingPoints;
 		pointsManager.timePoints += TimeRemainingPoints;
@@ -522,7 +517,7 @@ public class RecessCamera : MonoBehaviour {
 	
 	public void MiscellaneousBonusPoints (string bonusName, int value){
 		RecessManager.AddScore(value);
-		comboPopup.Initiate(bonusName + Environment.NewLine + value.ToString(), 
+		bonusPopup.Initiate(bonusName + Environment.NewLine + value.ToString(), 
 					bonusColour, 
 					bonusSize, 
 					showBonusFor, 

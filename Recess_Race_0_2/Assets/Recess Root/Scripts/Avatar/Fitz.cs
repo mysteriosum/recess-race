@@ -19,7 +19,6 @@ public class Fitz : Movable {
 	private bool spinFalling						= false;
 	private float spinFallMod						= 0.5f;
 	private float spinFallMoveMod					= 0.575f;
-	readonly private float propelTiming				= 0.3f;
 	private float propelTimer						= 0f;
 	private float propellerTimePenalty				= 0.25f;
 	private float pinkyDoubleJumpMode				= 0.5f;
@@ -575,9 +574,6 @@ public class Fitz : Movable {
 		Vector2 result = base.Jump (currentVelocity, amount);
 		controller.ResetJumpInput();
 		return result;
-	}
-	private void SetVelocity (Vector2 newVelocity){
-		velocity = newVelocity;
 	}
 	
 	private void OnLand(){
