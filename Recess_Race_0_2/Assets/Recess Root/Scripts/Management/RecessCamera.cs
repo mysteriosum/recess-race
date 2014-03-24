@@ -103,7 +103,6 @@ public class RecessCamera : MonoBehaviour {
 	int bonusSize = 14;
 	float showBonusFor = 2.0f;
 	float bonusRotation = 15f;
-	
 	StyleManager pointsManager = new StyleManager();
 	
 	public float TimeRemaining{
@@ -276,7 +275,7 @@ public class RecessCamera : MonoBehaviour {
 			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , trans.position.z);
 			trans.position = Vector3.Lerp(trans.position, target, lerpAmount);
 			
-			if (effectiveBorder != null && !effectiveBorder.Contains((Vector2)trans.position)){
+			if (effectiveBorder.width > 1 && !effectiveBorder.Contains((Vector2)trans.position)){
 				trans.position = new Vector3(Mathf.Clamp(trans.position.x, effectiveBorder.xMin, effectiveBorder.xMax),
 										Mathf.Clamp(trans.position.y, effectiveBorder.yMin, effectiveBorder.yMax), trans.position.z);
 			}
@@ -522,7 +521,7 @@ public class RecessCamera : MonoBehaviour {
 	
 	public void MiscellaneousBonusPoints (string bonusName, int value){
 		RecessManager.AddScore(value);
-		comboPopup.Initiate(bonusName + Environment.NewLine + value.ToString(), 
+		bonusPopup.Initiate(bonusName + Environment.NewLine + value.ToString(), 
 					bonusColour, 
 					bonusSize, 
 					showBonusFor, 

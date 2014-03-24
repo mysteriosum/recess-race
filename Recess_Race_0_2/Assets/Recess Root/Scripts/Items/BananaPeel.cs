@@ -17,14 +17,14 @@ public class BananaPeel : Movable {
 	
 	
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
 		base.Start();
 		activated = true;
 		velocity = new Vector2(-MaxSpeed, jumpImpulse);
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	protected override void FixedUpdate () {
 		if (!inert){
 			base.FixedUpdate();
 			velocity = Move(velocity, 0);

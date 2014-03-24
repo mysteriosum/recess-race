@@ -93,6 +93,7 @@ public class Roulette : MonoBehaviour {
 			} else {
 				currentItem = null;
 				display.sprite = null;
+				currentBanana = bananaMax;
 			}
 			
 		}
