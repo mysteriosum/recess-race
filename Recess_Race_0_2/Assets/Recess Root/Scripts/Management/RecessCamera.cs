@@ -7,7 +7,7 @@ public class RecessCamera : MonoBehaviour {
 	private Transform trans;
 	private Transform fitzNode;
 	private Transform box;
-	
+
 	public AudioSource audioSource;
 	public Sounds sounds;
 	

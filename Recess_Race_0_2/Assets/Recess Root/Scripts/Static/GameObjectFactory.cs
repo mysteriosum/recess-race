@@ -12,7 +12,11 @@ public class GameObjectFactory  {
         return newObject;
     }
 
-	public static GameObject createCopyGameObject(GameObject original , string name, GameObject parent = null){
+	public static GameObject createCopyGameObject(GameObject original , string name, GameObject parent){
+		return createCopyGameObject (original, name, parent.transform);
+	}
+
+	public static GameObject createCopyGameObject(GameObject original , string name, Transform parent = null){
 		GameObject newObject = (GameObject)GameObject.Instantiate (original);
 		newObject.name = name;
 		if (parent != null) {

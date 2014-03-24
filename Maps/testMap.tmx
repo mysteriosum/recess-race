@@ -94,23 +94,10 @@
  </objectgroup>
  <objectgroup name="SpeedBoosts" width="100" height="40"/>
  <objectgroup color="#ffff00" name="Positions" width="100" height="40">
-  <object name="Player" x="289" y="1101" width="32" height="32">
-   <ellipse/>
-  </object>
-  <object name="End" x="1344" y="966" width="32" height="32">
-   <ellipse/>
-  </object>
-  <object name="AI1" x="255" y="969" width="32" height="32">
-   <ellipse/>
-  </object>
-  <object name="AI2" x="300" y="842" width="32" height="32">
-   <ellipse/>
-  </object>
-  <object name="AI3" x="211" y="1093" width="32" height="32">
-   <ellipse/>
-  </object>
-  <object name="AI4" x="212" y="966" width="32" height="32">
-   <ellipse/>
-  </object>
+  <object name="Player" x="315" y="1119"/>
+  <object name="End" x="1357" y="992"/>
+  <object name="Billy" x="233" y="993"/>
+  <object name="George" x="320" y="860"/>
+  <object name="Liddy" x="217" y="1121"/>
  </objectgroup>
 </map>

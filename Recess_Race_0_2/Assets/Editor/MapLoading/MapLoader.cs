@@ -41,6 +41,7 @@ public class MapLoader {
     private void load(string mapText) {
         stopwatch = new Stopwatch();
         loadAssets();
+		emptyScene ();
         createEmptyWorld();
 
         document = XDocument.Parse(mapText);
@@ -100,6 +101,13 @@ public class MapLoader {
         print("Done");
     }
 
+	private void emptyScene(){
+		GameObject world = GameObject.Find ("World");
+		if (world != null) {
+			GameObject.DestroyImmediate(world);		
+		}
+	}
+
     private void loadBorders() {
         Transform parent = GameObjectFactory.createGameObject("Borders", worldRootGameObject.transform).transform;
         createBorder("top", new Vector3(map.mapDimension.width / 2, map.mapDimension.height+1, 0), this.map.mapDimension.width+1, 1, parent);
@@ -128,19 +136,22 @@ public class MapLoader {
 	private void loadPositions(){
 		Transform parent = GameObjectFactory.createGameObject("PositionsStuff", worldRootGameObject.transform).transform;
 		IEnumerable<XElement> positions = getAllObjectFromObjectGroup("Positions");
-		loadObject (positions, "End", "FinishLine","Finish Line", parent);
-		loadObject (positions, "Player", "Fitzwilliam","Fitz William", parent);
+		loadObject (positions, "End", "FinishLine","Finish Line", 2.8f, parent);
+		loadObject (positions, "Player", "Fitzwilliam","Fitz William", -0.4f, parent);
+		loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
+		loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
+		loadObject (positions, "George", "George","George", -0.4f, parent);
 	}
 
-	private void loadObject(IEnumerable<XElement> xElement, string objectToTreatName, string prefabName, string unityObjectName, Transform parent){
+	private void loadObject(IEnumerable<XElement> xElement, string objectToTreatName, string prefabName, string unityObjectName, float yOffset, Transform parent){
 		XElement element = xElement.First(e => e.Attribute("name").Value.Equals(objectToTreatName));
 
 		GameObject prefab = Resources.Load<GameObject>(prefabName);
-		GameObject obj = GameObjectFactory.createCopyGameObject(prefab, unityObjectName, parent.gameObject);
+		GameObject obj = GameObjectFactory.createCopyGameObject(prefab, unityObjectName, parent);
 
 		float x = (float) parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
 		float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-		obj.transform.Translate(x,y,0);
+		obj.transform.Translate(x,y + yOffset,0);
 	}
 
     private void loadTennisBalls() {
@@ -225,7 +236,7 @@ public class MapLoader {
 		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
-        this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera").GetComponent<RecessCamera>();
+        this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<RecessCamera>();
 
 		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);
 	}
