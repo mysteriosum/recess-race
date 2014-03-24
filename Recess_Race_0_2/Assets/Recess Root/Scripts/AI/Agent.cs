@@ -6,6 +6,7 @@ public class Agent : Movable {
     private Instruction currentInstruction;
     private Plateform lastPlateform;
     public int currentWayPoint = 0;
+    public float speedFactor = 1;
 
 
     void Update() {
@@ -20,6 +21,7 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
+            Debug.Log(instruction.ToString());
         }
         this.currentInstruction = instruction;
     }
@@ -27,7 +29,8 @@ public class Agent : Movable {
     protected override void FixedUpdate() {
 		if (!activated) return;
         base.FixedUpdate();
-        velocity = Move(velocity, controller.hAxis);
+        velocity = Move(velocity, controller.hAxis * speedFactor);
+        Debug.Log(controller.hAxis * speedFactor);
     }
 
 
@@ -59,14 +62,35 @@ public class Agent : Movable {
 			if(linkedPlateform.instruction.needRunCharge){
 				makeRunCharge(linkedPlateform,instructionsToGetThere);
 			}else{
-				if(Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05){
-					switchTo(instructionsToGetThere);
-				}else{
-					Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
-					run.nextInstruction = instructionsToGetThere;
-					switchTo(run);
-				}
+                makeJump(linkedPlateform, instructionsToGetThere);
+				
 			}
+        }
+    }
+
+    private void makeJump(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere) {
+        if (Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05) {
+            switchTo(instructionsToGetThere);
+        } else {
+            if ((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
+               || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
+                Debug.Log("On va attendre");
+                Instruction run = new RunToInstruction(this, linkedPlateform.startLocation, true);
+                /*Instruction wait = new WaitInstruction(this, 0f);
+                Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
+                Instruction wait2 = new WaitInstruction(this, 0.1f);
+                run.nextInstruction = wait;
+                wait.nextInstruction = makeSurRun;
+                makeSurRun.nextInstruction = wait2;*/
+                run.nextInstruction = instructionsToGetThere;
+                switchTo(run);
+            } else {
+                Debug.Log("On attend pas");
+                Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
+                run.nextInstruction = instructionsToGetThere;
+                switchTo(run);
+            }
+
         }
     }
 
@@ -138,4 +162,8 @@ public class Agent : Movable {
         controller.getJump = false;
     }*/
 
+
+    internal bool isGrounded() {
+        return this.grounded;
+    }
 }

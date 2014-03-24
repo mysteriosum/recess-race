@@ -39,6 +39,7 @@ public class JumpInstruction : Instruction {
 
     public override void start() {
         agent.setMovingStrenght((float)direction);
+        Debug.Log("on fait le jump vers " + (float)direction);
         agent.jump();
 		this.startX = agent.transform.position.x;
 		this.moving = true;
@@ -52,13 +53,6 @@ public class JumpInstruction : Instruction {
 		this.lastY = this.agent.transform.position.y;
 
 		antiStuck ();
-
-		if (stockCounter <= 0) {
-			moving = false;
-			this.isDone = true;
-			agent.setMovingStrenght(0);	
-			agent.stopJumping();
-		}
 		
 		if (holding && Mathf.Abs (startX - agent.transform.position.x) >= holdLenght) {
 			holding = false;
@@ -95,6 +89,13 @@ public class JumpInstruction : Instruction {
 			stockCounter = 10;
 		}
 		this.lastX = agent.transform.position.x;
+
+        if (stockCounter <= 0 && this.agent.isGrounded()) {
+            moving = false;
+            this.isDone = true;
+            agent.setMovingStrenght(0);
+            agent.stopJumping();
+        }
 	}
 
 	public override Direction getStartingDirection (){

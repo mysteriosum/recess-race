@@ -47,15 +47,17 @@ public class AgentPlateformFinder {
 		float xToGo = link.startLocation.x;
 		float direction = (float)link.startingDirection;
 		if (agent.transform.position.x > link.startLocation.x) { // agent on right of target
-			if(direction > 0){
+			if(link.startingDirection.Equals(Direction.right)){
 				xToGo -= 1.5f;
 			}else if(agent.transform.position.x - link.startLocation.x < 1.5f){
 				xToGo += 1.5f;
 			}
 		} else {
-			if(direction < 0){
+			if(link.startingDirection.Equals(Direction.left)){
+				Debug.Log("aaww");
 				xToGo += 1.5f;
 			}else if(agent.transform.position.x - link.startLocation.x > -1.5f){
+				Debug.Log("aaww2");
 				xToGo -= 1.5f;
 			}	
 		}

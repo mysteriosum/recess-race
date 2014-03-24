@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 
 public class RecessCamera : MonoBehaviour {
-	private Transform t;
+	private Transform trans;
 	private Transform fitzNode;
 	private Transform box;
 	
@@ -29,25 +29,14 @@ public class RecessCamera : MonoBehaviour {
 	
 	
 	// parallax members
-	public Transform[] parallaxes;	
-	public Sprite[] backgroundElements;
-	public Sprite silhouette;
-	public Sprite fence; 
-	
+    [HideInInspector]
+    public List<Transform> parallaxes;
+    [HideInInspector]
+    public float furthestParalaxZ;
 	private float farDistance;
-	private int minimumAtStart = 70;
-	private float minimumDistance = -10;
-	private float bgDistance = 60;
-	private float silhouetteDistance = 100;
-	private float silhouetteYOffset = 1;
-	private float fenceYOffset = -2;
-	private float fenceDistance = 27;
-	private int fenceAmount = 85;
-	private int houseAmount = 85;
 	
 	private float lerpAmount = 0.1f;
 	private float maxParallax = 0.3f;
-	private float furthestParalaxZ;
 	
 	//race variables
 	
@@ -222,7 +211,7 @@ public class RecessCamera : MonoBehaviour {
 	}
 	void Start () {
 		
-		t = transform;
+		trans = transform;
 		audioSource = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
 		try{
@@ -242,7 +231,6 @@ public class RecessCamera : MonoBehaviour {
 		fitz = Fitz.fitz.transform;
 		racers = tlist.ToArray();
 		
-		Vector3 defaultPosition = new Vector3(minimumDistance, t.position.y, bgDistance);
 		
 		
 		Transform roulette = GetComponentInChildren<Roulette>().transform;
@@ -252,76 +240,6 @@ public class RecessCamera : MonoBehaviour {
 			goTimer = goTime;
 			
 		}
-		//---------------------------------------------------------------\\
-		//--------------------------place bg tiles-----------------------\\
-		//---------------------------------------------------------------\\
-		if (produceBackground){
-				
-			
-			List<Transform> parallaxen = new List<Transform>();
-			Transform bgs = new GameObject("Backgrounds").transform;
-			
-			Transform houses = new GameObject("Houses").transform;
-			houses.parent = bgs;
-			for (int i = 0; i < houseAmount; i++) {
-				GameObject newGuy = new GameObject("background" + i.ToString());
-				SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
-				int rando = UnityEngine.Random.Range (0, backgroundElements.Length);
-				newSprite.sprite = backgroundElements[rando];
-				newGuy.transform.position = defaultPosition + Vector3.right * newSprite.sprite.bounds.size.x;
-				defaultPosition = newGuy.transform.position;
-				newSprite.sortingLayerName = "Background";
-				parallaxen.Add (newGuy.transform);
-				newGuy.transform.parent = houses;
-			}
-			
-			Vector3 silhouettePosition = new Vector3(minimumDistance, t.position.y + silhouetteYOffset, silhouetteDistance);
-			
-			Transform silhouettes = new GameObject("Silhouettes").transform;
-			silhouettes.parent = bgs;
-			for (int i = 0; i < minimumAtStart; i++) {
-				GameObject newGuy = new GameObject("background" + i.ToString());
-				SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
-				newSprite.sprite = silhouette;
-				newGuy.transform.position = silhouettePosition + Vector3.right * newSprite.sprite.bounds.size.x;
-				silhouettePosition = newGuy.transform.position;
-				newSprite.sortingLayerName = "Background";
-				parallaxen.Add (newGuy.transform);
-				newGuy.transform.parent = silhouettes;
-			}
-			
-			Vector3 fencePosition = new Vector3(minimumDistance, t.position.y + fenceYOffset, fenceDistance);
-			Transform fences = new GameObject("Fences").transform;
-			fences.parent = bgs;
-			
-			for (int i = 0; i < fenceAmount; i++) {
-				GameObject newGuy = new GameObject("background" + i.ToString());
-				SpriteRenderer newSprite = newGuy.AddComponent<SpriteRenderer>();
-				newSprite.sprite = fence;
-				newGuy.transform.position = fencePosition + Vector3.right * newSprite.sprite.bounds.size.x;
-				fencePosition = newGuy.transform.position;
-				newSprite.sortingLayerName = "Background";
-				parallaxen.Add (newGuy.transform);
-				newGuy.transform.parent = fences;
-			}
-			
-	//		foreach (Transform item in parallaxes) {
-	//			parallaxen.Add(item);
-	//		}
-			parallaxen.Add(silhouettes);
-			parallaxen.Add(houses);
-			parallaxen.Add(fences);
-			
-			parallaxes = parallaxen.ToArray();
-			
-			foreach(Transform tr in parallaxes){
-				if (tr.position.z > furthestParalaxZ){
-					furthestParalaxZ = tr.position.z;
-				}
-			}
-			
-		}
-		
 		
 	}
 	void StartRace() {
@@ -353,17 +271,17 @@ public class RecessCamera : MonoBehaviour {
 			comboPopup.Update ();
 		}
 		
-		Vector3 forepos = t.position;
+		Vector3 forepos = trans.position;
 		if (fitzNode != null && raceBegun){
-			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , t.position.z);
-			t.position = Vector3.Lerp(t.position, target, lerpAmount);
+			Vector3 target = new Vector3(fitzNode.position.x , fitzNode.position.y , trans.position.z);
+			trans.position = Vector3.Lerp(trans.position, target, lerpAmount);
 			
-			if (effectiveBorder != null && !effectiveBorder.Contains((Vector2)t.position)){
-				t.position = new Vector3(Mathf.Clamp(t.position.x, effectiveBorder.xMin, effectiveBorder.xMax),
-										Mathf.Clamp(t.position.y, effectiveBorder.yMin, effectiveBorder.yMax), t.position.z);
+			if (effectiveBorder != null && !effectiveBorder.Contains((Vector2)trans.position)){
+				trans.position = new Vector3(Mathf.Clamp(trans.position.x, effectiveBorder.xMin, effectiveBorder.xMax),
+										Mathf.Clamp(trans.position.y, effectiveBorder.yMin, effectiveBorder.yMax), trans.position.z);
 			}
 		}
-		Vector3 postPos = t.position;
+		Vector3 postPos = trans.position;
 		
 		foreach (Transform tran in parallaxes){
 			//Never Used

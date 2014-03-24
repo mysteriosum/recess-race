@@ -12,6 +12,7 @@ using System.Diagnostics;
 public class MapLoader {
 
 	public static bool useTestBackground = false;
+    public static bool makeBackground = true;
 	public static bool verbose;
     public static bool inDebugMode = false;
 
@@ -27,6 +28,7 @@ public class MapLoader {
 	private List<TileData> tilesData;
 
 	private Map map;
+    private RecessCamera recessCamera;
 	private GameObject worldRootGameObject;
 	private GameObject aiGroupGameObject;
 
@@ -36,57 +38,85 @@ public class MapLoader {
     private XDocument document;
 
 
-    private void load(string mapText){
+    private void load(string mapText) {
         stopwatch = new Stopwatch();
-		loadAssets ();
-		createEmptyWorld ();
+        loadAssets();
+        createEmptyWorld();
 
-		document = XDocument.Parse (mapText);
-		XElement mapElement = document.Elements ().First();
-		XElement tilesLayer = document.Elements ().Descendants().First (e => e.Name == "layer");
+        document = XDocument.Parse(mapText);
+        XElement mapElement = document.Elements().First();
+        XElement tilesLayer = document.Elements().Descendants().First(e => e.Name == "layer");
         XElement waypoints = getObjectGroupElement("Waypoints");
-		if (waypoints == null) {
-			UnityEngine.Debug.Log("Missing important tag : Waypoints");
-			return;
-		}
-		XElement AIPlateformRemoves = getObjectGroupElement("AIPlateformRemove");
+        if (waypoints == null) {
+            UnityEngine.Debug.Log("Missing important tag : Waypoints");
+            return;
+        }
+        XElement AIPlateformRemoves = getObjectGroupElement("AIPlateformRemove");
 
         print("Set-up");
 
         loadTileset(mapElement.Descendants().Where(e => e.Name == "tileset"));
         print("Loaded tileSets");
         tileCreator = new TileCreator(worldRootGameObject.transform, tilesData);
-		loadMapSettings (mapElement);
-		plateformGenerator = new PlateformGenerator (this.map);
+        loadMapSettings(mapElement);
+        plateformGenerator = new PlateformGenerator(this.map);
         plateformGenerator.setGameObjectParent(aiGroupGameObject.transform);
         print("Loaded MapSettings");
 
+        loadBorders();
+        print("Loaded borders");
         loadTiles(tilesLayer);
         print("Loaded tiles");
-		
-		plateformGenerator.doneLoadingTiles ();
-		tileCreator.doneLoadingTiles();
-		print("Loaded tiles/CleanUp");
 
-		plateformGenerator.loadAIPlateformRemove(AIPlateformRemoves, this.map);
+        plateformGenerator.doneLoadingTiles();
+        tileCreator.doneLoadingTiles();
+        print("Loaded tiles/CleanUp");
+
+        plateformGenerator.loadAIPlateformRemove(AIPlateformRemoves, this.map);
         plateformGenerator.loadWaypoints(waypoints, this.map);
         print("Loaded Waypoints");
-        
-		plateformGenerator.linkPlateforms ();
+
+        plateformGenerator.linkPlateforms();
         print("Loaded Ai instructions");
 
 
         loadGarbage();
         loadTennisBalls();
         loadQuestionMark();
-		loadSpeedBoosts();
+        loadSpeedBoosts();
         print("Loaded Objects");
 
-        if(!MapLoader.inDebugMode){
+        if (makeBackground) {
+            BackgroundLoader bgl = new BackgroundLoader();
+            bgl.loadBackground(worldRootGameObject,map,recessCamera);
+            print("Loaded Background");
+        }
+
+        if (!MapLoader.inDebugMode) {
             plateformGenerator.hideAllPlatefoms();
         }
-		print ("Done");
-	}
+        print("Done");
+    }
+
+    private void loadBorders() {
+        Transform parent = GameObjectFactory.createGameObject("Borders", worldRootGameObject.transform).transform;
+        createBorder("top", new Vector3(map.mapDimension.width / 2, map.mapDimension.height+1, 0), this.map.mapDimension.width+1, 1, parent);
+        createBorder("bottom", new Vector3(map.mapDimension.width / 2, -1, 0), this.map.mapDimension.width+1, 1, parent);
+        createBorder("left", new Vector3(map.mapDimension.width + 1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
+        createBorder("right", new Vector3(-1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
+    }
+
+    private void createBorder(string name, Vector3 position,int width, int height, Transform parent) {
+        GameObject newBorder = GameObjectFactory.createGameObject("Top border", parent);
+        newBorder.AddComponent<BoxCollider2D>();
+        newBorder.transform.localScale = new Vector3(width, height);
+        newBorder.transform.Translate(position);
+        newBorder.AddComponent<GizmoDad>();
+        GizmoDad dad = (GizmoDad)newBorder.GetComponent<GizmoDad>();
+        dad.size = new Vector3(1, 1, 1);
+        dad.myColour = Couleur.white;
+        dad.myShape = GizmoDad.Forme.wireCube;
+    }
 
     private void loadAssets() {
     }
@@ -173,6 +203,7 @@ public class MapLoader {
 		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
+        this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera").GetComponent<RecessCamera>();
 
 		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);
 	}
