@@ -137,7 +137,7 @@ public class MapLoader {
 		Transform parent = GameObjectFactory.createGameObject("PositionsStuff", worldRootGameObject.transform).transform;
 		IEnumerable<XElement> positions = getAllObjectFromObjectGroup("Positions");
 		loadObject (positions, "End", "FinishLine","Finish Line", 2.8f, parent);
-		loadObject (positions, "Player", "Fitzwilliam","Fitz William", -0.4f, parent);
+		loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.4f, parent);
 		loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
 		loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
 		loadObject (positions, "George", "George","George", -0.4f, parent);
