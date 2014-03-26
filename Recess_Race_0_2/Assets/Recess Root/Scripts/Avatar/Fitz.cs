@@ -19,7 +19,7 @@ public class Fitz : Movable {
 	private bool spinFalling						= false;
 	private float spinFallMod						= 0.5f;
 	private float spinFallMoveMod					= 0.575f;
-	private float propelTimer						= 0f;
+	private float propelTimer						= 0f;	
 	private float propellerTimePenalty				= 0.25f;
 	private float pinkyDoubleJumpMode				= 0.5f;
 	

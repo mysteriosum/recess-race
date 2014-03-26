@@ -24,12 +24,26 @@ public class RecessManager {
 	public static string TimeString{
 		get { 
 			//int minutes = (int) Mathf.Floor(currentTime/60);
-			int seconds = (int) Mathf.Floor(currentTime % 60);
-			float centiSeconds = (int) Mathf.Floor((currentTime - (int) currentTime) * 100);
-			return Mathf.Floor(currentTime/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + ":" + centiSeconds.ToString();}
+//			int seconds = (int) Mathf.Floor(currentTime % 60);
+//			float centiSeconds = (int) Mathf.Floor((currentTime - (int) currentTime) * 100);
+//			return Mathf.Floor(currentTime/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + ":" + centiSeconds.ToString();
+			
+			return Textf.ConvertTimeToString(currentTime);
+		}
 	}
 	
+	
+	
 	public static readonly int garbageValue = 10;
+	
+	public LevelStats[] levelStats = new LevelStats[4]{
+		//level 1
+		new LevelStats(1, 3000, "Banana", 200f, 230f, 260f),
+		new LevelStats(2, 3000, "Hookshot", 200f, 230f, 260f),
+		new LevelStats(3, 3000, "ComboCandy", 200f, 230f, 260f),
+		new LevelStats(4, 3000, "Ahrah", 200f, 230f, 260f),
+		
+	};
 	
 	private static RecessManager instance;
 	public static RecessManager Instance{
@@ -44,6 +58,8 @@ public class RecessManager {
 	static RecessManager(){
 		highScore = PlayerPrefs.GetInt("highScore", 0);
 		bestTime = PlayerPrefs.GetFloat("bestTime", 0);
+		
+		
 	}
 	
 	public static void AddGarbageToScore(){
