@@ -53,14 +53,14 @@ public class AgentPlateformFinder {
 			}
 		} else {
 			if(link.startingDirection.Equals(Direction.left)){
-				Debug.Log("aaww");
+//				Debug.Log("aaww");
 				xToGo += 1.5f;
 			}else if(agent.transform.position.x - link.startLocation.x > -1.5f){
-				Debug.Log("aaww2");
+//				Debug.Log("aaww2");
 				xToGo -= 1.5f;
 			}	
 		}
-		Debug.Log ("location : " + agent.transform.position.x  + ", wanted : " + link.startLocation.x + " -- xToGo: " + xToGo);
+//		Debug.Log ("location : " + agent.transform.position.x  + ", wanted : " + link.startLocation.x + " -- xToGo: " + xToGo);
 		return xToGo;
 	}
 

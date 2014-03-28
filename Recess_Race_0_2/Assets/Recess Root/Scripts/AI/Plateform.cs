@@ -11,6 +11,12 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     public int id;
 	public int waypointId;
     public bool showGismos = true;
+	
+	public Color pointColor;
+	public Vector3 pointLocation = Vector3.zero;
+	public Vector3 pointToLocation = Vector3.zero;
+	public bool pointArrowUp;
+	public bool pointArrowRight;
 
 	public bool isUnder(Plateform p2){
 		Vector3 v1 = this.transform.position; 
@@ -21,6 +27,18 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
 	public bool isLeftOf(Plateform p2){
 		return this.transform.position.x < p2.transform.position.x;
+	}
+
+	public void showPoint(Vector3 from, Vector3 to,Color color, bool right, bool up){
+		this.pointColor = color;
+		this.pointLocation = from;
+		this.pointToLocation = to;
+		this.pointArrowUp = up;
+		this.pointArrowRight = right;
+	}
+
+	public void hidePoint(){
+		this.pointLocation = Vector3.zero;
 	}
 
 	public Bounds getBound(){
@@ -34,6 +52,16 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
 	void OnDrawGizmos(){
         if (!showGismos) return;
+
+		if (pointLocation != Vector3.zero) {
+			Gizmos.color = pointColor;
+			Gizmos.DrawSphere(pointLocation, 0.4f);
+			int up = (pointArrowUp) ? 1 : -1;
+			int right = (pointArrowRight) ? 1 : -1;
+			Vector3 to = new Vector3(pointLocation.x + right, pointLocation.y + up, 0);
+			Gizmos.DrawLine(pointLocation, pointToLocation);
+			Gizmos.DrawLine(pointLocation, to);
+		}
 
         foreach (var linked in linkedJumpPlateform) {
             if (linked == null || !linked.plateform) continue;
@@ -87,3 +115,5 @@ public class LinkedPlateform {
 		this.startingDirection = startingDirection;
     }
 }
+
+

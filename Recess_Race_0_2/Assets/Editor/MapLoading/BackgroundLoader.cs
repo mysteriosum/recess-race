@@ -14,9 +14,11 @@ public  class BackgroundLoader {
 	
     private float bgDistance = 60;
     private float silhouetteDistance = 100;
+	private float treesDistance = 52;
     private float silhouetteYOffset = 1;
-    private float fenceYOffset = -2;
+    private float fenceYOffset = -4;
     private float fenceDistance = 27;
+	private float grassLineYOffset = -10;
 
     private RecessCamera camera;
     private Map map;
@@ -25,18 +27,28 @@ public  class BackgroundLoader {
         this.camera = camera;
         this.map = map;
         parent = GameObjectFactory.createGameObject("Backgrounds", gameObjectMapParent.transform).transform;
-        camera.parallaxes = new List<Transform>();
+		if (MapLoader.loadGameElement) {
+			camera.parallaxes = new List<Transform>();		
+		}
+        
 
-		addLayerOfSprites("House"		, parent, "Background/BuildingAndStuff/", bgDistance, 0);
-		addLayerOfSprites("Silouette"	, parent, "Background/Silouette/", silhouetteDistance, silhouetteYOffset);
-		addLayerOfSprites("Fence"		, parent, "Background/fences/", fenceDistance, fenceYOffset);
-        makeParallax();
+		GameObject prefab = Resources.Load<GameObject>("SkyBackdrop");
+		/*GameObject obj = */GameObjectFactory.createCopyGameObject(prefab, "SkyBackdrop", parent);
+
+		addLayerOfSprites("Silouette"	, parent, "Background/Silouette/", silhouetteDistance, silhouetteYOffset, Vector2.one);
+		addLayerOfSprites("House"		, parent, "Background/BuildingAndStuff/", bgDistance, 0, Vector2.one);
+		addLayerOfSprites("GrassLine"	, parent, "Background/GrassLine/", bgDistance, grassLineYOffset, Vector2.one);
+		addLayerOfSprites("Fence"		, parent, "Background/Fences/", fenceDistance, fenceYOffset, Vector2.one);
+		addLayerOfSprites("Tree"		, parent, "Background/Trees/", treesDistance, 0f, new Vector2(0.4f,3f));
+		if (MapLoader.loadGameElement) {
+			makeParallax ();
+		}
     }
 
-    private void addLayerOfSprites(string name, Transform parent, string assetPath, float z, float yOffset) {
+    private void addLayerOfSprites(string name, Transform parent, string assetPath, float z, float yOffset, Vector2 skipSpriteFactor) {
 		Sprite[] sprites = Resources.LoadAll<Sprite>(assetPath);
         Transform spritesParent = GameObjectFactory.createGameObject(name + "s", parent.transform).transform;
-        int widthCovered = 0;
+        float widthCovered = 0;
         int index = 0;
         bool isFirst = true;
         int totalToCover = map.mapDimension.width;
@@ -49,11 +61,14 @@ public  class BackgroundLoader {
 
             int spriteWidth = (int)newSprite.sprite.bounds.size.x;
 
-            newGuy.transform.position = new Vector3(widthCovered, yOffset, z);
+            newGuy.transform.position = new Vector3(widthCovered, map.mapDimension.height/2 + yOffset, z);
             newSprite.sortingLayerName = "Background";
-            camera.parallaxes.Add(newGuy.transform);
+			if (MapLoader.loadGameElement) {
+            	camera.parallaxes.Add(newGuy.transform);
+			}
 
-            widthCovered += spriteWidth;
+			float factor = UnityEngine.Random.Range(skipSpriteFactor.x, skipSpriteFactor.y);
+            widthCovered += spriteWidth * factor;
             index++;
             if (isFirst) {
                 totalToCover += spriteWidth;

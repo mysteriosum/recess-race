@@ -223,6 +223,16 @@ public class PlateformGenerator {
 		}
 	}
 
+	public void linkPlateform(Plateform plateform){
+		foreach (var p2 in this.plateforms) {
+			if (plateform.Equals(p2)) continue;
+			
+			if (isInMaximumJumpPosibility(plateform, p2)) {
+				findReachablePlateform(plateform, p2);
+			}
+		}
+	}
+
 	private void findReachablePlateform(Plateform fromPlateform, Plateform toPlateform){
         for (float x = fromPlateform.getLeftCornerPosition().x; x < fromPlateform.getLeftCornerPosition().x + fromPlateform.getWidth(); x++) {
             Vector3 from = new Vector3(x, fromPlateform.transform.position.y, fromPlateform.transform.position.z);

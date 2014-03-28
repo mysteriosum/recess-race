@@ -33,6 +33,12 @@ public class JumpPathingMaps {
 	});
 
 
+	public static PathingMap jump_x2_y1 = new PathingMap(true, new bool[,] {
+		{true,true,true},
+		{true,true,true},
+		{true,true,true},
+		{true,true,false}
+	});
 
     public static PathingMap jump_x2_y2 = new PathingMap(true, new bool[,] {
         {true,true,true},
@@ -82,6 +88,14 @@ public class JumpPathingMaps {
 		{false,true,true},{false,true,true},{false,true,true},{false,true,true},{false,true,true},
 		{false,true,true},{false,true,true},{false,true,true},{false,true,true},{false,true,true},
 		{false,true,true}
+	});
+
+	public static PathingMap jump_x2_ym12 = new PathingMap(true, new bool[,] {
+		{true,true,true},
+		{true,true,true},
+		{false,true,true},{false,true,true},{false,true,true},{false,true,true},{false,true,true},
+		{false,true,true},{false,true,true},{false,true,true},{false,true,true},{false,true,true},
+		{false,true,true},{false,true,true}
 	});
 
 	public static PathingMap jump_x2_ym7 = new PathingMap(true, new bool[,] {
@@ -182,6 +196,15 @@ public class JumpPathingMaps {
 		{true,true,false,false,false,false}
 	});
 
+	public static PathingMap jump_x5_y3_loopedBetter = new PathingMap(true, new bool[,] {
+		{false,false,true,true,true,true},
+		{false,true,true,true,true,true},
+		{false,true,true,true,true,true},
+		{true,true,true,true,false,false},
+		{true,true,true,false,false,false},
+		{true,true,false,false,false,false}
+	});
+
 	public static PathingMap jump_x3_ym1 = new PathingMap(true, new bool[,] {
 		{true,true,true,true},
 		{true,true,true,true},
@@ -228,5 +251,15 @@ public class JumpPathingMaps {
 		{true,true,true,true,false,false,false,false,false,true,true,true},
 		{true,true,true,false,false,false,false,false,false,true,true,true},
 		{true,true,false,false,false,false,false,false,false,false,true,true}
+	});
+
+	public static PathingMap jump_x12_y0 = new PathingMap(true, new bool[,] {
+		{false,false,false,false,true,true,true,true,true,false,false,false,false},
+		{false,false,true,true,true,true,true,true,true,true,true,false,false},
+		{false,true,true,true,true,true,true,true,true,true,true,true,false},
+		{false,true,true,true,true,false,false,false,false,true,true,true,true},
+		{true,true,true,true,false,false,false,false,false,false,true,true,true},
+		{true,true,true,false,false,false,false,false,false,false,false,true,true},
+		{true,true,false,false,false,false,false,false,false,false,false,true,true}
 	});
 }
