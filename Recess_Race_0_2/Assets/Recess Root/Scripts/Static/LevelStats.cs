@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum LetterGrades{
+	d,c,b,a,s,ss
+}
+
 public class LevelStats {
 	
 	public int bestScore;
@@ -40,6 +44,29 @@ public class LevelStats {
 		get{ return Textf.ConvertTimeToString(bronzeTime); }
 	}
 	
+	public string LetterGradeString{
+		get{
+			float fraction = (float) bestScore / (float) (scoreToUnlock);
+			LetterGrades letterGrade = (LetterGrades)Mathf.Round(fraction * (int)LetterGrades.ss);
+			
+			switch (letterGrade){
+			case LetterGrades.ss:
+				return "S+";
+			case LetterGrades.s:
+				return "S";
+			case LetterGrades.a:
+				return "A";
+			case LetterGrades.b:
+				return "B";
+			case LetterGrades.c:
+				return "C";
+			default:
+				return "D";
+			
+				
+			}
+		}
+	}
 	
 	public LevelStats (int levelIndex, int scoreToUnlock, string objectName, float goldTime, float silverTime, float bronzeTime)
 	{
@@ -53,6 +80,7 @@ public class LevelStats {
 		
 		bestScore = PlayerPrefs.GetInt("BestScoreLevel" + levelIndex.ToString(), 0);
 		bestTime = PlayerPrefs.GetFloat ("BestTimeLevel" + levelIndex.ToString (), 0);
+		
 	}
 
 	

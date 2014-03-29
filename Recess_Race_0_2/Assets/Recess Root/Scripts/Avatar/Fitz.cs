@@ -618,7 +618,6 @@ public class Fitz : Movable {
 		
 		if (dmgScript && dmgScript.enabled && !hurt){
 			
-			
 			if (other.GetComponent<TennisBall>() != null && CheckCaughtTennisBall(TennisBall.catchBallLeeway)){
 				Destroy(other.gameObject);
 			} else if (!boogerBoy){
@@ -630,7 +629,10 @@ public class Fitz : Movable {
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 			}
 		}
-				//enter a speed boost object!
+		
+		
+		//enter a speed boost object!
+		
 		if ((speedBoostTimer > noBoostFor ^ !speedBoosting) && other.gameObject.tag == "SpeedBoost" && controller.hAxis != 0){
 			other.GetComponent<Animator>().Play(0);
 			SpeedBoost();

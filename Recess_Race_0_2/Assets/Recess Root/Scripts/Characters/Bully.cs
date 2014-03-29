@@ -3,8 +3,7 @@ using System.Collections;
 using System;
 
 public class Bully : MonoBehaviour {
-	public string message = "Get away from me, faggot!";
-	
+	public string message = "Get off me, gaylord!";
 	private string showMessage;
 	private float showMessageTiming = 2.5f;
 	private float showMessageTimer = 0;
@@ -12,6 +11,8 @@ public class Bully : MonoBehaviour {
 	private float messageWidthPercent = 0.8f;
 	private float messageHeightPercent = 0.2f;
 	private int fontSize = 35;
+	
+	
 	
 	void Start(){
 		showMessage = name + ":" + Environment.NewLine + message;
