@@ -101,7 +101,7 @@ public class MainMenu : MonoBehaviour {
 	
 	void Update (){
 		if (currentMenu == MenuEnum.timeTrial || currentMenu == MenuEnum.grandPrix){
-			int directionModifier = goingUp? 1 : -1;
+			//int directionModifier = goingUp? 1 : -1;
 			
 			currentSpeed += Time.deltaTime * accelAmount * (goingUp? 1 : -1);
 			currentSpeed = Mathf.Clamp (currentSpeed, -arrowMax, arrowMax);

@@ -27,6 +27,7 @@ public class RunToInstruction : Instruction {
 		}
         agent.setMovingStrenght((int)direction);
 		this.lastX = agent.transform.position.x;
+		ranDistance = 0;
     }
 
 
@@ -40,20 +41,29 @@ public class RunToInstruction : Instruction {
         
 		if (isInRange() || stockCounter <= 0) {
             agent.setMovingStrenght(0);
-			if(stockCounter <= 0) Debug.Log ("Unstuck");
+			//if(stockCounter <= 0) Debug.Log ("Unstuck");
             agent.speedFactor = 1;
             isDone = true;
         }
 
-        if (arriveWithSpeedZero && Mathf.Abs(this.agent.transform.position.x - targetX) < 7) {
-            if (ranDistance < 7) {
-                agent.speedFactor = (1 - ranDistance / 3f);
-                if (agent.speedFactor < 0) agent.speedFactor = 0;
-            } else {
-                agent.speedFactor = 0.000000000001f;
-            }
+        if (arriveWithSpeedZero) {
+			if(Mathf.Abs(this.agent.transform.position.x - targetX) < 2.5){
+				if (ranDistance > 2 ) {
+					if(Mathf.Abs(this.agent.transform.position.x - targetX) < 0.5){
+						float force = (targetX - this.agent.transform.position.x) / 16;
+						agent.setMovingStrenght(force);
+					}else{
+						float force = (this.agent.transform.position.x - targetX) / 16;
+						agent.setMovingStrenght(force);
+					}
+				} else {
+					agent.setMovingStrenght(Mathf.Sign(targetX - this.agent.transform.position.x) / 8);
+				}
+			}else{
+			}
         }
-        ranDistance += ranDistanceThisFrame;
+		ranDistance += ranDistanceThisFrame;
+        
         this.lastX = agent.transform.position.x;
     }
 

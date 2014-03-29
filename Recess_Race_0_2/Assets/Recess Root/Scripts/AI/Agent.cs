@@ -77,13 +77,14 @@ public class Agent : Movable {
                || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
 				//debugLog("On va attendre");
                 Instruction run = new RunToInstruction(this, linkedPlateform.startLocation, true);
-                /*Instruction wait = new WaitInstruction(this, 0f);
-                Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
+                Instruction wait = new WaitInstruction(this, 1f);
+                /*Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
                 Instruction wait2 = new WaitInstruction(this, 0.1f);
                 run.nextInstruction = wait;
                 wait.nextInstruction = makeSurRun;
                 makeSurRun.nextInstruction = wait2;*/
-                run.nextInstruction = instructionsToGetThere;
+                run.nextInstruction = wait;
+				wait.nextInstruction = instructionsToGetThere;
                 switchTo(run);
             } else {
 				//debugLog("On attend pas");
