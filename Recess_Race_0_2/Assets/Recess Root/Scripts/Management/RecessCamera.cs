@@ -49,7 +49,7 @@ public class RecessCamera : MonoBehaviour {
 	private float showScoreAt = 4.3f;
 	private float tryAgainAt = 6.5f;
 	
-	
+	private bool timeTrial = false;
 	
 	//popups and other points stuff: combos, etc
 	
@@ -105,9 +105,16 @@ public class RecessCamera : MonoBehaviour {
 	
 	public string TimeRemainingString{
 		get { 
+			
+			if (timeTrial){
+				return Textf.ConvertTimeToString(RecessManager.CurrentTime);
+			}
+			
 			int seconds = (int) Mathf.Floor(TimeRemaining % 60);
 			float centiSeconds = (int) Mathf.Floor((currentTime - (int) currentTime) * 100);
-			return Mathf.Floor(TimeRemaining/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + (centiSeconds < 10? ":0" : ":") + centiSeconds.ToString();}
+			return Mathf.Floor(TimeRemaining/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + (centiSeconds < 10? ":0" : ":") + centiSeconds.ToString();
+		
+		}
 	}
 	
 	public int TimeRemainingPoints{
@@ -199,6 +206,15 @@ public class RecessCamera : MonoBehaviour {
 		}
 		else{
 			cam = this;
+		}
+		
+		if (RecessManager.currentGameMode == GameModes.timeTrial){
+			Bully[] bullies = FindObjectsOfType<Bully>();
+			
+			foreach (var item in bullies) {
+				Destroy(item.gameObject);
+				timeTrial = true;
+			}
 		}
 	}
 	void Start () {
@@ -326,7 +342,6 @@ public class RecessCamera : MonoBehaviour {
 				Rect goRect = new Rect(Screen.width/2 - gotexWidth/2, 0, gotexWidth, gotexHeight);
 				
 				GUI.DrawTexture(goRect, goTexture, ScaleMode.ScaleAndCrop);
-				GUI.TextArea(goRect, goText, hud.skin.customStyles[3]);
 			}
 		}
 		if (!raceFinished){
@@ -402,7 +417,7 @@ public class RecessCamera : MonoBehaviour {
 			}
 			yValue += congratsHeight * 0.3f;
 			if (finishedTimer > tryAgainAt){
-				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "Next race?", hud.skin.textArea);
+				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "What now?", hud.skin.textArea);
 
 				yValue += congratsHeight * 0.1f;
 				
@@ -425,6 +440,10 @@ public class RecessCamera : MonoBehaviour {
 				
 				GUIStyle yesnoStyle = new GUIStyle(hud.skin.customStyles[0]);
 				yesnoStyle.alignment = TextAnchor.MiddleLeft;
+				GUIStyle nextStyle = new GUIStyle(yesnoStyle);
+				GUIStyle homeStyle = new GUIStyle(yesnoStyle);
+				GUIStyle retryStyle = new GUIStyle(yesnoStyle);
+				
 				GUIContent yesContent = new GUIContent("Yes");
 				if (hud.CursorIndex == 0){
 					yesContent.image = hud.selectIcon;

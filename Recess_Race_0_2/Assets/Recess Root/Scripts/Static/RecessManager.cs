@@ -10,6 +10,10 @@ public class RecessManager {
 	private static float bestTime = 0f;
 	private static int garbage = 0;
 	
+	public static GameModes currentGameMode;
+	
+	private static int currentLevel;
+	
 	public static int Score {
 		get{ return score; }
 		set{ score = value; }
@@ -29,14 +33,12 @@ public class RecessManager {
 //			return Mathf.Floor(currentTime/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + ":" + centiSeconds.ToString();
 			
 			return Textf.ConvertTimeToString(currentTime);
+	
 		}
 	}
-	
-	
-	
 	public static readonly int garbageValue = 10;
 	
-	public LevelStats[] levelStats = new LevelStats[4]{
+	public static LevelStats[] levelStats = new LevelStats[4]{
 		//level 1
 		new LevelStats(1, 3000, "Banana", 200f, 230f, 260f),
 		new LevelStats(2, 3000, "Hookshot", 200f, 230f, 260f),
@@ -86,5 +88,14 @@ public class RecessManager {
 		}
 	}
 	
+	public static void LoadLevel(int index, GameModes gameMode){
+		currentGameMode = gameMode;
+		Application.LoadLevel(index);
+	}
 	
+	
+}
+
+public enum GameModes{
+	grandPrix, timeTrial
 }

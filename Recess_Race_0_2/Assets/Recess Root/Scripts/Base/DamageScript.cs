@@ -2,6 +2,7 @@
 using System.Collections;
 
 public enum StunDurations{
+	none = 0,
 	light = 1,
 	medium = 2,
 	harsh = 3
