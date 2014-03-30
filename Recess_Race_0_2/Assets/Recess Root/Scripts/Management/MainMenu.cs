@@ -357,7 +357,7 @@ public class MainMenu : MonoBehaviour {
 		}
 	}
 	
-	public Rect SelectionRect(float left, float top, float width, float height, GUIStyle style){
+	public static Rect SelectionRect(float left, float top, float width, float height, GUIStyle style){
 		Rect rect = new Rect(left, top, width, height);
 		
 		if (rect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y))){
@@ -374,7 +374,7 @@ public class MainMenu : MonoBehaviour {
 		return rect;
 	}
 	
-	public Rect SelectionRect(float left, float top, float width, float height){
+	public static Rect SelectionRect(float left, float top, float width, float height){
 		return SelectionRect(left, top, width, height, new GUIStyle());
 	}
 	

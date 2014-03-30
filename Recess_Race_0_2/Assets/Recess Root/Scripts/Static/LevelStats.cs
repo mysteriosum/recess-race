@@ -18,13 +18,13 @@ public class LevelStats {
 	public readonly float bronzeTime;
 
 	public bool HasGold {
-		get{ return bestTime < goldTime; }
+		get{ return bestTime > 0 && bestTime < goldTime; }
 	}
 	public bool HasSilver {
-		get{ return bestTime < silverTime; }
+		get{ return bestTime > 0 && bestTime < silverTime; }
 	}
 	public bool HasBronze {
-		get{ return bestTime < bronzeTime; }
+		get{ return bestTime > 0 && bestTime < bronzeTime; }
 	}
 	
 	public bool HasUnlockedItem{
