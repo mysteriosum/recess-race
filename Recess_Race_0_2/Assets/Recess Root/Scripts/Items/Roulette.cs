@@ -30,6 +30,12 @@ public class Roulette : MonoBehaviour {
 	private float mediumAt = 4f;
 	private float longAt = 6f;
 	
+	private float blinkFor = 2.3f;
+	private float blinkTimer = 0;
+	private float onFor = 0.3f;
+	private float offFor = 0.3f;
+	private float flashTimer = 0;
+	
 	private float runHoldMultiplier = 3f;
 	private static Roulette instance;
 	public static Roulette Instance{
@@ -88,8 +94,15 @@ public class Roulette : MonoBehaviour {
 			Debug.Log("Current name is " + currentItem.name);
 			if (currentItem.name == "Banana" && currentBanana > 0){
 				currentBanana --;
+				Debug.Log("Current index is " + currentBanana);
 				if (currentBanana > 0)
 					display.sprite = bananaSprites[currentBanana - 1];
+				
+				if (currentBanana == 0){
+					currentItem = null;
+					display.sprite = null;
+					currentBanana = bananaMax;
+				}
 			} else {
 				currentItem = null;
 				display.sprite = null;
@@ -98,8 +111,25 @@ public class Roulette : MonoBehaviour {
 			
 		}
 		
+		if (blinkTimer < 0){
+			blinkTimer -= Time.deltaTime;
+			flashTimer += Time.deltaTime;
+			if ((flashTimer > onFor && display.renderer.enabled) || (flashTimer > offFor && !display.renderer.enabled)){
+				display.renderer.enabled = !display.renderer.enabled;
+				flashTimer = 0;
+			}
+		} else{
+			display.renderer.enabled = true;
+		}
+		
 		if (rouletteTimer > rouletteTiming)
 			 return;
+		
+		if (rouletteTimer > longAt && Input.GetButtonDown("Run")){
+			rouletteTimer = rouletteTiming;
+			currentItem = items[index];
+			blinkTimer = blinkFor;
+		}
 		
 		float increment = Time.deltaTime * (Input.GetButton("Run")? runHoldMultiplier : 1);
 		rouletteTimer += increment;
@@ -107,6 +137,7 @@ public class Roulette : MonoBehaviour {
 		
 		if (rouletteTimer > rouletteTiming){
 			currentItem = items[index];
+			blinkTimer = blinkFor;
 		}
 		else if (spinTimer > currentTiming){
 			index = NextIndex(index, items.Length);

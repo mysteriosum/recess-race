@@ -14,11 +14,15 @@ public class InstructionFactory {
 		Instruction instruction = null;
 
 		if (data.type.Equals(InstructionCreationData.InstructionType.Run)) {
-			Vector3 p = new Vector3(agent.transform.position.x + data.moveHoldingLenght, agent.transform.position.y);
+			Vector3 p = new Vector3(agent.transform.position.x + data.moveHoldingLenght * agent.getRandomSkillFactor(), agent.transform.position.y);
 			instruction = new RunToInstruction(agent,p);
 		} else if (data.type.Equals(InstructionCreationData.InstructionType.Jump)) {
-			instruction = new JumpInstruction(agent, data.direction,data.jumpHoldingLenght, data.moveHoldingLenght
-											, data.distanceToStartRunningAgain, data.endDirection, data.totalDistanceAfterMoveAgain);
+			instruction = new JumpInstruction(agent 
+			                                  , data.direction,data.jumpHoldingLenght * agent.getRandomSkillFactor()
+			                                  , data.moveHoldingLenght * agent.getRandomSkillFactor()
+			                                  , data.distanceToStartRunningAgain * agent.getRandomSkillFactor()
+			                                  , data.endDirection
+			                                  , data.totalDistanceAfterMoveAgain * agent.getRandomSkillFactor());
 		}
 
 		return instruction;

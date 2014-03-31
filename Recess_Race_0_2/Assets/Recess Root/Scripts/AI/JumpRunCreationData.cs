@@ -3,6 +3,7 @@ using UnityEngine;
 
 [Serializable]
 public class JumpRunCreationData {
+
 	public InstructionCreationData instruction;
     public PathingMap jumpingPath;
 	public Direction direction;

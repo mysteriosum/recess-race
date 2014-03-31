@@ -9,7 +9,7 @@ public class GarbagePhysics : Movable {
 	private float accelerationRate = 200f;
 	private float maxVelocity = 50f;
 	
-	private float maxDistance = 5f;
+	//private float maxDistance = 5f;
 	
 	private Vector2 AccelVector {
 		get{

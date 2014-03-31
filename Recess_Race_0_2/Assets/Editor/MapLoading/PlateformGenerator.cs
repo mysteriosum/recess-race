@@ -223,6 +223,16 @@ public class PlateformGenerator {
 		}
 	}
 
+	public void linkPlateform(Plateform plateform){
+		foreach (var p2 in this.plateforms) {
+			if (plateform.Equals(p2)) continue;
+			
+			if (isInMaximumJumpPosibility(plateform, p2)) {
+				findReachablePlateform(plateform, p2);
+			}
+		}
+	}
+
 	private void findReachablePlateform(Plateform fromPlateform, Plateform toPlateform){
         for (float x = fromPlateform.getLeftCornerPosition().x; x < fromPlateform.getLeftCornerPosition().x + fromPlateform.getWidth(); x++) {
             Vector3 from = new Vector3(x, fromPlateform.transform.position.y, fromPlateform.transform.position.z);
@@ -265,10 +275,14 @@ public class PlateformGenerator {
 							if(!canOverRunFromRight(x,from.y)) continue;
 						}
 					}
+					try{
+						if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
+							fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
+						}	
+					}catch(IndexOutOfRangeException){
+						//Debug.LogError("Plateform " + fromPlateform.name + " to " + toPlateform.name + " - To close of map edge");
+					}
 
-					if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
-						fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
-					}	
 				}
             }
         }
@@ -301,7 +315,7 @@ public class PlateformGenerator {
 	}
 
 	private bool isJummpable(Vector3 v1, Vector3 v2){
-        return Math.Abs(v1.x - v2.x) <= 13 && v2.y - v1.y <= 4;
+        return Math.Abs(v1.x - v2.x) <= 14 && v2.y - v1.y <= 4;
 	}
 
     private void print(string str) {

@@ -15,6 +15,7 @@ public class MapLoader {
     public static bool makeBackground = true;
 	public static bool verbose;
     public static bool inDebugMode = false;
+	public static bool loadGameElement = true;
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
@@ -32,7 +33,7 @@ public class MapLoader {
 	private GameObject worldRootGameObject;
 	private GameObject aiGroupGameObject;
 
-	private PlateformGenerator plateformGenerator;
+	public PlateformGenerator plateformGenerator;
     private TileCreator tileCreator;
 
     private XDocument document;
@@ -114,7 +115,9 @@ public class MapLoader {
         createBorder("bottom", new Vector3(map.mapDimension.width / 2, -1, 0), this.map.mapDimension.width+1, 1, parent);
         createBorder("left", new Vector3(map.mapDimension.width + 1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
         createBorder("right", new Vector3(-1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
-		recessCamera.Border = new Rect (0, 0, map.mapDimension.width, map.mapDimension.height);
+		if (loadGameElement) {
+			recessCamera.Border = new Rect (0, 0, map.mapDimension.width, map.mapDimension.height);		
+		}
     }
 
     private void createBorder(string name, Vector3 position,int width, int height, Transform parent) {
@@ -137,11 +140,14 @@ public class MapLoader {
 		Transform parent = GameObjectFactory.createGameObject("PositionsStuff", worldRootGameObject.transform).transform;
 		IEnumerable<XElement> positions = getAllObjectFromObjectGroup("Positions");
 		loadObject (positions, "End", "FinishLine","Finish Line", 2.8f, parent);
-		loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.4f, parent);
-		loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
-		loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
-		loadObject (positions, "George", "George","George", -0.4f, parent);
+		if (loadGameElement) {
+			loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.4f, parent);
+			loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
+			loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
+			loadObject (positions, "George", "George","George", -0.4f, parent);
+		}				
 	}
+
 
 	private void loadObject(IEnumerable<XElement> xElement, string objectToTreatName, string prefabName, string unityObjectName, float yOffset, Transform parent){
 		XElement element = xElement.First(e => e.Attribute("name").Value.Equals(objectToTreatName));
@@ -236,7 +242,9 @@ public class MapLoader {
 		worldRootGameObject = GameObjectFactory.createGameObject ("World", null);
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
-        this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<RecessCamera>();
+		if (loadGameElement) {
+			this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<RecessCamera>();		
+		}
 
 		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);
 	}

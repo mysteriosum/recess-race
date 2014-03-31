@@ -7,6 +7,7 @@ public class Agent : Movable {
     private Plateform lastPlateform;
     public int currentWayPoint = 0;
     public float speedFactor = 1;
+	public float skill;
 
 
     void Update() {
@@ -21,7 +22,7 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
-            //Debug.Log(instruction.ToString());
+			debugLog(instruction.ToString());
         }
         this.currentInstruction = instruction;
     }
@@ -74,18 +75,19 @@ public class Agent : Movable {
         } else {
             if ((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
                || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
-                Debug.Log("On va attendre");
+				//debugLog("On va attendre");
                 Instruction run = new RunToInstruction(this, linkedPlateform.startLocation, true);
-                /*Instruction wait = new WaitInstruction(this, 0f);
-                Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
+                Instruction wait = new WaitInstruction(this, 1f);
+                /*Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
                 Instruction wait2 = new WaitInstruction(this, 0.1f);
                 run.nextInstruction = wait;
                 wait.nextInstruction = makeSurRun;
                 makeSurRun.nextInstruction = wait2;*/
-                run.nextInstruction = instructionsToGetThere;
+                run.nextInstruction = wait;
+				wait.nextInstruction = instructionsToGetThere;
                 switchTo(run);
             } else {
-                Debug.Log("On attend pas");
+				//debugLog("On attend pas");
                 Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
                 run.nextInstruction = instructionsToGetThere;
                 switchTo(run);
@@ -97,14 +99,14 @@ public class Agent : Movable {
 	private void makeRunCharge(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere){
 		float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, linkedPlateform);
 		if (xToGo != linkedPlateform.startLocation.x) {
-			Debug.Log("Making a run charge prepositioning");
+			//debugLog("Making a run charge prepositioning");
 			Instruction overRun = new RunToInstruction(this, new Vector3(xToGo, linkedPlateform.startLocation.y, 0));
 			Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
 			overRun.nextInstruction = run;
 			run.nextInstruction = instructionsToGetThere;
 			switchTo(overRun);
 		} else {
-			Debug.Log("RUN");
+			//debugLog("RUN");
 			Instruction run = new RunToInstruction(this, linkedPlateform.startLocation);
 			run.nextInstruction = instructionsToGetThere;
 			switchTo(run);
@@ -118,6 +120,9 @@ public class Agent : Movable {
 		setInstructionAgentToThis (instruction.nextInstruction);
 	}
 
+	public float getRandomSkillFactor(){
+		return Random.Range (this.skill , 2 - this.skill);
+	}
 
     void debugLog(string message) {
         if (this.debug) {
@@ -144,25 +149,7 @@ public class Agent : Movable {
     public float getMaxXSpeed() {
         return this.maxSpeed;
     }
-
-   /* protected override Vector2 Jump(Vector2 currentVelocity, float amount) {
-        controller.getJump = true;
-        return base.Jump(currentVelocity, amount);
-    }
-
-    protected Vector2 Jump(Vector2 currentVelocity, float amount, float delay) {
-        CancelInvoke("JumpDone");
-        Invoke("JumpDone", delay);
-        nextJump = null;
-        return Jump(currentVelocity, amount);
-    }
-
-    void JumpDone() {
-        debugLog("Stop The Jump!");
-        controller.getJump = false;
-    }*/
-
-
+	
     internal bool isGrounded() {
         return this.grounded;
     }

@@ -19,7 +19,7 @@ public class Fitz : Movable {
 	private bool spinFalling						= false;
 	private float spinFallMod						= 0.5f;
 	private float spinFallMoveMod					= 0.575f;
-	private float propelTimer						= 0f;
+	private float propelTimer						= 0f;	
 	private float propellerTimePenalty				= 0.25f;
 	private float pinkyDoubleJumpMode				= 0.5f;
 	
@@ -46,8 +46,9 @@ public class Fitz : Movable {
 	private float dustTiming						= 15f;
 	private GameObject windArea;
 	
-	
 	private float itemTimer							= 0;
+	
+	private bool isRolling							= false;
 	
 	private float speedBoostMod						= 1.7f;
 	private float tempMaxSpeed						= 0;
@@ -161,6 +162,18 @@ public class Fitz : Movable {
 	//--------------------------------------------------------------------------\\
 	//--------------------------Miscellaneous properties------------------------\\
 	//--------------------------------------------------------------------------\\
+	
+	protected override string WalkAnimation {
+		get {
+			return isRolling? a.roll : a.walk;
+		}
+	}
+	
+	protected override string FallAnimation {
+		get {
+			return isRolling? a.roll : a.fall;
+		}
+	}
 	
 	private float HorizontalInput{
 		get {
@@ -307,7 +320,7 @@ public class Fitz : Movable {
 	//------------------------------------------------------\\
 		
 		
-		if (grounded && controller.getJumpDown && CanControl){
+		if ((grounded || isRolling) && controller.getJumpDown && CanControl){
 			velocity = Jump(velocity, JumpImpulse);
 			grounded = false;
 
@@ -353,7 +366,7 @@ public class Fitz : Movable {
 	//---------------------------Pinky related checks---------------------------\\
 	//--------------------------------------------------------------------------\\
 		if (pinky){
-			if (controller.getJumpDown && !grounded){
+			if (controller.getJumpDown && !grounded && !IsHurt){
 //				propelling = true;
 //				propelTimer = propelTiming;
 				controller.ResetJumpInput();
@@ -387,7 +400,6 @@ public class Fitz : Movable {
 			if (wallJumpLockTimer > 0){
 				wallJumpLockTimer -= Time.deltaTime;
 			}
-			
 		}
 		
 		
@@ -453,6 +465,13 @@ public class Fitz : Movable {
 				speedBoostTimer = 0;
 			}
 		}
+		
+		
+	//--------------------------------------------------------------------------\\
+	//-----------------------other random miscellanous checks-------------------\\
+	//--------------------------------------------------------------------------\\
+		
+		
 	}
 	
 	void ChangeToPinky(){
@@ -548,6 +567,10 @@ public class Fitz : Movable {
 			ResetPropeller();
 		}
 		
+		if (grounded && controller.getDDown){
+			BeginRoll();
+		}
+		
 		Vector2 basic = base.Move (currentVelocity, input);
 		
 		if (input * basic.x <= 0 && !dashing){
@@ -580,6 +603,10 @@ public class Fitz : Movable {
 		ResetPropeller();
 		if (hurt && anim){
 			anim.Play (a.rest);
+		}
+		
+		if (controller.getD){
+			BeginRoll();
 		}
 	}
 	
@@ -618,7 +645,6 @@ public class Fitz : Movable {
 		
 		if (dmgScript && dmgScript.enabled && !hurt){
 			
-			
 			if (other.GetComponent<TennisBall>() != null && CheckCaughtTennisBall(TennisBall.catchBallLeeway)){
 				Destroy(other.gameObject);
 			} else if (!boogerBoy){
@@ -630,7 +656,10 @@ public class Fitz : Movable {
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 			}
 		}
-				//enter a speed boost object!
+		
+		
+		//enter a speed boost object!
+		
 		if ((speedBoostTimer > noBoostFor ^ !speedBoosting) && other.gameObject.tag == "SpeedBoost" && controller.hAxis != 0){
 			other.GetComponent<Animator>().Play(0);
 			SpeedBoost();
@@ -642,6 +671,18 @@ public class Fitz : Movable {
 	void PlayRestAnim (){
 		if (anim && grounded){
 			anim.Play(a.rest);
+		}
+	}
+	
+	void BeginRoll(){
+		isRolling = true;
+		anim.Play(a.roll);
+	}
+	
+	void EndRoll(){
+		isRolling = false;
+		if (falling){
+			anim.Play(a.fall);
 		}
 	}
 	

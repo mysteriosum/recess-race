@@ -20,9 +20,9 @@ public class JumpInstruction : Instruction {
 	public float startX;
 	
 	private float lastX;
+	private float lastY;
 	private float endX;
 	private float yDistance;
-	private float lastY;
 	private int stockCounter;
 
 	public JumpInstruction(Agent agent, Direction direction, float holdLenght, float moveLenght
@@ -39,7 +39,6 @@ public class JumpInstruction : Instruction {
 
     public override void start() {
         agent.setMovingStrenght((float)direction);
-        Debug.Log("on fait le jump vers " + (float)direction);
         agent.jump();
 		this.startX = agent.transform.position.x;
 		this.moving = true;
@@ -50,9 +49,10 @@ public class JumpInstruction : Instruction {
 
     public override void update() {
 		yDistance += Mathf.Abs(this.agent.transform.position.y - lastY);
+		antiStuck ();
 		this.lastY = this.agent.transform.position.y;
 
-		antiStuck ();
+		if (this.isDone) return;
 		
 		if (holding && Mathf.Abs (startX - agent.transform.position.x) >= holdLenght) {
 			holding = false;
@@ -67,9 +67,10 @@ public class JumpInstruction : Instruction {
 				agent.setMovingStrenght (0);
 			}
 		} else {
-			if(removing){
-				if (Mathf.Abs (startX - agent.transform.position.x) >= moveAgainMoveLenght) {
+			if(removing || moveAgainAfterYMoved == 0){
+				if (Mathf.Abs (startX - agent.transform.position.x) >= moveAgainMoveLenght && agent.isGrounded()) {
 					removing = false;
+					//agent.setMovingStrenght ((float)direction);
 					agent.setMovingStrenght (0);
 					doneMoving = true;
 				}
@@ -83,7 +84,8 @@ public class JumpInstruction : Instruction {
     }
 
 	private void antiStuck(){
-		if(Mathf.Abs(lastX - agent.transform.position.x) < 0.007){
+		//Debug.Log (Mathf.Abs(lastX - agent.transform.position.x) + " - " +  Mathf.Abs(lastY - agent.transform.position.y));
+		if(Mathf.Abs(lastX - agent.transform.position.x) < 0.007 && Mathf.Abs(lastY - agent.transform.position.y) < 0.007){
 			stockCounter--;
 		}else{
 			stockCounter = 10;
@@ -93,8 +95,9 @@ public class JumpInstruction : Instruction {
         if (stockCounter <= 0 && this.agent.isGrounded()) {
             moving = false;
             this.isDone = true;
-            agent.setMovingStrenght(0);
+			agent.setMovingStrenght((float)direction);
             agent.stopJumping();
+			Debug.Log ("UnStuck");
         }
 	}
 
