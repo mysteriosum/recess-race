@@ -67,10 +67,11 @@ public class JumpInstruction : Instruction {
 				agent.setMovingStrenght (0);
 			}
 		} else {
-			if(removing){
+			if(removing || moveAgainAfterYMoved == 0){
 				if (Mathf.Abs (startX - agent.transform.position.x) >= moveAgainMoveLenght && agent.isGrounded()) {
 					removing = false;
-					agent.setMovingStrenght ((float)direction);
+					//agent.setMovingStrenght ((float)direction);
+					agent.setMovingStrenght (0);
 					doneMoving = true;
 				}
 			}else if(yDistance > this.moveAgainAfterYMoved){

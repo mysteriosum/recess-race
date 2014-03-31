@@ -516,11 +516,21 @@
   <object x="30612" y="669" width="56" height="80">
    <ellipse/>
   </object>
-  <object x="31284" y="705" width="56" height="80">
-   <ellipse/>
-  </object>
   <object x="31595" y="559" width="56" height="80">
    <ellipse/>
   </object>
+  <object x="31683" y="542"/>
+  <object x="31750" y="479"/>
+  <object x="31878" y="354"/>
+  <object x="31940" y="289"/>
+  <object x="32006" y="224"/>
+  <object x="31817" y="416"/>
+ </objectgroup>
+ <objectgroup color="#ff0000" name="Positions" width="100" height="40">
+  <object name="Player" x="512" y="512"/>
+  <object name="End" x="32320" y="704"/>
+  <object name="Billy" x="256" y="512"/>
+  <object name="George" x="320" y="512"/>
+  <object name="Liddy" x="160" y="512"/>
  </objectgroup>
 </map>

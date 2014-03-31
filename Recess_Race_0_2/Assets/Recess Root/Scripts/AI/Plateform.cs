@@ -82,7 +82,8 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 				Gizmos.DrawLine(linked.startLocation, v2);
 			} else if(linked.instruction.type.Equals(InstructionCreationData.InstructionType.DropOff)){
 				Gizmos.color = new Color(0, 1, 1, 0.8f);
-				Gizmos.DrawLine(linked.startLocation, linked.plateform.transform.position);
+				Vector3 v2 = new Vector3(linked.startLocation.x + ((float)linked.startingDirection), linked.plateform.transform.position.y, 0);
+				Gizmos.DrawLine(linked.startLocation, v2);
 			}
 
 			Gizmos.DrawSphere(linked.startLocation, 0.15f);

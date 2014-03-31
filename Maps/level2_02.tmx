@@ -518,4 +518,11 @@
    <ellipse/>
   </object>
  </objectgroup>
+ <objectgroup color="#ff0000" name="Positions" width="100" height="40">
+  <object name="Player" x="512" y="512"/>
+  <object name="End" x="32320" y="704"/>
+  <object name="Billy" x="256" y="512"/>
+  <object name="George" x="320" y="512"/>
+  <object name="Liddy" x="160" y="512"/>
+ </objectgroup>
 </map>
