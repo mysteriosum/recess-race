@@ -58,8 +58,7 @@ public class RecessManager {
 	}
 	
 	static RecessManager(){
-		highScore = PlayerPrefs.GetInt("highScore", 0);
-		bestTime = PlayerPrefs.GetFloat("bestTime", 0);
+		
 		
 		
 	}
@@ -73,14 +72,20 @@ public class RecessManager {
 		score += value;
 	}
 	
-	public static void SaveStatistics(bool eraseCurrent){
+	public static void SaveStatistics(int level, bool eraseCurrent){
 		if (score > highScore){
-			PlayerPrefs.SetInt("highScore", score);
-			highScore = score;
+			PlayerPrefs.SetInt("highScore" + level.ToString(), score);
+			levelStats[level - 1].highScore = score;
 		}
-		if (currentTime < bestTime){
-			PlayerPrefs.SetFloat("bestTime", currentTime);
-			bestTime = currentTime;
+		else{
+			Debug.Log("Score too low");
+		}
+		if (currentTime < bestTime || bestTime == 0){
+			PlayerPrefs.SetFloat("bestTime" + level.ToString(), currentTime);
+			levelStats[level - 1].bestTime = currentTime;
+		}
+		else{
+			Debug.Log("time too low");
 		}
 		if (eraseCurrent){
 			score = 0;

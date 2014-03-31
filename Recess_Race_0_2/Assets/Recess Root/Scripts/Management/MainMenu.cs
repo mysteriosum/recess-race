@@ -32,8 +32,17 @@ public class MainMenu : MonoBehaviour {
 	public Texture2D silverTexture;
 	public Texture2D bronzeTexture;
 	
+	public Sprite[] logoCards;
+	public SpriteRenderer sceneLogoCard;
+	private int logoIndex = 0;
+	private float fadeTimer = 0;
+	private float fadeFor = 0.9f;
+	private float showFor = 2.3f;
+	private float showTimer = 0;
 	
-	private MenuEnum currentMenu = MenuEnum.main;
+	
+	
+	private MenuEnum currentMenu = MenuEnum.intro;
 	public Vector2 mainButtonOffset = Vector2.zero;
 	
 	private float selectFontScreenRation = 0.085f;
@@ -45,8 +54,8 @@ public class MainMenu : MonoBehaviour {
 	public float stopwatchX = 0.6f;
 	public float grandPrixMedalX = 0.3f;
 	public float modeSelectIconsY = 0.5f;
-	public float stopwatchScale = 1f;
-	public float grandPrixMedalScale = 1f;
+	public float stopwatchSize = 0.35f;
+	public float grandPrixMedalSize = 0.35f;
 	
 	private float thumbMarginPercent = 0.085f;
 	private float thumbsStartX = 0;
@@ -138,8 +147,11 @@ public class MainMenu : MonoBehaviour {
 	void Start () {
 		currentSpeed = goingUp? arrowMax : -arrowMax;
 		
+		sceneLogoCard.sprite = logoCards[0];
+		sceneLogoCard.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, sceneLogoCard.transform.position.z);
+		Debug.Log(sceneLogoCard.sprite.rect);
 		
-		
+			
 		//set up menus, make sure the menu skin is correct...
 	}
 	
@@ -155,8 +167,57 @@ public class MainMenu : MonoBehaviour {
 			}
 		}
 		
+		
 		if (thumbsStartX != ThumbsStartAt){
 			thumbsStartX = Mathf.Lerp (thumbsStartX, ThumbsStartAt, lerpAmount);
+		}
+		
+		if (currentMenu == MenuEnum.intro){
+			sceneLogoCard.transform.localScale = Vector3.one;
+			float yScale = Camera.main.orthographicSize / sceneLogoCard.bounds.extents.y;
+			float screenRatio = (float)Screen.width / (float)Screen.height;
+			float xScale = Camera.main.orthographicSize * screenRatio / sceneLogoCard.bounds.extents.x;
+			sceneLogoCard.transform.localScale = new Vector3(xScale, yScale, 1f);
+			
+			if (fadeTimer < fadeFor && showTimer <= 0){
+				
+				fadeTimer += Time.deltaTime;
+				float amount = Mathf.Lerp(0, 1f, fadeTimer/fadeFor);
+				sceneLogoCard.renderer.material.color = new Color(amount, amount, amount, 1f);
+				
+			} else if (fadeTimer >= fadeFor && showTimer <= showFor){
+				
+				showTimer += Time.deltaTime;
+				
+			} else if (showTimer >= showFor){
+				
+				fadeTimer -= Time.deltaTime;
+				float amount = Mathf.Lerp(0, 1f, fadeTimer/fadeFor);
+				sceneLogoCard.renderer.material.color = new Color(amount, amount, amount, 1f);
+				
+				if (fadeTimer <= 0 && logoIndex < logoCards.Length - 1){
+					showTimer = 0;
+					logoIndex ++;
+					sceneLogoCard.sprite = logoCards[logoIndex];
+				} else if (fadeTimer <= 0){
+					currentMenu = MenuEnum.main;
+				}
+			}
+			
+			if (Input.GetButtonDown ("Jump") || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)){
+				if (logoIndex < logoCards.Length-1){
+					logoIndex++;
+					showTimer = 0;
+					fadeTimer = fadeFor;
+					sceneLogoCard.sprite = logoCards[logoIndex];
+				}
+				else{
+					currentMenu = MenuEnum.main;
+				}
+			}
+			if (Input.GetKeyDown(KeyCode.Escape)){
+				currentMenu = MenuEnum.main;
+			}
 		}
 	}
 	
@@ -169,9 +230,7 @@ public class MainMenu : MonoBehaviour {
 		case MenuEnum.intro:
 			//play intro animation!
 			
-			if (Input.GetButtonDown ("Jump")){
-				currentMenu ++;
-			}
+			
 			break;
 		case MenuEnum.main:
 			//render background (animated?! or just one long animated texture that loops?)
@@ -204,10 +263,6 @@ public class MainMenu : MonoBehaviour {
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mainPic);
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), credits);
 			
-			if (Input.GetKeyDown (KeyCode.Escape) || Input.GetMouseButtonDown(0)){
-				currentMenu = MenuEnum.title;
-			}
-			
 			break;
 		case MenuEnum.options:
 			
@@ -232,8 +287,10 @@ public class MainMenu : MonoBehaviour {
 			} else if (grandPrixSelect){
 				RecessManager.LoadLevel(1, GameModes.grandPrix);
 			}
+			float medalScale = Screen.height * grandPrixMedalSize / medalTexture.height;
+			float stopwatchScale = Screen.height * stopwatchSize / stopwatchTexture.height;
 			
-			GUI.DrawTexture(new Rect(grandPrixMedalX * Screen.width, modeSelectIconsY * Screen.height, medalTexture.width * grandPrixMedalScale, medalTexture.height * grandPrixMedalScale), medalTexture);
+			GUI.DrawTexture(new Rect(grandPrixMedalX * Screen.width, modeSelectIconsY * Screen.height, medalTexture.width * medalScale, medalTexture.height * medalScale), medalTexture);
 			GUI.DrawTexture(new Rect(stopwatchX * Screen.width, modeSelectIconsY * Screen.height, stopwatchTexture.width * stopwatchScale, stopwatchTexture.height * stopwatchScale), stopwatchTexture);
 			
 			break;
@@ -289,7 +346,7 @@ public class MainMenu : MonoBehaviour {
 				"Course " + (currentIndex + 1).ToString(), levelSelectStyle);
 			
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.bestScoreY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
-				"Best Score: " + RecessManager.levelStats[currentIndex].bestScore.ToString(), levelSelectStyle);
+				"Best Score: " + RecessManager.levelStats[currentIndex].highScore.ToString(), levelSelectStyle);
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.bestTimeY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
 				"Best Time: " + Textf.ConvertTimeToString(RecessManager.levelStats[currentIndex].bestTime), levelSelectStyle);
 			if (RecessManager.levelStats[currentIndex].HasBronze){

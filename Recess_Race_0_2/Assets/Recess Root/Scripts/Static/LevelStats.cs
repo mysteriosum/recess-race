@@ -7,8 +7,9 @@ public enum LetterGrades{
 
 public class LevelStats {
 	
-	public int bestScore;
+	public int highScore;
 	public float bestTime;
+	public readonly int levelIndex;
 	public readonly int scoreToUnlock;
 	public readonly GameObject itemToUnlock;
 	public readonly string objectName;
@@ -28,7 +29,7 @@ public class LevelStats {
 	}
 	
 	public bool HasUnlockedItem{
-		get{ return bestScore > scoreToUnlock; }
+		get{ return highScore > scoreToUnlock; }
 	}
 	public string BestTimeString{
 		get{ return Textf.ConvertTimeToString(bestTime); }
@@ -46,7 +47,7 @@ public class LevelStats {
 	
 	public string LetterGradeString{
 		get{
-			float fraction = (float) bestScore / (float) (scoreToUnlock);
+			float fraction = (float) highScore / (float) (scoreToUnlock);
 			LetterGrades letterGrade = (LetterGrades)Mathf.Round(fraction * (int)LetterGrades.ss);
 			
 			switch (letterGrade){
@@ -70,6 +71,7 @@ public class LevelStats {
 	
 	public LevelStats (int levelIndex, int scoreToUnlock, string objectName, float goldTime, float silverTime, float bronzeTime)
 	{
+		this.levelIndex = levelIndex;
 		this.scoreToUnlock = scoreToUnlock;
 		this.objectName = objectName;
 		this.goldTime = goldTime;
@@ -78,8 +80,8 @@ public class LevelStats {
 		
 		itemToUnlock = Resources.Load ("objects/" + objectName) as GameObject;
 		
-		bestScore = PlayerPrefs.GetInt("BestScoreLevel" + levelIndex.ToString(), 0);
-		bestTime = PlayerPrefs.GetFloat ("BestTimeLevel" + levelIndex.ToString (), 0);
+		highScore = PlayerPrefs.GetInt("highScore" + levelIndex.ToString(), 0);
+		bestTime = PlayerPrefs.GetFloat ("bestTime" + levelIndex.ToString (), 0);
 		
 	}
 

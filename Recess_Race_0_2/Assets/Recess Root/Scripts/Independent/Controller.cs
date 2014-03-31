@@ -104,9 +104,15 @@ public class Controller {
 		}
 		hAxisLast = hAxis;
 		
+		VerticalInputs();
 	}
 	
 	public void CursorInput(){
+		VerticalInputs();
+		
+	}
+	
+	private void VerticalInputs(){
 		vAxis = Input.GetAxis("Vertical");
 		
 		getD = vAxis < -0.3f;
@@ -118,7 +124,6 @@ public class Controller {
 		getDUp = vAxisLast < -0.3f && !getD;
 		getUUp = vAxisLast > 0.3f && !getU;
 		vAxisLast = vAxis;
-		
 	}
 	
 	public void ResetJumpInput(){
