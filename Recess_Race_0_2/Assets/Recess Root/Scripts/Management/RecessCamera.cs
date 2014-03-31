@@ -32,6 +32,7 @@ public class RecessCamera : MonoBehaviour {
 	private float lerpAmount = 0.1f;
 	private float maxParallax = 0.3f;
 	
+	
 	//race variables
 	
 	private bool raceBegun = false;
@@ -104,7 +105,7 @@ public class RecessCamera : MonoBehaviour {
 	}
 	
 	public string TimeRemainingString{
-		get { 
+		get {
 			
 			if (timeTrial){
 				return Textf.ConvertTimeToString(RecessManager.CurrentTime);
@@ -154,10 +155,15 @@ public class RecessCamera : MonoBehaviour {
 			get { return cursorIndex; }
 			set { cursorIndex = value; }
 		}
+		
+		public Vector2 choiceSize = new Vector2(0.185f, 0.085f);
+		public Vector2 congratsStart = new Vector2(0.1f, 0.15f);
+		public float statsOffsetX = 0.11f;
 	}
 	
 	public HUDTextures hud;
-	
+	//end of the race 
+	public float[] endListIntervals = new float[]{ 0.1f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f };
 	public bool produceBackground = true;
 	public bool toReadySetGo = true;
 	
@@ -209,11 +215,12 @@ public class RecessCamera : MonoBehaviour {
 		}
 		
 		if (RecessManager.currentGameMode == GameModes.timeTrial){
+			timeTrial = true;
+			
 			Bully[] bullies = FindObjectsOfType<Bully>();
 			
 			foreach (var item in bullies) {
 				Destroy(item.gameObject);
-				timeTrial = true;
 			}
 		}
 	}
@@ -262,7 +269,10 @@ public class RecessCamera : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void FixedUpdate () {
-		
+		//TEMP give points for free to test
+		if (Input.GetKey(KeyCode.Equals)){
+			RecessManager.AddScore(10);
+		}
 		if (goTimer < noMoreGoTime){
 			goTimer += Time.deltaTime;
 			if (goTimer > goTime)
@@ -342,6 +352,7 @@ public class RecessCamera : MonoBehaviour {
 				Rect goRect = new Rect(Screen.width/2 - gotexWidth/2, 0, gotexWidth, gotexHeight);
 				
 				GUI.DrawTexture(goRect, goTexture, ScaleMode.ScaleAndCrop);
+				GUI.TextArea(goRect, goText, hud.skin.customStyles[3]);
 			}
 		}
 		if (!raceFinished){
@@ -388,20 +399,26 @@ public class RecessCamera : MonoBehaviour {
 		} else {
 			float congratsWidth = Screen.width * 0.7f;
 			float congratsHeight = Screen.height * 0.8f;
-			GUI.BeginGroup(new Rect((Screen.width - congratsWidth) / 2, (Screen.height - congratsHeight)/2, congratsWidth, congratsHeight));
-			float yValue = 0;
-			float xValue = 100;
+			float xValue = Screen.height * hud.congratsStart.x;
+			float yValue = Screen.height * hud.congratsStart.y;
+			float heightValue = Screen.height * 0.05f;
+			int intervalIndex = 0;
+			GUIStyle statsStyle = new GUIStyle(hud.skin.GetStyle("LevelSelect"));
+			statsStyle.fontSize = (int) heightValue;
 			
 			if (finishedTimer > congratulationsAt){
 				GUIStyle boxStyle = new GUIStyle(hud.skin.box);
 				boxStyle.contentOffset = new Vector2(0, 35);
-				GUI.Box (new Rect(0, yValue, congratsWidth, congratsHeight), "Congratulations!", boxStyle);
+				boxStyle.fontSize = (int) (Screen.height * 0.15f);
+				GUI.Box (new Rect(xValue, yValue, congratsWidth, congratsHeight), "Congratulations!", boxStyle);
 			}
-			yValue += congratsHeight * 0.25f;
+			xValue += hud.statsOffsetX * Screen.width;
+			yValue += endListIntervals[intervalIndex] * Screen.height;
 			if (finishedTimer > placeAt){
 				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 50), "You came in " + RankString + " place!", hud.skin.textArea);
 			}
-			yValue += congratsHeight * 0.1f;
+			intervalIndex ++;
+			yValue += endListIntervals[intervalIndex] * Screen.height;
 			if (finishedTimer > scoredAt){		//TODO: Make this prettier (make sounds happen and count up and appear one at a time and the total should be last
 				string stringy = "Your score";
 				if (finishedTimer > showScoreAt){
@@ -412,42 +429,69 @@ public class RecessCamera : MonoBehaviour {
 						"Time: " + pointsManager.timePoints.ToString();
 				}
 					
-				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 150), stringy, hud.skin.textArea);
+				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, heightValue), stringy, hud.skin.textArea);
 			
 			}
-			yValue += congratsHeight * 0.3f;
+			intervalIndex ++;
+			yValue += endListIntervals[intervalIndex] * Screen.height;
 			if (finishedTimer > tryAgainAt){
-				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 70), "What now?", hud.skin.textArea);
+				GUI.TextArea (new Rect(xValue, yValue, congratsWidth - 2 * xValue, heightValue), "What now?", hud.skin.textArea);
 
-				yValue += congratsHeight * 0.1f;
+			intervalIndex ++;
+			yValue += endListIntervals[intervalIndex] * Screen.height;
 				
 				
-				//input: change cursor
-				controller.CursorInput();
-				if (controller.getUDown){
-					hud.CursorIndex -= 1;
-					Debug.Log ("going up" + hud.CursorIndex);
-					if (hud.CursorIndex < 0)
-						hud.CursorIndex = 1;
-					Debug.Log ("going up" + hud.CursorIndex);
-				}
-				if (controller.getDDown){
-					hud.CursorIndex += 1;
-					if (hud.CursorIndex > 1){
-						hud.CursorIndex = 0;
-					}
-				}
+//				//input: change cursor
+//				controller.CursorInput();
+//				if (controller.getUDown){
+//					hud.CursorIndex -= 1;
+//					if (hud.CursorIndex < 0)
+//						hud.CursorIndex = 1;
+//				}
+//				if (controller.getDDown){
+//					hud.CursorIndex += 1;
+//					if (hud.CursorIndex > 1){
+//						hud.CursorIndex = 0;
+//					}
+//				}
 				
 				GUIStyle yesnoStyle = new GUIStyle(hud.skin.customStyles[0]);
 				yesnoStyle.alignment = TextAnchor.MiddleLeft;
-				GUIStyle nextStyle = new GUIStyle(yesnoStyle);
 				GUIStyle homeStyle = new GUIStyle(yesnoStyle);
 				GUIStyle retryStyle = new GUIStyle(yesnoStyle);
 				
+				if (Application.loadedLevel < Application.levelCount-1){
+					
+					GUIStyle nextStyle = new GUIStyle(yesnoStyle);
+					Rect nextRect = MainMenu.SelectionRect(xValue, yValue, Screen.width * hud.choiceSize.x, Screen.height * hud.choiceSize.y, nextStyle);
+						
+					bool nextPressed = GUI.Button(nextRect, "Next Race", nextStyle);
+					if (nextPressed){
+						if (RecessManager.currentGameMode == GameModes.timeTrial){
+							RecessManager.SaveStatistics(Application.loadedLevel, true);
+						}
+						Application.LoadLevel(Application.loadedLevel+1);
+					}
+					
+					intervalIndex ++;
+					yValue += endListIntervals[intervalIndex] * Screen.height;
+				}
+				
+				Rect homeRect = MainMenu.SelectionRect(xValue, yValue, Screen.width * hud.choiceSize.x, Screen.height * hud.choiceSize.y, homeStyle);
+				bool homePressed = GUI.Button(homeRect, "Main Menu", homeStyle);
+				if (homePressed){
+					if (RecessManager.currentGameMode == GameModes.timeTrial){
+						RecessManager.SaveStatistics(Application.loadedLevel, true);
+					}
+					RecessManager.LoadLevel(0, RecessManager.currentGameMode);
+				}
+				/*
 				GUIContent yesContent = new GUIContent("Yes");
 				if (hud.CursorIndex == 0){
 					yesContent.image = hud.selectIcon;
 				}
+				
+				
 				bool yes = GUI.Button (new Rect(xValue, yValue, congratsWidth - 2 * xValue, 30), yesContent, yesnoStyle);
 				yValue += 40;
 				
@@ -472,9 +516,8 @@ public class RecessCamera : MonoBehaviour {
 				if (no){
 					RecessManager.SaveStatistics(true);
 					Application.LoadLevel(0);
-				}
+				}*/
 			}
-			GUI.EndGroup();
 		}
 	}
 	

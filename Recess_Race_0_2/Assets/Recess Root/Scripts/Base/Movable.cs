@@ -145,10 +145,27 @@ public class Movable : MonoBehaviour {
 		public string fall = "Fall";
 		public string hurt = "Hurt";
 		public string rest = "Rest";
+		public string roll = "Roll";
+		public string down = "Down";
 	}
 	
 	public AnimationNames a = new AnimationNames();
-
+	
+	protected virtual string WalkAnimation {
+		get{
+			return a.walk;
+		}
+	}
+	protected virtual string JumpAnimation {
+		get{
+			return a.jump;
+		}
+	}
+	protected virtual string FallAnimation {
+		get{
+			return a.fall;
+		}
+	}
 	//------------------------------------------------------\\
 	//----------------------Debugging-----------------------\\
 	//------------------------------------------------------\\
@@ -195,7 +212,7 @@ public class Movable : MonoBehaviour {
 			if (velocity.y < 0 && !falling){
 				falling = true;
 				if (animated && !hurt){
-					anim.Play(a.fall);
+					anim.Play(FallAnimation);
 				}
 				SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
 			}
@@ -297,7 +314,7 @@ public class Movable : MonoBehaviour {
 			newX = Accelerate(input);
 			t.localScale = new Vector3(input > 0? 1 : -1, 1, 1);
 			if (animated && grounded){
-				anim.Play(a.walk);
+				anim.Play(WalkAnimation);
 				anim.speed = Mathf.Lerp(MaxSpeed * maxWalkAnimMultiplier, MaxSpeed, Mathf.Abs(newX) / MaxSpeed)/ MaxSpeed;
 			}
 		} else if (animated && grounded && !hurt){
@@ -359,11 +376,12 @@ public class Movable : MonoBehaviour {
 	
 	protected virtual Vector2 Jump (Vector2 currentVelocity, float amount){
 		if (animated){
-			anim.Play(a.jump);
+			anim.Play(JumpAnimation);
 		}
 		Vector2 newVel = new Vector2(currentVelocity.x, amount);
 		return newVel;
 	}
+	
 	
 	public void SetVelocity (Vector2 newVelocity){
 		velocity = newVelocity;
