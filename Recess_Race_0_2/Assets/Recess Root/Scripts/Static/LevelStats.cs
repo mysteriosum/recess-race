@@ -7,8 +7,11 @@ public enum LetterGrades{
 
 public class LevelStats {
 	
-	public int highScore;
+	public int highScoreTT;
+	public int highScoreGP;
 	public float bestTime;
+	public int bestRank;
+	
 	public readonly int levelIndex;
 	public readonly int scoreToUnlock;
 	public readonly GameObject itemToUnlock;
@@ -17,19 +20,55 @@ public class LevelStats {
 	public readonly float goldTime;
 	public readonly float silverTime;
 	public readonly float bronzeTime;
-
+	
+	private bool GrandPrix{
+		get{ return RecessManager.currentGameMode == GameModes.grandPrix; }
+	}
 	public bool HasGold {
-		get{ return bestTime > 0 && bestTime < goldTime; }
+		get{
+			if (GrandPrix){
+				return bestRank == 1;
+			}
+			else{
+				return bestTime > 0 && bestTime < goldTime;
+			}
+		}
 	}
 	public bool HasSilver {
-		get{ return bestTime > 0 && bestTime < silverTime; }
+		get{
+			if (GrandPrix){
+				return bestRank > 0 && bestRank < 3;
+			}
+			else{
+				return bestTime > 0 && bestTime < silverTime;
+			}
+		}
 	}
 	public bool HasBronze {
-		get{ return bestTime > 0 && bestTime < bronzeTime; }
+		get{
+			if (GrandPrix){
+				return bestRank > 0 && bestRank < 4;
+			}
+			else{
+				return bestTime > 0 && bestTime < bronzeTime;
+			}
+		}
 	}
 	
+	public bool HasParticipated {
+		get{
+			if (GrandPrix){
+				return bestRank > 0;
+			}
+			else{
+				return bestTime > 0;
+			}
+		}
+	}
+	
+	
 	public bool HasUnlockedItem{
-		get{ return highScore > scoreToUnlock; }
+		get{ return highScoreGP > scoreToUnlock; }
 	}
 	public string BestTimeString{
 		get{ return Textf.ConvertTimeToString(bestTime); }
@@ -47,7 +86,8 @@ public class LevelStats {
 	
 	public string LetterGradeString{
 		get{
-			float fraction = (float) highScore / (float) (scoreToUnlock);
+			int scoreInQuestion = RecessManager.currentGameMode == GameModes.grandPrix? highScoreGP : highScoreTT;
+			float fraction = (float) scoreInQuestion / (float) (scoreToUnlock);
 			LetterGrades letterGrade = (LetterGrades)Mathf.Round(fraction * (int)LetterGrades.ss);
 			
 			switch (letterGrade){
@@ -80,8 +120,10 @@ public class LevelStats {
 		
 		itemToUnlock = Resources.Load ("objects/" + objectName) as GameObject;
 		
-		highScore = PlayerPrefs.GetInt("highScore" + levelIndex.ToString(), 0);
+		highScoreTT = PlayerPrefs.GetInt("highScoreTT" + levelIndex.ToString(), 0);
+		highScoreGP = PlayerPrefs.GetInt ("highScoreGP" + levelIndex.ToString(), 0);
 		bestTime = PlayerPrefs.GetFloat ("bestTime" + levelIndex.ToString (), 0);
+		bestRank = PlayerPrefs.GetInt ("bestRank" + levelIndex.ToString (), 0);
 		
 	}
 

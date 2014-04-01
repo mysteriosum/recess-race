@@ -52,6 +52,12 @@ public class RecessCamera : MonoBehaviour {
 	
 	private bool timeTrial = false;
 	
+	public int Rank {
+		get{
+			return rank;
+		}
+	}
+	
 	//popups and other points stuff: combos, etc
 	
 	Popup comboPopup = new Popup();
@@ -337,22 +343,18 @@ public class RecessCamera : MonoBehaviour {
 			
 			
 			if (goTimer > readyTime){
-				string goText = "Ready...";
 				Texture2D goTexture = hud.ready;
 				if (goTimer > setTime){
 					goTexture = hud.getSet;
-					goText = "Set...";
 				}
 				if (goTimer > goTime){
 					goTexture = hud.go;
-					goText = "GO!";
 				}
 				float gotexWidth = Screen.width * 0.42f;
 				float gotexHeight = Screen.height * 0.4f;
 				Rect goRect = new Rect(Screen.width/2 - gotexWidth/2, 0, gotexWidth, gotexHeight);
 				
 				GUI.DrawTexture(goRect, goTexture, ScaleMode.ScaleAndCrop);
-				GUI.TextArea(goRect, goText, hud.skin.customStyles[3]);
 			}
 		}
 		if (!raceFinished){
