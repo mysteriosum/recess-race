@@ -22,7 +22,7 @@ public class Agent : Movable {
     private void switchTo(Instruction instruction) {
         if (instruction != null) {
             instruction.start();
-			debugLog(instruction.ToString());
+			//debugLog(instruction.ToString());
         }
         this.currentInstruction = instruction;
     }
@@ -77,12 +77,7 @@ public class Agent : Movable {
                || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
 				//debugLog("On va attendre");
                 Instruction run = new RunToInstruction(this, linkedPlateform.startLocation, true);
-                Instruction wait = new WaitInstruction(this, 1f);
-                /*Instruction makeSurRun = new RunToInstruction(this, linkedPlateform.startLocation, true);
-                Instruction wait2 = new WaitInstruction(this, 0.1f);
-                run.nextInstruction = wait;
-                wait.nextInstruction = makeSurRun;
-                makeSurRun.nextInstruction = wait2;*/
+                Instruction wait = new WaitInstruction(this, 0.1f);
                 run.nextInstruction = wait;
 				wait.nextInstruction = instructionsToGetThere;
                 switchTo(run);
