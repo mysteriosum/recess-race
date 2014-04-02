@@ -10,6 +10,7 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     public Color color;
     public int id;
 	public int waypointId;
+	public bool isLastWayPoint;
     public bool showGismos = true;
 	
 	public Color pointColor;
