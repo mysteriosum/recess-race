@@ -12,7 +12,7 @@ public class Agent : Movable {
 
 	private Vector3 lastPosition;
 	public float distanceDone = 111;
-	private int unstuckTickNumber = 30;
+	private int unstuckTickNumber = 60;
 
     void Update() {
         if (currentInstruction != null) {
@@ -42,7 +42,7 @@ public class Agent : Movable {
     }
 
 	private void antiStuck(){
-		if (++unstuckTickNumber >= 30) {
+		if (++unstuckTickNumber >= 60) {
 			this.lastPosition = this.transform.position;
 			unstuckTickNumber = 0;
 			if(distanceDone < 0.09){

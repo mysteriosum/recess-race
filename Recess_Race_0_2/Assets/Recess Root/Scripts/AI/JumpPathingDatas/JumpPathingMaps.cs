@@ -316,6 +316,23 @@ public class JumpPathingMaps {
 
 
 
+
+	
+
+	//--------------------------------------------------------------------------------
+	//---------------------------------------10---------------------------------------
+	//--------------------------------------------------------------------------------
+
+	public static PathingMap jump_x10_y3 = new PathingMap(true, new bool[,] {
+		{false,false,false,false,true,true,true,true,true,false,false},
+		{false,false,true,true,true,true,true,true,true,true,true},
+		{false,true,true,true,true,true,true,true,true,true,true},
+		{false,true,true,true,true,false,false,false,false,true,true},
+		{true,true,true,true,false,false,false,false,false,false,false},
+		{true,true,true,false,false,false,false,false,false,false,false},
+		{true,true,false,false,false,false,false,false,false,false,false}
+	});
+
 	//--------------------------------------------------------------------------------
 	//---------------------------------------11---------------------------------------
 	//--------------------------------------------------------------------------------

@@ -328,17 +328,17 @@
   </object>
   <object x="19525" y="1166" width="81" height="72">
    <properties>
-    <property name="id" value="14"/>
+    <property name="id" value="13"/>
    </properties>
   </object>
   <object x="22099" y="1142" width="81" height="72">
    <properties>
-    <property name="id" value="15"/>
+    <property name="id" value="14"/>
    </properties>
   </object>
   <object x="25395" y="1110" width="81" height="72">
    <properties>
-    <property name="id" value="16"/>
+    <property name="id" value="15"/>
    </properties>
   </object>
  </objectgroup>
