@@ -58,9 +58,8 @@ public class PlateformGenerator {
 		}
 	}
 
-    private bool tileOver(int x, int y)
-    {
-        return y != mapDimension.height-1 && map.pathingMap[x][y + 1];
+    private bool tileOver(int x, int y){
+		return (y != mapDimension.height-1 && map.pathingMap[x][y + 1]) || (y != mapDimension.height-2 && map.pathingMap[x][y + 2]);
     }
 
     private void prepareNextTile(int x, int y)
