@@ -497,7 +497,16 @@
     <property name="id" value="16"/>
    </properties>
   </object>
-  <object x="32114" y="733"/>
+  <object x="30613" y="865">
+   <properties>
+    <property name="id" value="17"/>
+   </properties>
+  </object>
+  <object x="31782" y="737">
+   <properties>
+    <property name="id" value="18"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#a40080" name="QuestionMarks" width="1050" height="60">
   <object type="QuestionMark" x="16564" y="712">
