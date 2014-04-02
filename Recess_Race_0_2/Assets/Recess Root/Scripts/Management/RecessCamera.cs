@@ -255,7 +255,7 @@ public class RecessCamera : MonoBehaviour {
 		}
 		fitz = Fitz.fitz.transform;
 		racers = tlist.ToArray();
-		
+		transform.position = new Vector3(fitz.transform.position.x, fitz.transform.position.y, transform.position.z);
 		
 		
 		Transform roulette = GetComponentInChildren<Roulette>().transform;

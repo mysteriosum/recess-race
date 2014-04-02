@@ -191,10 +191,13 @@ public class MainMenu : MonoBehaviour {
 	public CreditsVariables creditsVars;
 	void Awake () {
 		currentSpeed = goingUp? arrowMax : -arrowMax;
-		
-		sceneLogoCard.sprite = logoCards[0];
-		sceneLogoCard.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, sceneLogoCard.transform.position.z);
-		
+		if (logoCards.Length > 0){
+			sceneLogoCard.sprite = logoCards[0];
+			sceneLogoCard.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, sceneLogoCard.transform.position.z);	
+		}
+		else{
+			currentMenu = MenuEnum.main;
+		}
 			
 		//set up menus, make sure the menu skin is correct...
 	}
