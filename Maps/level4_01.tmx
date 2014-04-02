@@ -751,7 +751,7 @@
     <property name="id" value="2"/>
    </properties>
   </object>
-  <object x="9917" y="476" width="66" height="60">
+  <object x="9454" y="471" width="66" height="60">
    <properties>
     <property name="id" value="4"/>
    </properties>
@@ -924,30 +924,6 @@
   <object x="8321" y="350" width="66" height="72">
    <ellipse/>
   </object>
-  <object x="9551" y="596" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="9707" y="698" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="9575" y="830" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="9725" y="926" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="9545" y="986" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="9725" y="1100" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="9881" y="1256" width="66" height="72">
-   <ellipse/>
-  </object>
-  <object x="15318" y="714" width="48" height="60">
-   <ellipse/>
-  </object>
   <object x="15338" y="578" width="48" height="60">
    <ellipse/>
   </object>
@@ -964,6 +940,15 @@
    <ellipse/>
   </object>
   <object x="17336" y="806" width="48" height="60">
+   <ellipse/>
+  </object>
+  <object x="11995" y="860" width="66" height="72">
+   <ellipse/>
+  </object>
+  <object x="12515" y="736" width="66" height="72">
+   <ellipse/>
+  </object>
+  <object x="12183" y="796" width="66" height="72">
    <ellipse/>
   </object>
  </objectgroup>
