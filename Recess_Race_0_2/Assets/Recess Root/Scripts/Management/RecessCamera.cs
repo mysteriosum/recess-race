@@ -177,7 +177,7 @@ public class RecessCamera : MonoBehaviour {
 	private Transform fitz;
 	private List<Popup> popups = new List<Popup>();
 	
-	private Controller controller = new Controller();
+//	private Controller controller = new Controller();
 	
 	private int rank = 0;
 	
@@ -460,7 +460,7 @@ public class RecessCamera : MonoBehaviour {
 				GUIStyle yesnoStyle = new GUIStyle(hud.skin.customStyles[0]);
 				yesnoStyle.alignment = TextAnchor.MiddleLeft;
 				GUIStyle homeStyle = new GUIStyle(yesnoStyle);
-				GUIStyle retryStyle = new GUIStyle(yesnoStyle);
+//				GUIStyle retryStyle = new GUIStyle(yesnoStyle);
 				
 				if (Application.loadedLevel < Application.levelCount-1){
 					

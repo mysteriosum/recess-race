@@ -51,7 +51,7 @@ public class DialogueManager : MonoBehaviour {
 				string theirName = speaker.name;
 				string formattedName = theirName.ToUpper();
 				if (line.StartsWith(formattedName)){
-					string toSay = line.Remove (0, theirName.Length + 2);
+					//string toSay = line.Remove (0, theirName.Length + 2);
 					commands.Add (new DialogueCommand(line, theirName, (float)line.Length * timePerCharacter));
 				}
 			}
@@ -79,6 +79,8 @@ public class DialogueManager : MonoBehaviour {
 	
 	public void NextCommand(){
 		convoIndex ++;
-		ExecuteCommand(commands[convoIndex]);
+		if (convoIndex < commands.Count)
+			ExecuteCommand(commands[convoIndex]);
+
 	}
 }

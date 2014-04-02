@@ -8,6 +8,8 @@ public class Speaker : MonoBehaviour {
 	public SpriteRenderer speaker;
 	public TextMesh tm;
 	
+	private static int count = 0;
+	
 	public Vector2 textOffset = new Vector2(0.2f, 0.2f);
 	public int textSize = 14;
 	public float heightPerLine = 1f;
@@ -18,7 +20,7 @@ public class Speaker : MonoBehaviour {
 	public delegate void SpeechDoneDelegate();
 	public SpeechDoneDelegate finishEvent = null;
 	
-	bool active = false;
+	bool isActive = false;
 	bool growing;
 	float maxScaleY;
 	float maxScaleX;
@@ -30,12 +32,10 @@ public class Speaker : MonoBehaviour {
 	float scaleX;
 	float scaleY;
 	
-	int modifier = 1;
 	public int lineLengths = 40;
-	float growthRateMod = 16f;
+	float growthRateMod = 20f;
 	
 	
-	string showString = "";
 	
 	string dialogue;
 	string testDialogue = "This is a wonderful string, really. It's long enough to test my purpose, and also I'm into things like this. So there!";
@@ -45,19 +45,25 @@ public class Speaker : MonoBehaviour {
 		triangle.renderer.enabled = false;
 		square.renderer.enabled = false;
 		tm.renderer.enabled = false;
+		
+		triangle.transform.position -= Vector3.forward * count;
+		square.transform.position -= Vector3.forward * count;
+		tm.transform.position -= Vector3.forward * count;
+		
 		speaker = transform.parent.GetComponent<SpriteRenderer>();
 		//DEV
-		Debug.Log ("Disabling renderers from start");
 		//Speak (testDialogue, showTimerDefault, SayItAgain);
 		maxScaleX = defaultScaleX;
-		
+		count++;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (!active) return;
+		if (!isActive) return;
 		
-		modifier = Camera.main.transform.position.x > transform.position.x? -1 : 1;
+		tm.transform.localScale = new Vector3(transform.localScale.x, 1, 1);
+		
+		
 		
 		if (growing){
 			scaleX += Time.deltaTime * growthRateMod;
@@ -73,7 +79,7 @@ public class Speaker : MonoBehaviour {
 			tm.text = dialogue;
 			tm.renderer.enabled = true;
 			showTimer += Time.deltaTime;
-			tm.transform.position = new Vector3(square.bounds.min.x + textOffset.x, square.bounds.max.y + textOffset.y, -1);
+			tm.transform.position = new Vector3(square.bounds.min.x + textOffset.x, square.bounds.max.y + textOffset.y, tm.transform.position.z);
 			
 			if (showTimer > showTiming){
 				scaleX -= Time.deltaTime * growthRateMod;
@@ -83,7 +89,7 @@ public class Speaker : MonoBehaviour {
 				square.transform.localScale = new Vector3(scaleX, scaleY, 1);
 				tm.renderer.enabled = false;
 				if (scaleX <= 0 || scaleY <= 0){
-					active = false;
+					isActive = false;
 					triangle.renderer.enabled = false;
 					square.renderer.enabled = false;
 					Debug.Log ("no more enabling on renderers");
@@ -113,7 +119,7 @@ public class Speaker : MonoBehaviour {
 		Debug.Log ("my square's renderer is enabled: " + square.renderer.enabled);
 		showTiming = duration;
 		showTimer = 0;
-		active = true;
+		isActive = true;
 //		tm.transform.position = square.transform.position + Vector3.up * (lineAmount-1) + new Vector3(textOffset.x, textOffset.y, -1);
 		
 	}

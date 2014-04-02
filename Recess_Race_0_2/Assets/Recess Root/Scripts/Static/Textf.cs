@@ -29,7 +29,6 @@ static public class Textf {
 				else {
 					if (charCount > longest){
 						longest = charCount;
-						Debug.Log ("longest line is " + longest);
 					}
                 	charCount = word.Length + 1;
 	                result += Environment.NewLine + word;
@@ -39,7 +38,6 @@ static public class Textf {
             }
 			if (charCount > longest){
 				longest = charCount;
-				Debug.Log ("longest line is " + longest);
 			}
 //			if (currentLine == lineLengths.Length){
 //				return "string doesn't fit!";

@@ -252,9 +252,9 @@ public class Movable : MonoBehaviour {
 				grounded = true;
 				falling = false;
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
-				/*if (animated){
-					anim.Play(a.land); //TEMP got rid of this until we have a proper land animation
-				}*/
+				if (debug){
+					Debug.Log ("I'm grounded now. This is what I hit: " + downRays[lastConnection].collider.name);
+				}
 			}
 			else if (!connectedDown){
 				grounded = false;
