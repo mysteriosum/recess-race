@@ -1,0 +1,53 @@
+#SCENE THE THIRD, in which Phyllis speaks to Mr Bennett in an attempt to mitigate some of the damage she has caused.
+PHYLLIS: Hello, Mr. Bennet.
+MR BENNET: Hey Phyl! Why so formal?
+PHYLLIS: Well, the kids - I mean…
+MR BENNET: It’s fine, I don’t mind.
+PHYLLIS: Hah, okay, sorry.
+MR BENNET: Don’t be.
+PHYLLIS: The children seem to be enjoying themselves.
+MR BENNET: Yes, I think so. There are still some improvements I could make for next year. I didn’t have time to do everything I wanted. For one thing, I wanted to better use the insides of the building, that would have been fun. It would have taken too long to draw - err, organise the desks and chairs. 
+PHYLLIS: It’s still wonderful. I was just telling Jane, Fitz is especially engaged. It’s refreshing!
+MR BENNET: You’re awfully positive today. Are you buttering me up for something?
+PHYLLIS: What? Oh… ahahahah, you’re so funny!
+MR BENNET: Okay, what is it then?
+PHYLLIS: Well… it’s about Carol.
+MR BENNET: Aah, yes. Unfortunate, that…
+PHYLLIS: Well, I think maybe… maybe it was a bit rash?
+MR BENNET: I agree, but given the circumstances…
+PHYLLIS: But what if not all the circumstances were known?
+MR BENNET: Oh? Do you know something we don’t?
+PHYLLIS: Well, yes.
+MR BENNET: I would love to hear it.
+PHYLLIS: Okay. It’s… well, she was eating her dinner… did she tell you about it?
+MR BENNET: She mentioned it, yes. She said there was… a gross thing in her lunch and she started, spilling the whole thing on her clothes. We considered that.
+PHYLLIS: I see. And that didn’t help her case?
+MR BENNET: Not enough. I can’t see why she needed to spend more than 2 minutes away. She could have asked for help, at worst. She was lucky it was only a minor injury, and the parents didn’t want to take legal action…
+PHYLLIS: Okay but… but what if the… the gross thing was put there on purpose?
+MR BENNET: … Oh? Well. That might have changed things.
+PHYLLIS: What if… what if someone put it there, knowing she had a particular fear of… it… in a childish show of revenge?
+MR BENNET: That is quite childish.
+PHYLLIS: I know… I know it won’t happen again, also, and at worst, I’m ready to leave myself if it will make a difference!
+PAUSE: 2
+PHYLLIS: It was me, by the way. In case that wasn’t clear.
+MR BENNET: It was.
+PHYLLIS: I’m so sorry, I didn’t mean for any of this to happen. I didn’t know she’d try to eat on duty, I thought it was harmless! I was just so fed up, she’s always on my case about anything she can think of, I just wanted her to stop, and… well…
+MR BENNET: You thought a little mischief would make you feel better.
+PHYLLIS: Yes.
+MR BENNET: It never does, but we never know until it’s too late. I should have perhaps preempted this. I noticed, of course, the way she treats you. I am sorry I didn’t act sooner. This could have been prevented. Yes… yes, I see now this was my fault.
+PHYLLIS: Oh…
+PAUSE: 4
+MR BENNET: Well, I will speak to Mme de Bourgh about this. Before I do, I need something from you.
+PHYLLIS: Yes? Anything!
+MR BENNET: I need assurance that this will never happen again - not just a promise. A plan of action.
+PHYLLIS: What action?
+MR BENNET: If, by the end of my conversation with Lady Catherine, you and Carol are both employed here, the first time you see her you must square with her. Tell her what you have done, and why you have done it, and apologise.
+PHYLLIS: Oh… okay. Yes, of course. I’ll do it.
+MR BENNET: Good! Then we have a deal. Please understand that I am absolutely serious about this condition, and if it is not met, I will consider it an affront to me, personally, and I will not take it lightly.
+PHYLLIS: I understand.
+MR BENNET: Very good. Now, let’s watch the end of the race, yes?
+PHYLLIS: Yes. Thank you.
+MR BENNET: Yes, yes. Carry on.
+
+
+

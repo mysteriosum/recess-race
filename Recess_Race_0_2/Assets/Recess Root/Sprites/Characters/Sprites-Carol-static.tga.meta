@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 781c3212c442bb24cb97a3bfc40ae31c
+guid: 0670d16dcb667f644938b87435b4da1e
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -23,19 +23,19 @@ TextureImporter:
   textureFormat: -1
   maxTextureSize: 1024
   textureSettings:
-    filterMode: 2
+    filterMode: -1
     aniso: 1
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 6
+  alignment: 7
   spritePivot: {x: .5, y: .5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 100
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings:
@@ -44,6 +44,15 @@ TextureImporter:
     textureFormat: -2
     compressionQuality: 50
   spriteSheet:
-    sprites: []
+    sprites:
+    - name: Sprites-Carol-static_0
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 3
+        width: 187
+        height: 430
+      alignment: 7
+      pivot: {x: 0, y: 0}
   spritePackingTag: 
   userData: 

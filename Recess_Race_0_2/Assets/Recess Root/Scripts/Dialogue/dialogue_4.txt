@@ -1,0 +1,58 @@
+#Scene 4, in which Carol and Phyllis are reconciled.
+#[Phylls and Carol are standing in the school yard, discussing previous events: how Phyllis sabotaged Carol, how she was fired, how Phyllis talked Mr. Bennett into rehiring Carol, and how Carol got her job back.]
+PHYLLIS: Hello Carol.
+CAROL: Hi.
+PAUSE: 50
+PHYLLIS: I’m sorry.
+CAROL: I beg your pardon?
+PHYLLIS: I said I’m sorry.
+CAROL: For what?
+PHYLLIS: For… everything.  You... don’t know?
+CAROL: I don’t know what you’re talking about, but I think you’d better explain it.
+PHYLLIS: I thought they would have told you. What did they say when they rehired you?
+CAROL: They said they discussed it more at length, and decided it was an impulsive decision, and to give me a second chance. What should they have told me?
+PHYLLIS: I… um…
+CAROL: Well?
+PHYLLIS: It was me who sabotaged your lunch.
+CAROL: You… you what?!
+PHYLLIS: I put the… gross thing in your lunch. On that day.
+CAROL: I see.
+PHYLLIS: Yes…
+PAUSE: 5
+CAROL: So it was because of you that I was dismissed.
+PAUSE: 1
+PHYLLIS: Yes.
+CAROL: And no one knew it was you?
+PHYLLIS: Well I told Jane a couple of days ago, and she told me to tell Mr. Bennett...
+CAROL: So you could have just done nothing.
+PHYLLIS: Y-yes, I could have. I thought about it.
+CAROL: Why didn't you just let me get fired?
+PHYLLIS: I...
+CAROL:  I can't even remember a kind word between us.
+PHYLLIS: Yes, but you never got me fired! I never wanted for that to happen. I couldn't sleep all week. Especially, Hill told me about your family situation, and I couldn't stop imagining your father...
+CAROL: (a short laugh) I never told my father.
+PHYLLIS: Oh.
+CAROL: I couldn't face him. Whatever you imagined, it would have been worse. You must understand, the way I've treated you is the way he treats anyone without a six-digit salary. I'm afraid I've inherited many of my father's worst aspects. 
+PAUSE: 4
+CAROL: I thought about you a lot this week.
+PHYLLIS: Really?
+CAROL: When I thought about how my father would react, and how he does when I do anything he doesn't like, I thought about how I've treated you. Spending the day home alone left me lots of time to think.
+PHYLLIS: I see.
+CAROL: I deserved what you did.
+PHYLLIS: No, you didn't, no one does.
+CAROL: I did. 
+PHYLLIS: I should have just told you how I felt. I was a coward.
+CAROL: Look... what happened is in the past now.
+PHYLLIS: So... you forgive me?
+CAROL: Will you forgive me?
+PHYLLIS: Of course.
+CAROL: Then we're even.
+PHYLLIS: OK. Good.
+CAROL: ... Thank you.
+PHYLLIS: Thank you!
+#[The two resume watching the race. After a moment, Carol smirks and nudges Phyllis]
+PAUSE: 3
+CAROL: Actually, I take all that back. You damn well owe me!
+PHYLLIS: Owe you what?!
+CAROL: I dunno yet. I'll figure something out. Revenge maybe. I promise I won't get you fired, but I can't promise anything else!
+#[They both laugh. AND THE RACE GOES ON!...Though at this point you've clearly lost if you watched this whole convo!

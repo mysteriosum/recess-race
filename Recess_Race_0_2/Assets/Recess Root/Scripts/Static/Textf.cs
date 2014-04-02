@@ -6,12 +6,13 @@ using System.Collections.Generic;
 static public class Textf {
 
 	
-	static public string GangsterWrap(string longstring,int[] lineLengths){
+	static public string GangsterWrap(string longstring,int[] lineLengths, out int lineAmount, out int longestLine){
 		int currentLine = 0;
     	int charCount = 0;
 		char[] delimiterChars = { ' ' };
-		String[] words = longstring.Split(delimiterChars);
-    	String result = "";
+		string[] words = longstring.Split(delimiterChars);
+    	string result = "";
+		int longest = 0;
 		
  	    for (int index = 0; index < words.Length; index++) {
         	string word = words[index];
@@ -22,20 +23,30 @@ static public class Textf {
             }
 			else if (index > 0 ) {
             	charCount += word.Length + 1; //+1 because we assume that there will be a space after every word
-            	if (charCount <= lineLengths[currentLine]) {
+            	if (charCount <= lineLengths[Mathf.Min (lineLengths.Length - 1, currentLine)]) {
 					result += " " + word;
 				}
 				else {
+					if (charCount > longest){
+						longest = charCount;
+						Debug.Log ("longest line is " + longest);
+					}
                 	charCount = word.Length + 1;
 	                result += Environment.NewLine + word;
 					currentLine ++;
             	}
 
             }
-			if (currentLine == lineLengths.Length){
-				return "String doesn't fit!";
+			if (charCount > longest){
+				longest = charCount;
+				Debug.Log ("longest line is " + longest);
 			}
+//			if (currentLine == lineLengths.Length){
+//				return "string doesn't fit!";
+//			}
         }
+		longestLine = longest;
+		lineAmount = currentLine + 1;
 		return result;
     }
 	/// <summary>
@@ -50,23 +61,23 @@ static public class Textf {
 	/// <param name='characters'>
 	/// Characters.
 	/// </param>
-	public static String[] ParseScript (TextAsset script){
-		String[] delimitors = new String[] { Environment.NewLine, "\n" };
+	public static string[] ParseScript (TextAsset script){
+		string[] delimitors = new string[] { Environment.NewLine, "\n" };
 		string wholeScript = script.text;
-		Debug.Log("New line is silly because " + Environment.NewLine + " I mean look!");
-		String[] lines = wholeScript.Split(delimitors, StringSplitOptions.RemoveEmptyEntries);
+		
+		string[] lines = wholeScript.Split(delimitors, StringSplitOptions.RemoveEmptyEntries);
 		Debug.Log("First line is " + lines[0]);
 		return lines;
 	}
 	
-	public static String SplitIntoComponents (String fullText, int maxLength){
+	public static string SplitIntoComponents (string fullText, int maxLength){
 		if (fullText.Length <= maxLength){
 			return fullText;
 		}
 		
-		List<String> components = new List<String>();
-		String remainingText = fullText;
-		String modifiedText = "";
+		List<string> components = new List<string>();
+		string remainingText = fullText;
+		string modifiedText = "";
 		int insuranceButton = 0;
 		while (remainingText.Length > maxLength){
 			insuranceButton ++;
@@ -93,7 +104,7 @@ static public class Textf {
 			components[i] = components[i].Insert (components[i].Length, "...*");
 		}
 		
-		modifiedText = String.Concat(components.ToArray());
+		modifiedText = string.Concat(components.ToArray());
 		return modifiedText;
 	}
 	
