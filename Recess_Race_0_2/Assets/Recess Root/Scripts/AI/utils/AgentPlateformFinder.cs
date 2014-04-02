@@ -37,17 +37,16 @@ public class AgentPlateformFinder {
 
 
 		if (min == 1) {
-			Debug.Log("From plateform #" + plateform.id + " to wp #" + targetWayPointId + " in direct jumps (trys " + trys + ").");
+			Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformWayPoint.plateform.id+" in direct jumps (trys " + trys + ").");
 			return plateformWayPoint;
 		} else {
-			Debug.Log("From plateform #" + plateform.id + " to wp #" + targetWayPointId + " in " + min + " jumps (trys " + trys + ").");
+
 			int target = (int) (min + (1 - agent.jumpDecissionSkill) * UnityEngine.Random.Range (0, 5));
-			Debug.Log (min + " target : " + target);
 			for (int i = 0; i < 5; i++) {
 				for (int j = -1; j <= 1; j+=2) {
 					PlateformNbTry plateformTry = getPlateformWithMoveOf(tryiedPlateform,target + j*i);
 					if(plateformTry != null){
-						Debug.LogWarning(plateformTry.plateform.startLocation);
+						Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformTry.plateform.plateform.id+" in " + min + " jumps (trys " + trys + ").");
 						return plateformTry.plateform;
 					}
 				}

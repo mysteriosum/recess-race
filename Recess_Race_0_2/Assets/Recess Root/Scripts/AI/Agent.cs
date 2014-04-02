@@ -42,10 +42,10 @@ public class Agent : Movable {
     }
 
 	private void antiStuck(){
-		if (++unstuckTickNumber >= 60) {
+		if (++unstuckTickNumber >= 30) {
 			this.lastPosition = this.transform.position;
 			unstuckTickNumber = 0;
-			if(distanceDone < 0.09){
+			if(distanceDone < 0.1){
 				Debug.Log ("AGENT UNSTUCK ");
 				if(this.currentInstruction == null){
 					switchTo(null);
@@ -68,19 +68,22 @@ public class Agent : Movable {
                 switchTo(instruction.getInstruction(this));
             }
         } else if (plateform) {
-			if (isNotCurrentPlateform(plateform)) return;
-            lastPlateform = plateform;
-            if (plateform.waypointId > 0) {
-               this.currentWayPoint = plateform.waypointId;
-            }
-			if(currentInstruction == null){
+			if (isCurrentPlateform(plateform)) return;
+			if(plateform.isLastWayPoint){
+				this.setMovingStrenght(1);
+			}else{
+				lastPlateform = plateform;
+				if (plateform.waypointId > 0) {
+					this.currentWayPoint = plateform.waypointId;
+				}
 				handlePlateform(plateform);
 			}
-        }
-
-    }
-
-	private bool isNotCurrentPlateform(Plateform plateform){
+			
+		}
+		
+	}
+	
+	private bool isCurrentPlateform(Plateform plateform){
 		return currentInstruction != null && lastPlateform != null && lastPlateform.id == plateform.id;
 	}
 
@@ -91,6 +94,7 @@ public class Agent : Movable {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {
 			Instruction instructionsToGetThere = InstructionFactory.makeInstruction(this,linkedPlateform.instruction);
+			//Debug.Log("test" + linkedPlateform.startLocation);
 			if(linkedPlateform.instruction.needRunCharge){
 				makeRunCharge(linkedPlateform,instructionsToGetThere);
 			}else{
@@ -100,16 +104,16 @@ public class Agent : Movable {
     }
 
     private void makeJump(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere) {
-        if (Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.05) {
+        if (Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.1) {
             switchTo(instructionsToGetThere);
         } else {
             if ((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
                || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
-				//debugLog("On va attendre");
 				Instruction run = new RunToInstruction(this, getXOffsetedPosition(linkedPlateform.startLocation), true);
-                Instruction wait = new WaitInstruction(this, 0.1f);
+                Instruction wait = new WaitInstruction(this, 0.4f);
                 run.nextInstruction = wait;
 				wait.nextInstruction = instructionsToGetThere;
+				//Debug.Log(instructionsToGetThere.ToString());
                 switchTo(run);
             } else {
 				//debugLog("On attend pas");

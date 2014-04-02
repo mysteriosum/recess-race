@@ -193,6 +193,9 @@ public class PlateformGenerator {
 				plateform.transform.gameObject.name = "Plateform " + plateform.id + " - wp #" + id + "";
 				plateform.waypointId = id;
 				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
+				if(id==nbWayPoints){
+					plateform.isLastWayPoint = true;
+				}
 				/*if(id == 1){
 					BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.none, CommandEnum.right, DifficultyEnum.assured);
 					BullyInstruction bi = MapElementHelper.generateInstructionOnCentered(con, plateform, this.bullyInstructionParent);
