@@ -36,8 +36,7 @@ public class PossibleJumpMaps {
 		list1_m2.Add (new JumpRunCreationData (Direction.right, creationData, JumpPathingMaps.jump_x1_ym2));
 		possibles[1, getIndexFromY(-2)] = list1_m2;
 
-		List<JumpRunCreatio
-			nData> list1_m3 = new List<JumpRunCreationData>();
+		List<JumpRunCreationData> list1_m3 = new List<JumpRunCreationData>();
 		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.DropOff,direction=Direction.right, distanceToStartRunningAgain =0f, endDirection=Direction.right, totalDistanceAfterMoveAgain=3f, jumpHoldingLenght=10f, moveHoldingLenght=1f, needRunCharge=false};
 		list1_m3.Add (new JumpRunCreationData (Direction.right, creationData, JumpPathingMaps.jump_x1_ym3));
 		possibles[1, getIndexFromY(-3)] = list1_m3;
