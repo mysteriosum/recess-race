@@ -253,17 +253,17 @@ public class PlateformGenerator {
 							splitDirection = (from.x < to.x) ? SplitDirection.BottomRight : SplitDirection.BottomLeft;
 							checkDirection = (from.x < to.x) ? SplitDirection.BottomLeft : SplitDirection.BottomRight;
 							Vector3 vJump = new Vector3(from.x, from.y - Math.Abs(distanceY) , 0);
-							pathingMap = this.map.splitTo(splitDirection, vJump, new Dimension(13, Math.Abs(distanceY) + 7));
+							pathingMap = this.map.splitTo(splitDirection, vJump, new Dimension(14, Math.Abs(distanceY) + 7));
 						}else{
 							splitDirection = (from.x < to.x) ? SplitDirection.TopRight : SplitDirection.TopLeft;
 							checkDirection = (from.x < to.x) ? SplitDirection.TopLeft : SplitDirection.TopRight;
 							Vector3 vDrop = new Vector3(from.x, from.y +1, 0);
-							pathingMap = this.map.splitTo(splitDirection, vDrop, new Dimension(13, Math.Abs(distanceY) + 2));
+							pathingMap = this.map.splitTo(splitDirection, vDrop, new Dimension(14, Math.Abs(distanceY) + 2));
 						}
 					}else{ // Going up
 						splitDirection = (from.x < to.x) ? SplitDirection.BottomRight : SplitDirection.BottomLeft;
 						checkDirection = (from.x < to.x) ? SplitDirection.BottomLeft : SplitDirection.BottomRight;
-						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, 7));
+						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(14, 7));
 					}
 
 
