@@ -36,7 +36,8 @@ public class PossibleJumpMaps {
 		list1_m2.Add (new JumpRunCreationData (Direction.right, creationData, JumpPathingMaps.jump_x1_ym2));
 		possibles[1, getIndexFromY(-2)] = list1_m2;
 
-		List<JumpRunCreationData> list1_m3 = new List<JumpRunCreationData>();
+		List<JumpRunCreatio
+			nData> list1_m3 = new List<JumpRunCreationData>();
 		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.DropOff,direction=Direction.right, distanceToStartRunningAgain =0f, endDirection=Direction.right, totalDistanceAfterMoveAgain=3f, jumpHoldingLenght=10f, moveHoldingLenght=1f, needRunCharge=false};
 		list1_m3.Add (new JumpRunCreationData (Direction.right, creationData, JumpPathingMaps.jump_x1_ym3));
 		possibles[1, getIndexFromY(-3)] = list1_m3;
@@ -217,6 +218,11 @@ public class PossibleJumpMaps {
 		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.Jump,direction=Direction.right, distanceToStartRunningAgain =0f, endDirection=Direction.right, totalDistanceAfterMoveAgain=0f, jumpHoldingLenght=2.23f, moveHoldingLenght=6.51f, needRunCharge=true};
 		list7_4.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x7_y4));
 		possibles[7, getIndexFromY(4)] = list7_4;
+
+		List<JumpRunCreationData> list8_0 = new List<JumpRunCreationData>();
+		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.Jump,direction=Direction.right, distanceToStartRunningAgain =0f, endDirection=Direction.right, totalDistanceAfterMoveAgain=0f, jumpHoldingLenght=8f, moveHoldingLenght=8f, needRunCharge=false};
+		list8_0.Add(new JumpRunCreationData(Direction.right, creationData, JumpPathingMaps.jump_x8_y0_noRun));
+		possibles[8, getIndexFromY(0)] = list8_0;
 
 		List<JumpRunCreationData> list10_3 = new List<JumpRunCreationData>();
 		creationData = new InstructionCreationData() {type=InstructionCreationData.InstructionType.Jump,direction=Direction.right, distanceToStartRunningAgain =0f, endDirection=Direction.right, totalDistanceAfterMoveAgain=0f, jumpHoldingLenght=10f, moveHoldingLenght=10f, needRunCharge=true};

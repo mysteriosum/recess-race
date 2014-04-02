@@ -68,15 +68,21 @@ public class Agent : Movable {
                 switchTo(instruction.getInstruction(this));
             }
         } else if (plateform) {
-			if (currentInstruction != null && lastPlateform != null && lastPlateform.id == plateform.id) return;
+			if (isNotCurrentPlateform(plateform)) return;
             lastPlateform = plateform;
             if (plateform.waypointId > 0) {
                this.currentWayPoint = plateform.waypointId;
             }
-            handlePlateform(plateform);
+			if(currentInstruction == null){
+				handlePlateform(plateform);
+			}
         }
 
     }
+
+	private bool isNotCurrentPlateform(Plateform plateform){
+		return currentInstruction != null && lastPlateform != null && lastPlateform.id == plateform.id;
+	}
 
 
     private void handlePlateform(Plateform plateform) {
