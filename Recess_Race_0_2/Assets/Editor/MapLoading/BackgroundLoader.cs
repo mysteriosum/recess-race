@@ -12,18 +12,22 @@ public  class BackgroundLoader {
 
     private Transform parent;
 	
-    private float bgDistance = 60;
     private float silhouetteDistance = 100;
-	private float treesDistance = 52;
+    private float bgDistance = 85;
+	private float grassLineDistance = 80f;
+	private float treesDistance = 77;
+    private float fenceDistance = 75;
+	
     private float silhouetteYOffset = 1;
     private float fenceYOffset = -4;
-    private float fenceDistance = 27;
-	private float grassLineYOffset = -10;
+	private float grassLineYOffset = -30.5f;
+	private float houseYOffset = 0;
+	private float treesYOffset = 0;
 
     private RecessCamera camera;
     private Map map;
 
-    public void loadBackground(GameObject gameObjectMapParent, Map map, RecessCamera camera) {
+    public void loadBackground(GameObject gameObjectMapParent, Map map, RecessCamera camera, int yOffset) {
         this.camera = camera;
         this.map = map;
         parent = GameObjectFactory.createGameObject("Backgrounds", gameObjectMapParent.transform).transform;
@@ -35,11 +39,11 @@ public  class BackgroundLoader {
 		GameObject prefab = Resources.Load<GameObject>("SkyBackdrop");
 		/*GameObject obj = */GameObjectFactory.createCopyGameObject(prefab, "SkyBackdrop", parent);
 
-		addLayerOfSprites("Silouette"	, parent, "Background/Silouette/", silhouetteDistance, silhouetteYOffset, Vector2.one);
-		addLayerOfSprites("House"		, parent, "Background/BuildingAndStuff/", bgDistance, 0, Vector2.one);
-		addLayerOfSprites("GrassLine"	, parent, "Background/GrassLine/", bgDistance, grassLineYOffset, Vector2.one);
-		addLayerOfSprites("Fence"		, parent, "Background/Fences/", fenceDistance, fenceYOffset, Vector2.one);
-		addLayerOfSprites("Tree"		, parent, "Background/Trees/", treesDistance, 0f, new Vector2(0.4f,3f));
+		addLayerOfSprites("Silouette"	, parent, "Background/Silouette/", silhouetteDistance, silhouetteYOffset + yOffset, Vector2.one);
+		addLayerOfSprites("House"		, parent, "Background/BuildingAndStuff/", bgDistance, houseYOffset + yOffset, Vector2.one);
+		addLayerOfSprites("GrassLine"	, parent, "Background/GrassLine/", grassLineDistance, grassLineYOffset + yOffset, Vector2.one);
+		addLayerOfSprites("Fence"		, parent, "Background/Fences/", fenceDistance, fenceYOffset + yOffset, Vector2.one);
+		addLayerOfSprites("Tree"		, parent, "Background/Trees/", treesDistance, treesYOffset + yOffset, new Vector2(0.4f,3f));
 		if (MapLoader.loadGameElement) {
 			makeParallax ();
 		}

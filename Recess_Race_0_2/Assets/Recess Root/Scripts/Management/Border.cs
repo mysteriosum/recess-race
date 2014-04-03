@@ -7,7 +7,7 @@ public class Border : MonoBehaviour {
 	public Rect border;
 
 	// Use this for initialization
-	void Start () {
+	void Start () {/*
 		Transform top = null;
 		Transform bottom = null;
 		Transform right = null;
@@ -33,7 +33,8 @@ public class Border : MonoBehaviour {
 		}
 		else{
 			Debug.LogWarning("The border in your scene is not set correctly");
-		}
+		}*/
+		RecessCamera.cam.Border = border;
 		
 	}
 	

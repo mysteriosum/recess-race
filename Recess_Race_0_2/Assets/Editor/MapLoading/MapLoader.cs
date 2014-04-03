@@ -16,6 +16,7 @@ public class MapLoader {
 	public static bool verbose;
     public static bool inDebugMode = false;
 	public static bool loadGameElement = true;
+	public static int backgroundYOffset = 0;
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
@@ -88,11 +89,12 @@ public class MapLoader {
         loadTennisBalls();
         loadQuestionMark();
         loadSpeedBoosts();
+		loadFillerTiles();
         print("Loaded Objects");
 
         if (makeBackground) {
             BackgroundLoader bgl = new BackgroundLoader();
-            bgl.loadBackground(worldRootGameObject,map,recessCamera);
+            bgl.loadBackground(worldRootGameObject,map,recessCamera, backgroundYOffset);
             print("Loaded Background");
         }
 
@@ -111,13 +113,18 @@ public class MapLoader {
 
     private void loadBorders() {
         Transform parent = GameObjectFactory.createGameObject("Borders", worldRootGameObject.transform).transform;
-        createBorder("top", new Vector3(map.mapDimension.width / 2, map.mapDimension.height+1, 0), this.map.mapDimension.width+1, 1, parent);
-        createBorder("bottom", new Vector3(map.mapDimension.width / 2, -1, 0), this.map.mapDimension.width+1, 1, parent);
+		Border border = parent.gameObject.AddComponent<Border>();
+        float right = -1;
+		float top = map.mapDimension.height + 1;
+		createBorder("top", new Vector3(map.mapDimension.width / 2 + 1, top, 0), this.map.mapDimension.width+1, 1, parent);
+        createBorder("bottom", new Vector3(map.mapDimension.width / 2+1, -1, 0), this.map.mapDimension.width+1, 1, parent);
         createBorder("left", new Vector3(map.mapDimension.width + 1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
-        createBorder("right", new Vector3(-1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
+        createBorder("right", new Vector3(right, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
 		if (loadGameElement) {
-			recessCamera.Border = new Rect (0, 0, map.mapDimension.width, map.mapDimension.height);		
+			border.border = new Rect (0, 0, map.mapDimension.width, map.mapDimension.height);		
 		}
+		
+		
     }
 
     private void createBorder(string name, Vector3 position,int width, int height, Transform parent) {
@@ -143,6 +150,7 @@ public class MapLoader {
 		if (loadGameElement) {
 			loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.4f, parent);
 			loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
+			loadObject (positions, "StartObjects", "StartObjects","StartObjects", -0.4f, parent);
 			loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
 			loadObject (positions, "George", "George","George", -0.4f, parent);
 			loadObject (positions, "Dialogue_1", "Dialogue_1","Dialogue_1", -0.4f, parent);
@@ -221,8 +229,8 @@ public class MapLoader {
 		foreach (var element in questionMarks) {
             float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "QuestionMark", questionMarkParent);
-			garbage.transform.Translate(x, y, 0);
+			GameObject questionMark = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "QuestionMark", questionMarkParent);
+			questionMark.transform.Translate(x, y, 0);
 		}
 	}
 	
@@ -233,8 +241,26 @@ public class MapLoader {
 		foreach (var element in speedBoosts) {
             float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-			GameObject garbage = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "SpeedBoost", speedBoostParent);
-			garbage.transform.Translate(x, y, 0);
+			GameObject speedBoost = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "SpeedBoost", speedBoostParent);
+			speedBoost.transform.Translate(x, y, 0);
+		}
+	}	
+	private void loadFillerTiles() {
+        GameObject fillerPrefab = Resources.Load<GameObject>("Objects/FillerGrey");
+        IEnumerable<XElement> fillers = getAllObjectFromObjectGroup("Fill");
+		GameObject fillerParent = GameObjectFactory.createGameObject("Fill Group", worldRootGameObject.transform);
+		foreach (var element in fillers) {
+            float x = Mathf.Floor((float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width);
+            float y = Mathf.Ceil((float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height);
+			GameObject filler = GameObjectFactory.createCopyGameObject(fillerPrefab, "FillGuy", fillerParent);
+			float scaleX = Mathf.Ceil((float)parse(element.Attribute("width").Value) / (float)map.tileDimension.width);
+			float scaleY = Mathf.Ceil((float)parse(element.Attribute("height").Value) / (float)map.tileDimension.height);
+			
+			float offset = filler.GetComponent<SpriteRenderer>().sprite.bounds.extents.x;
+			
+			//filler.transform.Translate(x, y, 0);
+			filler.transform.localScale = new Vector3(scaleX, scaleY, 1f);
+			filler.transform.Translate(x + scaleX / 2 - offset, y - scaleY / 2 - offset, 0);
 		}
 	}
 	
