@@ -145,6 +145,15 @@ public class MapLoader {
 			loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
 			loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
 			loadObject (positions, "George", "George","George", -0.4f, parent);
+			loadObject (positions, "Dialogue_1", "Dialogue_1","Dialogue_1", -0.4f, parent);
+			loadObject (positions, "Dialogue_1_2", "Dialogue_1_2","Dialogue_1", -0.4f, parent);
+			loadObject (positions, "Dialogue_2", "Dialogue_2","Dialogue_2", -0.4f, parent);
+			loadObject (positions, "Dialogue_3", "Dialogue_3","Dialogue_3", -0.4f, parent);
+			loadObject (positions, "Dialogue_4", "Dialogue_4","Dialogue_4", -0.4f, parent);
+			loadObject (positions, "Jane", "Jane","Jane", -0.4f, parent);
+			//loadObject (positions, "Mr Bennet", "Mr Bennet","Mr Bennet", -0.4f, parent);
+			loadObject (positions, "Gardiner", "Gardiner","Gardiner", -0.4f, parent);
+			loadObject (positions, "Hill", "Hill","Hill", -0.4f, parent);
 		}				
 	}
 
