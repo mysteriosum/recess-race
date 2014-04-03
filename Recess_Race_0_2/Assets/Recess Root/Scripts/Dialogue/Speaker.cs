@@ -92,7 +92,6 @@ public class Speaker : MonoBehaviour {
 					isActive = false;
 					triangle.renderer.enabled = false;
 					square.renderer.enabled = false;
-					Debug.Log ("no more enabling on renderers");
 					if (finishEvent != null){
 						finishEvent();
 						//finishEvent = null;
@@ -116,7 +115,6 @@ public class Speaker : MonoBehaviour {
 		square.transform.localScale = Vector3.one;
 		square.renderer.enabled = true;
 		triangle.renderer.enabled = true;
-		Debug.Log ("my square's renderer is enabled: " + square.renderer.enabled);
 		showTiming = duration;
 		showTimer = 0;
 		isActive = true;

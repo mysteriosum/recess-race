@@ -524,5 +524,32 @@
   <object name="Billy" x="268" y="1202"/>
   <object name="George" x="332" y="1202"/>
   <object name="Liddy" x="172" y="1202"/>
+  <object name="Dialogue_1" x="-5032" y="625">
+   <ellipse/>
+  </object>
+  <object name="Dialogue_1_2" x="13379" y="1858" width="79" height="34">
+   <ellipse/>
+  </object>
+  <object name="Dialogue_2" x="19201" y="1180">
+   <ellipse/>
+  </object>
+  <object name="Dialogue_3" x="19438" y="1973">
+   <ellipse/>
+  </object>
+  <object name="Mr Bennet" x="722" y="1215">
+   <ellipse/>
+  </object>
+  <object name="Hill" x="18042" y="1505">
+   <ellipse/>
+  </object>
+  <object name="Gardiner" x="24092" y="1120">
+   <ellipse/>
+  </object>
+  <object name="Jane" x="18916" y="2019">
+   <ellipse/>
+  </object>
+  <object name="Dialogue_4" x="19587" y="1908">
+   <ellipse/>
+  </object>
  </objectgroup>
 </map>
