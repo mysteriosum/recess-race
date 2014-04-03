@@ -6,8 +6,6 @@ public class RecessManager {
 
 	private static int score;
 	private static float currentTime;
-	private static int highScore;
-	private static float bestTime = 0f;
 	private static int garbage = 0;
 	
 	public static GameModes currentGameMode;
@@ -73,24 +71,36 @@ public class RecessManager {
 	}
 	
 	public static void SaveStatistics(int level, bool eraseCurrent){
-		if (score > highScore){
-			PlayerPrefs.SetInt("highScore" + level.ToString(), score);
-			levelStats[level - 1].highScore = score;
+		if (currentGameMode == GameModes.timeTrial){
+			if (score > levelStats[level - 1].highScoreTT){
+				PlayerPrefs.SetInt("highScoreTT" + level.ToString(), score);
+				levelStats[level - 1].highScoreTT = score;
+			}
+//			else{
+//				Debug.Log("Score too low");
+//			}
+			if (currentTime < levelStats[level - 1].bestTime || levelStats[level - 1].bestTime == 0){
+				PlayerPrefs.SetFloat("bestTime" + level.ToString(), currentTime);
+				levelStats[level - 1].bestTime = currentTime;
+			}
+//			else{
+//				Debug.Log("time too low");
+//			}
+			if (eraseCurrent){
+				score = 0;
+				currentTime = 0;
+			}
+		} else {
+			if (score > levelStats[level - 1].highScoreGP || levelStats[level - 1].highScoreGP == 0){
+				PlayerPrefs.SetInt("highScoreTT" + level.ToString(), score);
+				levelStats[level - 1].highScoreTT = score;
+			}
+			
+			if (RecessCamera.cam.Rank < levelStats[level-1].bestRank || levelStats[level-1].bestRank == 0){
+				PlayerPrefs.SetInt ("bestRank" + level.ToString(), RecessCamera.cam.Rank);
+			}
 		}
-		else{
-			Debug.Log("Score too low");
-		}
-		if (currentTime < bestTime || bestTime == 0){
-			PlayerPrefs.SetFloat("bestTime" + level.ToString(), currentTime);
-			levelStats[level - 1].bestTime = currentTime;
-		}
-		else{
-			Debug.Log("time too low");
-		}
-		if (eraseCurrent){
-			score = 0;
-			currentTime = 0;
-		}
+		
 	}
 	
 	public static void LoadLevel(int index, GameModes gameMode){

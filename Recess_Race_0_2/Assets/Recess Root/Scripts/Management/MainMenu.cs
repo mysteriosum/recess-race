@@ -31,6 +31,7 @@ public class MainMenu : MonoBehaviour {
 	public Texture2D goldTexture;
 	public Texture2D silverTexture;
 	public Texture2D bronzeTexture;
+	public Texture2D participationTexture;
 	
 	public Sprite[] logoCards;
 	public SpriteRenderer sceneLogoCard;
@@ -40,22 +41,31 @@ public class MainMenu : MonoBehaviour {
 	private float showFor = 2.3f;
 	private float showTimer = 0;
 	
-	
+	public Rect playButtonRect;
+	public Rect creditsButtonRect;
+	public Texture2D buttonBanner;
 	
 	private MenuEnum currentMenu = MenuEnum.intro;
 	public Vector2 mainButtonOffset = Vector2.zero;
-	
+	public Vector2 creditsOffset;
 	private float selectFontScreenRation = 0.085f;
 	public Rect timeTrialRect = new Rect(0.1f, 0.6f, 0.3f, 0.085f);
 	public Rect grandPrixRect = new Rect(0.1f, 0.4f, 0.3f, 0.085f);
 	
 	public Rect levelSelectRect = new Rect(0.15f, 0.25f, 0.3f, 0.2f);
 	
-	public float stopwatchX = 0.6f;
-	public float grandPrixMedalX = 0.3f;
-	public float modeSelectIconsY = 0.5f;
-	public float stopwatchSize = 0.35f;
-	public float grandPrixMedalSize = 0.35f;
+	public Rect creditsGroupRect;
+	
+	public Texture2D hermitLogo;
+	public Rect hermitRect;
+	public Texture2D temp8Logo;
+	public Rect temp8Rect;
+	public Texture2D banana;
+	public Rect bananaRect;
+	public Texture2D actraLogo;
+	public Rect actraRect;
+	
+	public CreditsElement[] creditItems;
 	
 	private float thumbMarginPercent = 0.085f;
 	private float thumbsStartX = 0;
@@ -77,7 +87,7 @@ public class MainMenu : MonoBehaviour {
 		}
 	}
 	
-	public static float selectSizeMod = 0.2f;
+	public static float selectSizeMod = 0.15f;
 	
 	private float DefaultMargin{
 		get{ return LevelSelectRect.width/2 - ThumbWidth/2; }
@@ -141,18 +151,59 @@ public class MainMenu : MonoBehaviour {
 		public float goldY = 0.73f;
 		public float medalInterval = 0.1f;
 		public float medalsScale = 0.25f;
+		
+		public int gpFontSizeDivisor = 12;
+		public float courseStatInterval;
+		public float courseStatX;
+		public float courseStatBeginY;
+		public float statInterval;
+		
+		public Rect startRect;
 	}
 	public LevelSelectMenu levelSelectPositions;
 	
-	void Start () {
+	
+	[System.SerializableAttribute]
+	public class CreditsElement{
+		public string title;
+		public string[] credit;
+	}
+	private float CreditsMaxSpeed { get { return Screen.height * 0.0004f; } } //fraction of screen height
+	private float CreditsAccel{ get { return Screen.height * 0.001f; } }
+	private float creditsSpeed;
+	private float creditsDelay = 3.5f;
+	private float creditsTimer;
+	private float creditsOrigin;
+	private float CreditsMin { get { return Screen.height * -1.5f; } }
+	
+	[System.SerializableAttribute]
+	public class CreditsVariables{
+		public float origin;
+		public float betweenCategories;
+		public float betweenNames;
+		public float afterTitle;
+		public float beforeImage;
+		
+		public Vector2 itemSize;
+		public float fontSize;
+		public float shadowOffset;
+	}
+	public CreditsVariables creditsVars;
+	void Awake () {
 		currentSpeed = goingUp? arrowMax : -arrowMax;
-		
-		sceneLogoCard.sprite = logoCards[0];
-		sceneLogoCard.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, sceneLogoCard.transform.position.z);
-		Debug.Log(sceneLogoCard.sprite.rect);
-		
+		if (logoCards.Length > 0){
+			sceneLogoCard.sprite = logoCards[0];
+			sceneLogoCard.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, sceneLogoCard.transform.position.z);	
+		}
+		else{
+			currentMenu = MenuEnum.main;
+		}
 			
 		//set up menus, make sure the menu skin is correct...
+	}
+	
+	void Start (){
+		Application.targetFrameRate = 100;
 	}
 	
 	void Update (){
@@ -209,6 +260,8 @@ public class MainMenu : MonoBehaviour {
 					logoIndex++;
 					showTimer = 0;
 					fadeTimer = fadeFor;
+					sceneLogoCard.renderer.material.color = new Color(1f, 1f, 1f, 1f);
+					
 					sceneLogoCard.sprite = logoCards[logoIndex];
 				}
 				else{
@@ -218,6 +271,16 @@ public class MainMenu : MonoBehaviour {
 			if (Input.GetKeyDown(KeyCode.Escape)){
 				currentMenu = MenuEnum.main;
 			}
+		}
+		
+		if (currentMenu == MenuEnum.credits && creditsOrigin > CreditsMin){
+			if (creditsTimer < creditsDelay){
+				creditsTimer += Time.deltaTime;
+			} else if (creditsSpeed < CreditsMaxSpeed){
+				creditsSpeed += Time.deltaTime * CreditsAccel;
+			}
+			creditsOrigin -= creditsSpeed;
+			
 		}
 	}
 	
@@ -237,10 +300,15 @@ public class MainMenu : MonoBehaviour {
 			
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mainPic);
 			
+			GUI.DrawTexture(MultiplyRectByScreenDimensions(playButtonRect), buttonBanner);
+			GUI.DrawTexture(MultiplyRectByScreenDimensions(creditsButtonRect), buttonBanner);
+			
 			//Texture2D buttonTex = skin.button.normal.background;
 			GUIStyle playStyle = new GUIStyle(skin.customStyles[2]);
-			float buttonHeight = Screen.height * 0.085f;
-			float buttonWidth = Screen.width * 0.235f;
+			float buttonHeight = Screen.height * playButtonRect.height/2;
+			float buttonWidth = Screen.width * playButtonRect.width / 2;
+			playStyle.fontSize = (int)((float)Screen.height * playButtonRect.height/2);
+			GUIStyle creditsStyle = new GUIStyle(skin.customStyles[2]);
 			Rect playRect = SelectionRect(mainButtonOffset.x * Screen.width, Screen.height * mainButtonOffset.y, buttonWidth, buttonHeight, playStyle);
 			bool pressPlay = GUI.Button(playRect, mainMenu[0], playStyle);
 			if (pressPlay){
@@ -248,11 +316,13 @@ public class MainMenu : MonoBehaviour {
 //				Application.LoadLevel (firstLevelName);
 				currentMenu = MenuEnum.modeSelect;
 			}
-			GUIStyle creditsStyle = new GUIStyle(skin.customStyles[2]);
-			Rect creditsRect = SelectionRect(mainButtonOffset.x * Screen.width, (mainButtonOffset.y + 0.15f) * Screen.height, buttonWidth, buttonHeight, creditsStyle);
+			Rect creditsRect = SelectionRect((mainButtonOffset.x + creditsOffset.x) * Screen.width, (mainButtonOffset.y + creditsOffset.y) * Screen.height, buttonWidth, buttonHeight, creditsStyle);
 			bool pressCredits = GUI.Button (creditsRect, mainMenu[1], creditsStyle);
 			if (pressCredits){
 				currentMenu = MenuEnum.credits;
+				creditsOrigin = creditsVars.origin * Screen.height;
+				creditsSpeed = 0;
+				creditsTimer = 0;
 			}
 			break;
 		case MenuEnum.title:
@@ -260,8 +330,34 @@ public class MainMenu : MonoBehaviour {
 			break;
 		case MenuEnum.credits:
 			
-			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mainPic);
+			
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), credits);
+			Rect groupRect = MultiplyRectByScreenDimensions(creditsGroupRect);
+		GUI.BeginGroup(groupRect);
+			float x = groupRect.width / 4f;
+			float y = creditsOrigin;
+			float w = groupRect.width / 2f;
+			float h = creditsVars.fontSize * Screen.height;
+			
+			GUIStyle nameStyle = new GUIStyle(skin.GetStyle("LevelSelect"));
+			nameStyle.fontSize = (int)((float)Screen.height * creditsVars.fontSize);
+			nameStyle.alignment = TextAnchor.MiddleCenter;
+			
+			GUIStyle shadowStyle = new GUIStyle(nameStyle);
+			shadowStyle.normal.textColor = Color.black;
+			
+			foreach (CreditsElement cred in creditItems){
+				GUI.TextArea(new Rect(x + h * creditsVars.shadowOffset, y + h * creditsVars.shadowOffset, w, h), cred.title, shadowStyle);
+				GUI.TextArea(new Rect(x, y, w, h), cred.title, nameStyle);
+				y += Screen.height * creditsVars.afterTitle;
+				foreach (string credName in cred.credit) {
+					GUI.TextArea(new Rect(x, y, w, h), credName, nameStyle);
+					y += Screen.height * creditsVars.betweenNames;
+				}
+				y += Screen.height * creditsVars.betweenCategories;
+			}
+			
+		GUI.EndGroup();
 			
 			break;
 		case MenuEnum.options:
@@ -277,21 +373,18 @@ public class MainMenu : MonoBehaviour {
 			
 			
 			Rect trialRect = SelectionRect(TimeTrialRect.x, TimeTrialRect.y, TimeTrialRect.width, TimeTrialRect.height, trialStyle);
-			bool timeTrialSelect = GUI.Button (TimeTrialRect, "Time Trial", trialStyle);
+			bool timeTrialSelect = GUI.Button (trialRect, "Time Trial", trialStyle);
 			
 			Rect prixRect = SelectionRect(GrandPrixRect.x, GrandPrixRect.y, GrandPrixRect.width, GrandPrixRect.height, prixStyle);
-			bool grandPrixSelect = GUI.Button (GrandPrixRect, "Grand Prix", prixStyle);
+			bool grandPrixSelect = GUI.Button (prixRect, "Grand Prix", prixStyle);
 			
 			if (timeTrialSelect){
 				currentMenu = MenuEnum.timeTrial;
+				RecessManager.currentGameMode = GameModes.timeTrial;
 			} else if (grandPrixSelect){
-				RecessManager.LoadLevel(1, GameModes.grandPrix);
+				currentMenu = MenuEnum.grandPrix;
+				RecessManager.currentGameMode = GameModes.grandPrix;
 			}
-			float medalScale = Screen.height * grandPrixMedalSize / medalTexture.height;
-			float stopwatchScale = Screen.height * stopwatchSize / stopwatchTexture.height;
-			
-			GUI.DrawTexture(new Rect(grandPrixMedalX * Screen.width, modeSelectIconsY * Screen.height, medalTexture.width * medalScale, medalTexture.height * medalScale), medalTexture);
-			GUI.DrawTexture(new Rect(stopwatchX * Screen.width, modeSelectIconsY * Screen.height, stopwatchTexture.width * stopwatchScale, stopwatchTexture.height * stopwatchScale), stopwatchTexture);
 			
 			break;
 		case MenuEnum.timeTrial:
@@ -341,12 +434,13 @@ public class MainMenu : MonoBehaviour {
 			
 			
 			GUIStyle levelSelectStyle = new GUIStyle(skin.GetStyle("LevelSelect"));
-			
+			GUIStyle courseStyle = new GUIStyle(levelSelectStyle);
+			courseStyle.fontSize = (int)((double)courseStyle.fontSize * 1.4);
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.courseY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
 				"Course " + (currentIndex + 1).ToString(), levelSelectStyle);
 			
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.bestScoreY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
-				"Best Score: " + RecessManager.levelStats[currentIndex].highScore.ToString(), levelSelectStyle);
+				"Best Score: " + RecessManager.levelStats[currentIndex].highScoreTT.ToString(), levelSelectStyle);
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.bestTimeY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
 				"Best Time: " + Textf.ConvertTimeToString(RecessManager.levelStats[currentIndex].bestTime), levelSelectStyle);
 			if (RecessManager.levelStats[currentIndex].HasBronze){
@@ -360,6 +454,48 @@ public class MainMenu : MonoBehaviour {
 		case MenuEnum.grandPrix:
 			
 			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), grandPrix);
+			GUIStyle startStyle = new GUIStyle(skin.GetStyle("LevelSelect"));
+			startStyle.fontSize = (int)((float)Screen.height * levelSelectPositions.startRect.height);
+			startStyle.alignment = TextAnchor.MiddleCenter;
+			Rect startRect = SelectionRect(MultiplyRectByScreenDimensions(levelSelectPositions.startRect), startStyle);
+			bool startPressed = GUI.Button(startRect, "Start!", startStyle);
+			if (startPressed){
+				RecessManager.LoadLevel(1, GameModes.grandPrix);
+			}
+			
+			GUIStyle gpScreenStyle = new GUIStyle(skin.GetStyle("LevelSelect"));
+			gpScreenStyle.fontSize = Screen.height / levelSelectPositions.gpFontSizeDivisor;
+			GUIStyle courseGPStyle = new GUIStyle(gpScreenStyle);
+			courseGPStyle.fontSize = (int)((double)courseGPStyle.fontSize * 1.4);
+			
+			for (int i = 0; i < RecessManager.levelStats.Length; i++) {
+				float xValue = levelSelectPositions.courseStatX;
+				float yValue = levelSelectPositions.courseStatBeginY + i * levelSelectPositions.courseStatInterval;
+				
+				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
+					"Course " + (i + 1).ToString(), gpScreenStyle);
+				
+				yValue += levelSelectPositions.statInterval;
+				
+				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
+					"Best Score: " + RecessManager.levelStats[currentIndex].highScoreTT.ToString(), gpScreenStyle);
+				
+				yValue += levelSelectPositions.statInterval;
+				
+				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
+					"Best Time: " + Textf.ConvertTimeToString(RecessManager.levelStats[currentIndex].bestTime), gpScreenStyle);
+				
+				if (RecessManager.levelStats[currentIndex].HasParticipated){
+					Texture2D texture = participationTexture;
+					if (RecessManager.levelStats[currentIndex].HasBronze){
+						texture = RecessManager.levelStats[currentIndex].HasGold? goldTexture : (RecessManager.levelStats[currentIndex].HasSilver? silverTexture : bronzeTexture);
+					}
+					
+					GUI.DrawTexture(new Rect(levelSelectPositions.medalsOrigin.x * Screen.width, levelSelectPositions.medalsOrigin.y * Screen.height, 
+											texture.width * levelSelectPositions.medalsScale, texture.height * levelSelectPositions.medalsScale), texture);
+				}
+			}
+			
 			
 			break;
 		default:
@@ -413,7 +549,9 @@ public class MainMenu : MonoBehaviour {
 			}
 		}
 	}
-	
+	public static Rect SelectionRect(Rect rect, GUIStyle style){
+		return SelectionRect (rect.xMin, rect.yMin, rect.width, rect.height, style);
+	}
 	public static Rect SelectionRect(float left, float top, float width, float height, GUIStyle style){
 		Rect rect = new Rect(left, top, width, height);
 		

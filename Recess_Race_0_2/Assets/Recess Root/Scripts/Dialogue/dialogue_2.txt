@@ -1,0 +1,73 @@
+#SCENE the second, in which Jane and Phyllis discuss the firing of Carol, whose fault it is, and what should be done about it.
+JANE: I am glad the children are enjoying this.
+PHYLLIS: I'm sure they are.
+JANE: Well, Fitz certainly is. He's really engaged! I rarely see him so excited.
+PHYLLIS: Augh, Fitz.
+JANE: What's wrong with Fitz?
+PHYLLIS: He doesn't stand up for himself, that's what.
+JANE: Yes, it's true... why do you sound so bitter?
+PHYLLIS: It's, well... no, nevermind.
+JANE: All right...
+PAUSE: 8
+PHYLLIS: Jane, I have to tell you something.
+JANE: Yes?
+PHYLLIS: But you have to promise to keep it a secret. OK?
+JANE: Uh... all right.
+PHYLLIS: Don't worry, I didn't kill anyone or anything.
+JANE: I didn't think you did!
+PHYLLIS: I... hoo boy... okay, just give me a moment.
+JANE: Take your time...
+PHYLLIS: OK. I think it's because of me that Carol got fired.
+JANE: What? No, she left a group of children unattended. Fitz was... injured.
+PHYLLIS: Yes yes, but do you know why she left?
+JANE: I ... no, I don't.
+PHYLLIS: It's because I put a... a gross thing... in her food.
+JANE: Ahh. Well...
+PHYLLIS: I know! It's stupid and childish. 
+JANE: I wasn't going to say that...
+PHYLLIS: What were you going to say?
+JANE: I don't know... why did you do it?
+PHYLLIS: To get back at her! All year she's been a total bitch - 
+JANE: Language!
+PHYLLIS: She's been a B to me all year. I couldn't take it anymore! I just wanted her to suffer, like I do every time she reminds me how destitute I am. She has no idea what it's like to raise two kids on her own!
+JANE: No...
+PHYLLIS: When I work with you, I can forget all that. Forget about pinching every penny and saving coupons and all that shit. She just never lets it go...
+JANE: Yes, Phyl, but she's got her own problems. Her father is quite wealthy, you know, and he puts a lot of pressure on her.
+
+PHYLLIS: Yes, I know, her dad blah blah blah Hill told me all about it. I know! That's why I feel so bad! I didn't want to get her fired! I have trouble sleeping because I can't stop thinking about her stupid father and his stupid attitude. Anyway it's her fault for trying to eat during after-school hours.
+
+JANE: Phyl...
+
+PHYLLIS: I know, Jane, okay!? You have to help me, what do I do?
+
+JANE: What do you think you should do?
+
+PHYLLIS: I asked you first!
+
+JANE: Ah, yes, but I think you know the answer.
+
+PHYLLIS: ... Do I have to? What if I get fired?
+
+JANE: Talk to Mr. Bennett. He's very reasonable, and I'm sure he'll understand. He is also very good at persuading Mme de Bourgh. Anyway, they can't fire you for a little prank like that. It's unprofessional, and you will get a stern talking-to, but I think your conscience will rest much easier after.
+
+PHYLLIS: Carol is going to be even worse to me after...
+
+JANE: Perhaps...
+
+PHYLLIS: Perhaps my eye, she's going to hate me. Even more than she already does.
+
+JANE: I think you'd better talk to her about it, too. Maybe if you two can reach an understanding, it won't be so bad. It might even turn out better?
+
+PHYLLIS: Pfff, oh, Jane. Ever the optimist.
+
+JANE: You never know with people, and I think it's worth a try.
+
+PHYLLIS: All right, I'll give it a shot. What's the worst that could happen?
+
+JANE: That's the spirit!
+
+PHYLLIS: Thank you, Jane... though I'm not looking forward to any of this. And if it goes terribly wrong I'm blaming you!
+
+JANE [laughs]: If you must.
+
+[The two go back to watching the race]

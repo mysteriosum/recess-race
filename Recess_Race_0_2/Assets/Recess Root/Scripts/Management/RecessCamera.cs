@@ -52,6 +52,12 @@ public class RecessCamera : MonoBehaviour {
 	
 	private bool timeTrial = false;
 	
+	public int Rank {
+		get{
+			return rank;
+		}
+	}
+	
 	//popups and other points stuff: combos, etc
 	
 	Popup comboPopup = new Popup();
@@ -171,7 +177,7 @@ public class RecessCamera : MonoBehaviour {
 	private Transform fitz;
 	private List<Popup> popups = new List<Popup>();
 	
-	private Controller controller = new Controller();
+//	private Controller controller = new Controller();
 	
 	private int rank = 0;
 	
@@ -249,7 +255,7 @@ public class RecessCamera : MonoBehaviour {
 		}
 		fitz = Fitz.fitz.transform;
 		racers = tlist.ToArray();
-		
+		transform.position = new Vector3(fitz.transform.position.x, fitz.transform.position.y, transform.position.z);
 		
 		
 		Transform roulette = GetComponentInChildren<Roulette>().transform;
@@ -337,22 +343,18 @@ public class RecessCamera : MonoBehaviour {
 			
 			
 			if (goTimer > readyTime){
-				string goText = "Ready...";
 				Texture2D goTexture = hud.ready;
 				if (goTimer > setTime){
 					goTexture = hud.getSet;
-					goText = "Set...";
 				}
 				if (goTimer > goTime){
 					goTexture = hud.go;
-					goText = "GO!";
 				}
 				float gotexWidth = Screen.width * 0.42f;
 				float gotexHeight = Screen.height * 0.4f;
 				Rect goRect = new Rect(Screen.width/2 - gotexWidth/2, 0, gotexWidth, gotexHeight);
 				
 				GUI.DrawTexture(goRect, goTexture, ScaleMode.ScaleAndCrop);
-				GUI.TextArea(goRect, goText, hud.skin.customStyles[3]);
 			}
 		}
 		if (!raceFinished){
@@ -458,7 +460,7 @@ public class RecessCamera : MonoBehaviour {
 				GUIStyle yesnoStyle = new GUIStyle(hud.skin.customStyles[0]);
 				yesnoStyle.alignment = TextAnchor.MiddleLeft;
 				GUIStyle homeStyle = new GUIStyle(yesnoStyle);
-				GUIStyle retryStyle = new GUIStyle(yesnoStyle);
+//				GUIStyle retryStyle = new GUIStyle(yesnoStyle);
 				
 				if (Application.loadedLevel < Application.levelCount-1){
 					

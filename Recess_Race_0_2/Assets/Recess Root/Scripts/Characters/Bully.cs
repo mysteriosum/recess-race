@@ -1,34 +1,65 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
 
 public class Bully : MonoBehaviour {
-	public string message = "Get off me, gaylord!";
-	private string showMessage;
+	//public string message = "Get off me, gaylord!";
+	
+	
+	public string[] messages;
+	public string monitorMessage;
 	private float showMessageTiming = 2.5f;
-	private float showMessageTimer = 0;
 	
-	private float messageWidthPercent = 0.8f;
-	private float messageHeightPercent = 0.2f;
-	private int fontSize = 35;
+	private Speaker speaker;
+	private bool speaking = false;
+	private bool threatening = true;
+	private DamageScript damager;
 	
-	
-	
+	Collider2D monitorCol = null;
 	void Start(){
-		showMessage = name + ":" + Environment.NewLine + message;
+		speaker = GetComponent<Speaker>();
+		damager = GetComponent<DamageScript>();
 	}
 	
 	void Update(){
-		if (showMessageTimer > 0){
-			showMessageTimer -= Time.deltaTime;
+		if (monitorCol != null && !monitorCol.OverlapPoint(transform.position)){
+			threatening = true;
+			if (damager != null)
+				damager.enabled = true;
+			monitorCol = null;
 		}
 	}
 	
 	void CollideWithFitz(){
-		showMessageTimer = showMessageTiming;
+		if (speaking) return;
+		int i = Random.Range (0, messages.Length - 1);
+		string willSay = threatening? messages[i] : monitorMessage;
+		speaker.Speak (name + ": " + willSay, showMessageTiming, Done);
+		speaking = true;
 	}
 	
+	void Done(){
+		speaking = false;
+	}
 	
+	void OnTriggerEnter2D(Collider2D other){
+		if (threatening && other.GetComponent<SafeZone>()){
+			threatening = false;
+			if (damager)
+				damager.enabled = false;
+			
+			monitorCol = other;
+		}
+	}
+	
+	void OnTriggerExit2D(Collider2D other){
+		SafeZone zone = other.GetComponent<SafeZone>();
+		if (zone != null){
+			threatening = true;
+			damager.enabled = true;
+			Debug.Log ("Threatening is true");
+		}
+	}
+	/*
 	void OnGUI(){
 		if (showMessageTimer > 0){
 			Rect messageRect = 
@@ -40,5 +71,5 @@ public class Bully : MonoBehaviour {
 			style.fontSize = fontSize;
 			GUI.Box(messageRect, showMessage, style);
 		}
-	}
+	}*/
 }

@@ -58,9 +58,8 @@ public class PlateformGenerator {
 		}
 	}
 
-    private bool tileOver(int x, int y)
-    {
-        return y != mapDimension.height-1 && map.pathingMap[x][y + 1];
+    private bool tileOver(int x, int y){
+		return (y != mapDimension.height-1 && map.pathingMap[x][y + 1]) || (y != mapDimension.height-2 && map.pathingMap[x][y + 2]);
     }
 
     private void prepareNextTile(int x, int y)
@@ -194,6 +193,9 @@ public class PlateformGenerator {
 				plateform.transform.gameObject.name = "Plateform " + plateform.id + " - wp #" + id + "";
 				plateform.waypointId = id;
 				spriteRenderer.color = new Color(((float) id) / nbWayPoints,0,0, 0.6f);
+				if(id==nbWayPoints){
+					plateform.isLastWayPoint = true;
+				}
 				/*if(id == 1){
 					BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.none, CommandEnum.right, DifficultyEnum.assured);
 					BullyInstruction bi = MapElementHelper.generateInstructionOnCentered(con, plateform, this.bullyInstructionParent);
@@ -254,17 +256,17 @@ public class PlateformGenerator {
 							splitDirection = (from.x < to.x) ? SplitDirection.BottomRight : SplitDirection.BottomLeft;
 							checkDirection = (from.x < to.x) ? SplitDirection.BottomLeft : SplitDirection.BottomRight;
 							Vector3 vJump = new Vector3(from.x, from.y - Math.Abs(distanceY) , 0);
-							pathingMap = this.map.splitTo(splitDirection, vJump, new Dimension(13, Math.Abs(distanceY) + 7));
+							pathingMap = this.map.splitTo(splitDirection, vJump, new Dimension(14, Math.Abs(distanceY) + 7));
 						}else{
 							splitDirection = (from.x < to.x) ? SplitDirection.TopRight : SplitDirection.TopLeft;
 							checkDirection = (from.x < to.x) ? SplitDirection.TopLeft : SplitDirection.TopRight;
 							Vector3 vDrop = new Vector3(from.x, from.y +1, 0);
-							pathingMap = this.map.splitTo(splitDirection, vDrop, new Dimension(13, Math.Abs(distanceY) + 2));
+							pathingMap = this.map.splitTo(splitDirection, vDrop, new Dimension(14, Math.Abs(distanceY) + 2));
 						}
 					}else{ // Going up
 						splitDirection = (from.x < to.x) ? SplitDirection.BottomRight : SplitDirection.BottomLeft;
 						checkDirection = (from.x < to.x) ? SplitDirection.BottomLeft : SplitDirection.BottomRight;
-						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(13, 7));
+						pathingMap = this.map.splitTo(splitDirection, from, new Dimension(14, 7));
 					}
 
 

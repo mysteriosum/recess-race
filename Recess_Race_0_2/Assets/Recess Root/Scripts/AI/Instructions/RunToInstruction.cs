@@ -46,7 +46,7 @@ public class RunToInstruction : Instruction {
             isDone = true;
         }
 
-        if (arriveWithSpeedZero) {
+        if (!isDone && arriveWithSpeedZero) {
 			if(Mathf.Abs(this.agent.transform.position.x - targetX) < 2.5){
 				if (ranDistance > 2 ) {
 					if(Mathf.Abs(this.agent.transform.position.x - targetX) < 0.5){
