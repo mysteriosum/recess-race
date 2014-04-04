@@ -37,7 +37,8 @@ public class AgentPlateformFinder {
 
 
 		if (min == 1) {
-			Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformWayPoint.plateform.id+" in direct jumps (trys " + trys + ").");
+			if (agent.debug)
+				Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformWayPoint.plateform.id+" in direct jumps (trys " + trys + ").");
 			return plateformWayPoint;
 		} else {
 

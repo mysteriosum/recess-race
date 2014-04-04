@@ -46,7 +46,8 @@ public class Agent : Movable {
 			this.lastPosition = this.transform.position;
 			unstuckTickNumber = 0;
 			if(distanceDone < 0.1){
-				Debug.Log ("AGENT UNSTUCK ");
+				if (debug)
+					Debug.Log ("AGENT UNSTUCK ");
 				if(this.currentInstruction == null){
 					switchTo(null);
 				}else{

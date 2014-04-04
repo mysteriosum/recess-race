@@ -25,11 +25,11 @@ static public class Textf {
             	charCount += word.Length + 1; //+1 because we assume that there will be a space after every word
             	if (charCount <= lineLengths[Mathf.Min (lineLengths.Length - 1, currentLine)]) {
 					result += " " + word;
-				}
-				else {
 					if (charCount > longest){
 						longest = charCount;
 					}
+				}
+				else {
                 	charCount = word.Length + 1;
 	                result += Environment.NewLine + word;
 					currentLine ++;

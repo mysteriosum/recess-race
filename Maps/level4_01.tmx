@@ -991,6 +991,18 @@
    <ellipse/>
   </object>
   <object name="StartObjects" x="320" y="896"/>
+  <object name="Dialogue_1" x="7335" y="1829">
+   <ellipse/>
+  </object>
+  <object name="Dialogue_2" x="7335" y="1829">
+   <ellipse/>
+  </object>
+  <object name="Dialogue_3" x="7335" y="1829">
+   <ellipse/>
+  </object>
+  <object name="Gardiner" x="7335" y="1829">
+   <ellipse/>
+  </object>
  </objectgroup>
  <objectgroup color="#55ffff" name="Fill" width="1060" height="60">
   <object x="1" y="932" width="3675" height="984"/>

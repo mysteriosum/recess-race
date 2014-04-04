@@ -13,10 +13,10 @@ public class Speaker : MonoBehaviour {
 	public Vector2 textOffset = new Vector2(0.2f, 0.2f);
 	public int textSize = 14;
 	public float heightPerLine = 1f;
-	public float widthPerCharacter = 0.1f;
+	private float widthPerCharacter = 0.36f;
 	public float defaultScaleX = 8.5f;
-	public float extraHeight = 0.55f;
-	public float extraWidth = 1.5f;
+	public float extraHeight = 0.58f;
+	private float extraWidth = 2.9f;
 	public delegate void SpeechDoneDelegate();
 	public SpeechDoneDelegate finishEvent = null;
 	

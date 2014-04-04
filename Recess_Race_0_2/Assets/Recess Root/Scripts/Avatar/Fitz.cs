@@ -373,6 +373,8 @@ public class Fitz : Movable {
 				spinFalling = true;
 				velocity = Jump (velocity, JumpImpulse);
 				itemTimer -= propellerTimePenalty;
+				anim.Play(JumpAnimation, 0, 0);
+				falling = false;
 			}
 			if (propelTimer > 0){
 				propelTimer -= Time.deltaTime;
