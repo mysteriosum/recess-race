@@ -10,9 +10,10 @@ public class Bully : MonoBehaviour {
 	private float showMessageTiming = 2.5f;
 	
 	private Speaker speaker;
-	private bool speaking = false;
+	private static bool speaking = false;
 	private bool threatening = true;
 	private DamageScript damager;
+	
 	
 	Collider2D monitorCol = null;
 	void Start(){

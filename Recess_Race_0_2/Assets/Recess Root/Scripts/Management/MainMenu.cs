@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -472,28 +472,29 @@ public class MainMenu : MonoBehaviour {
 				float xValue = levelSelectPositions.courseStatX;
 				float yValue = levelSelectPositions.courseStatBeginY + i * levelSelectPositions.courseStatInterval;
 				
+				if (RecessManager.levelStats[i].HasParticipated){
+					Texture2D texture = participationTexture;
+					if (RecessManager.levelStats[currentIndex].HasBronze){
+						texture = RecessManager.levelStats[currentIndex].HasGold? goldTexture : (RecessManager.levelStats[currentIndex].HasSilver? silverTexture : bronzeTexture);
+					}
+					
+					GUI.DrawTexture(new Rect(Screen.width*(xValue + levelSelectPositions.bestsWidth), Screen.height * yValue, 
+											texture.width * levelSelectPositions.medalsScale, texture.height * levelSelectPositions.medalsScale), texture);
+				}
+				
 				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
 					"Course " + (i + 1).ToString(), gpScreenStyle);
 				
 				yValue += levelSelectPositions.statInterval;
 				
 				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
-					"Best Score: " + RecessManager.levelStats[currentIndex].highScoreTT.ToString(), gpScreenStyle);
+					"Best Score: " + RecessManager.levelStats[i].highScoreGP.ToString(), gpScreenStyle);
 				
 				yValue += levelSelectPositions.statInterval;
 				
 				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
-					"Best Time: " + Textf.ConvertTimeToString(RecessManager.levelStats[currentIndex].bestTime), gpScreenStyle);
+					"Best Rank: " + RecessManager.levelStats[i].RankString, gpScreenStyle);
 				
-				if (RecessManager.levelStats[currentIndex].HasParticipated){
-					Texture2D texture = participationTexture;
-					if (RecessManager.levelStats[currentIndex].HasBronze){
-						texture = RecessManager.levelStats[currentIndex].HasGold? goldTexture : (RecessManager.levelStats[currentIndex].HasSilver? silverTexture : bronzeTexture);
-					}
-					
-					GUI.DrawTexture(new Rect(levelSelectPositions.medalsOrigin.x * Screen.width, levelSelectPositions.medalsOrigin.y * Screen.height, 
-											texture.width * levelSelectPositions.medalsScale, texture.height * levelSelectPositions.medalsScale), texture);
-				}
 			}
 			
 			

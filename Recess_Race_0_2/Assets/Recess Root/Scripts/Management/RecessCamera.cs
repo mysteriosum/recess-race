@@ -246,7 +246,7 @@ public class RecessCamera : MonoBehaviour {
 			Debug.LogError ("There's no 'Fitzwilliam' in the scene, the camera doesn't like it");
 		}
 		
-		sounds = gameObject.AddComponent<Sounds>();
+		sounds = new Sounds();
 		
 		Bully[] bullies = FindObjectsOfType<Bully>();
 		List<Transform> tlist = new List<Transform>();
@@ -319,7 +319,7 @@ public class RecessCamera : MonoBehaviour {
 		}
 		
 		//check for rank
-		if (!raceFinished){
+		if (!timeTrial && !raceFinished){
 			rank = 1;
 			for (int i = 0; i < racers.Length; i ++){
 				if (fitz.position.x < racers[i].position.x){
@@ -469,9 +469,7 @@ public class RecessCamera : MonoBehaviour {
 						
 					bool nextPressed = GUI.Button(nextRect, "Next Race", nextStyle);
 					if (nextPressed){
-						if (RecessManager.currentGameMode == GameModes.timeTrial){
-							RecessManager.SaveStatistics(Application.loadedLevel, true);
-						}
+						RecessManager.SaveStatistics(Application.loadedLevel, true);
 						Application.LoadLevel(Application.loadedLevel+1);
 					}
 					
@@ -482,9 +480,8 @@ public class RecessCamera : MonoBehaviour {
 				Rect homeRect = MainMenu.SelectionRect(xValue, yValue, Screen.width * hud.choiceSize.x, Screen.height * hud.choiceSize.y, homeStyle);
 				bool homePressed = GUI.Button(homeRect, "Main Menu", homeStyle);
 				if (homePressed){
-					if (RecessManager.currentGameMode == GameModes.timeTrial){
-						RecessManager.SaveStatistics(Application.loadedLevel, true);
-					}
+					RecessManager.SaveStatistics(Application.loadedLevel, true);
+					
 					RecessManager.LoadLevel(0, RecessManager.currentGameMode);
 				}
 				/*

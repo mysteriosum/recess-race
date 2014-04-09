@@ -83,7 +83,22 @@ public class LevelStats {
 	public string BronzeTimeString{
 		get{ return Textf.ConvertTimeToString(bronzeTime); }
 	}
-	
+	public string RankString {
+		get {
+			switch (bestRank){
+			case 1:
+				return "1st";
+			case 2:
+				return "2nd";
+			case 3:
+				return "3rd";
+			case 4:
+				return "4th";
+			default:
+				return "-";
+			}
+		}
+	}
 	public string LetterGradeString{
 		get{
 			int scoreInQuestion = RecessManager.currentGameMode == GameModes.grandPrix? highScoreGP : highScoreTT;

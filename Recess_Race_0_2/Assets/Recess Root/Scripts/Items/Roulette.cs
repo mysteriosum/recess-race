@@ -36,6 +36,9 @@ public class Roulette : MonoBehaviour {
 	private float offFor = 0.3f;
 	private float flashTimer = 0;
 	
+	private Sounds sounds;
+	private AudioSource source;
+	
 	private float runHoldMultiplier = 3f;
 	private static Roulette instance;
 	public static Roulette Instance{
@@ -63,6 +66,8 @@ public class Roulette : MonoBehaviour {
 		display = GetComponentInChildren<SpriteRenderer>();
 		
 		List<Item> tempList = new List<Item>();
+		sounds = new Sounds();
+		source = gameObject.AddComponent<AudioSource>();
 		
 		if (bananaUnlocked){
 			foreach (Item item in secretItems){
@@ -91,10 +96,12 @@ public class Roulette : MonoBehaviour {
 		
 		if (currentItem != null && Input.GetButtonDown("Run")){
 			currentItem.Activate();
-			Debug.Log("Current name is " + currentItem.name);
+			
+			source.clip = sounds.collect;
+			source.Play ();
+			
 			if (currentItem.name == "Banana" && currentBanana > 0){
 				currentBanana --;
-				Debug.Log("Current index is " + currentBanana);
 				if (currentBanana > 0)
 					display.sprite = bananaSprites[currentBanana - 1];
 				
@@ -122,13 +129,13 @@ public class Roulette : MonoBehaviour {
 			display.renderer.enabled = true;
 		}
 		
-		if (rouletteTimer > rouletteTiming)
+		if (rouletteTimer >= rouletteTiming)
 			 return;
 		
 		if (rouletteTimer > longAt && Input.GetButtonDown("Run")){
 			rouletteTimer = rouletteTiming;
-			currentItem = items[index];
-			blinkTimer = blinkFor;
+			ChooseItem();
+			return;
 		}
 		
 		float increment = Time.deltaTime * (Input.GetButton("Run")? runHoldMultiplier : 1);
@@ -136,8 +143,7 @@ public class Roulette : MonoBehaviour {
 		spinTimer += Time.deltaTime;
 		
 		if (rouletteTimer > rouletteTiming){
-			currentItem = items[index];
-			blinkTimer = blinkFor;
+			ChooseItem();
 		}
 		else if (spinTimer > currentTiming){
 			index = NextIndex(index, items.Length);
@@ -148,9 +154,19 @@ public class Roulette : MonoBehaviour {
 			spinTimer = 0;
 			
 			display.sprite = items[index].GetSprite();
+			
+			source.clip = sounds.chirp;
+			source.Play ();
 		}
 		
 		
+	}
+	
+	private void ChooseItem(){
+		currentItem = items[index];
+		blinkTimer = blinkFor;
+		source.clip = sounds.collect;
+		source.Play ();
 	}
 	
 	public void StartRoulette(){

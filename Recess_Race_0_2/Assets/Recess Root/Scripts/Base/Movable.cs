@@ -147,6 +147,7 @@ public class Movable : MonoBehaviour {
 		public string rest = "Rest";
 		public string roll = "Roll";
 		public string down = "Down";
+		public string hang = "Hang";
 	}
 	
 	public AnimationNames a = new AnimationNames();

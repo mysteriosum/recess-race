@@ -47,7 +47,8 @@ public class AgentPlateformFinder {
 				for (int j = -1; j <= 1; j+=2) {
 					PlateformNbTry plateformTry = getPlateformWithMoveOf(tryiedPlateform,target + j*i);
 					if(plateformTry != null){
-						Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformTry.plateform.plateform.id+" in " + min + " jumps (trys " + trys + ").");
+						if (agent.debug)
+							Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformTry.plateform.plateform.id+" in " + min + " jumps (trys " + trys + ").");
 						return plateformTry.plateform;
 					}
 				}

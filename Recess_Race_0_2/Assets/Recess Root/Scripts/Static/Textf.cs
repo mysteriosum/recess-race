@@ -109,6 +109,6 @@ static public class Textf {
 	public static string ConvertTimeToString(float timeValue){
 		int seconds = (int) Mathf.Floor(timeValue % 60);
 			float centiSeconds = (int) Mathf.Floor((timeValue - (int) timeValue) * 100);
-			return Mathf.Floor(timeValue/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + ":" + centiSeconds.ToString();
+			return Mathf.Floor(timeValue/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + (centiSeconds < 10? ":0" : ":") + centiSeconds.ToString();
 	}
 }

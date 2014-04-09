@@ -70,6 +70,8 @@ public class Fitz : Movable {
 	private GameObject boogerAnim;
 	private GameObject ottoAnim;
 	
+	private Sounds sounds;
+	private AudioSource source;
 	//--------------------------------------------------------------------------\\
 	//-----------------------movement property overrides------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -171,7 +173,16 @@ public class Fitz : Movable {
 	
 	protected override string FallAnimation {
 		get {
+			if (IsBoogerBoy && wallHanging){
+				return a.hang;
+			}
 			return isRolling? a.roll : a.fall;
+		}
+	}
+	
+	protected override string JumpAnimation {
+		get {
+			return wallHanging? a.hang : a.jump;
 		}
 	}
 	
@@ -252,7 +263,8 @@ public class Fitz : Movable {
 		base.Start();
 		
 		ball = Resources.Load("devBall");
-		
+		sounds = new Sounds();
+		source = gameObject.AddComponent<AudioSource>();
 		//Find the animations from Fitz's children
 		foreach(Transform anims in GetComponentsInChildren<Transform>()){
 			if (anims.name.Contains ("Pinky")){
@@ -298,23 +310,24 @@ public class Fitz : Movable {
 	//------------------------------------------------------\\
 	//------------------TEST AND HACK-----------------------\\
 	//------------------------------------------------------\\
+		if (debug){
 		
-		if (Input.GetKey(KeyCode.Alpha1)){
-			ChangeToOtto();
+			if (Input.GetKey(KeyCode.Alpha1)){
+				ChangeToOtto();
+			}
+			
+			if (Input.GetKey(KeyCode.Alpha2)){
+				ChangeToPinky();
+			}
+			
+			if (Input.GetKey(KeyCode.Alpha3)){
+				ChangeToBoogerBoy();
+			}
+			
+			if (Input.GetKey(KeyCode.Alpha4)){
+				ChangeToDust();
+			}
 		}
-		
-		if (Input.GetKey(KeyCode.Alpha2)){
-			ChangeToPinky();
-		}
-		
-		if (Input.GetKey(KeyCode.Alpha3)){
-			ChangeToBoogerBoy();
-		}
-		
-		if (Input.GetKey(KeyCode.Alpha4)){
-			ChangeToDust();
-		}
-		
 	//------------------------------------------------------\\
 	//------------------Handling Inputs---------------------\\
 	//------------------------------------------------------\\
@@ -372,6 +385,8 @@ public class Fitz : Movable {
 				controller.ResetJumpInput();
 				spinFalling = true;
 				velocity = Jump (velocity, JumpImpulse);
+				source.clip = sounds.flap;
+				source.Play ();
 				itemTimer -= propellerTimePenalty;
 				anim.Play(JumpAnimation, 0, 0);
 				falling = false;
@@ -397,6 +412,9 @@ public class Fitz : Movable {
 				wallJumpLockTimer = wallJumpLockTiming;
 				velocity = new Vector2(MaxSpeed * wallJumpInput, JumpImpulse);
 				itemTimer -= wallJumpTimePenalty;
+				source.clip = sounds.wallJump;
+				source.Play ();
+				anim.Play (a.jump);
 			}
 			
 			if (wallJumpLockTimer > 0){
@@ -578,8 +596,15 @@ public class Fitz : Movable {
 		if (input * basic.x <= 0 && !dashing){
 			dashing = false;
 		}
-		
-		wallHanging = boogerBoy && CheckIfConnected(sideRays) && (input != 0);
+		if (IsBoogerBoy){
+			bool wasHanging = wallHanging;
+			wallHanging = boogerBoy && CheckIfConnected(sideRays) && (input != 0);
+			if (wallHanging){
+				anim.Play (a.hang);
+			} else if (!grounded && !wallHanging){
+				anim.Play (velocity.y > 0? a.jump : a.fall);
+			}
+		}
 		return basic;
 	}
 	
@@ -598,6 +623,8 @@ public class Fitz : Movable {
 	{
 		Vector2 result = base.Jump (currentVelocity, amount);
 		controller.ResetJumpInput();
+		source.clip = sounds.jump;
+		source.Play ();
 		return result;
 	}
 	
@@ -656,6 +683,8 @@ public class Fitz : Movable {
 				CanControl = false;
 				stunTimer = dmgScript.StunDuration;
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
+				source.clip = sounds.stun;
+				source.Play ();
 			}
 		}
 		
@@ -687,6 +716,17 @@ public class Fitz : Movable {
 			anim.Play(a.fall);
 		}
 	}
+	
+	void PlayRunSound(){
+		source.clip = sounds.run;
+		source.Play ();
+	}
+	
+	void PlayRollSounds(){
+		source.clip = sounds.roll;
+		source.Play ();
+	}
+	
 	
 	public bool CheckCaughtTennisBall(float leeway){
 		if (controller.isSpammingRun) return false;

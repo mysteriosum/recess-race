@@ -92,12 +92,13 @@ public class RecessManager {
 			}
 		} else {
 			if (score > levelStats[level - 1].highScoreGP || levelStats[level - 1].highScoreGP == 0){
-				PlayerPrefs.SetInt("highScoreTT" + level.ToString(), score);
-				levelStats[level - 1].highScoreTT = score;
+				PlayerPrefs.SetInt("highScoreGP" + level.ToString(), score);
+				levelStats[level - 1].highScoreGP = score;
 			}
 			
 			if (RecessCamera.cam.Rank < levelStats[level-1].bestRank || levelStats[level-1].bestRank == 0){
 				PlayerPrefs.SetInt ("bestRank" + level.ToString(), RecessCamera.cam.Rank);
+				levelStats[level - 1].bestRank = RecessCamera.cam.Rank;
 			}
 		}
 		
