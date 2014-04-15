@@ -70,8 +70,6 @@ public class Fitz : Movable {
 	private GameObject boogerAnim;
 	private GameObject ottoAnim;
 	
-	private Sounds sounds;
-	private AudioSource source;
 	//--------------------------------------------------------------------------\\
 	//-----------------------movement property overrides------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -167,7 +165,8 @@ public class Fitz : Movable {
 	
 	protected override string WalkAnimation {
 		get {
-			return isRolling? a.roll : a.walk;
+			bool skidding = (controller.hAxis < 0 && velocity.x > 0) || (controller.hAxis > 0 && velocity.x < 0);
+			return skidding? a.skid : (isRolling? a.roll : a.walk);
 		}
 	}
 	
@@ -263,8 +262,6 @@ public class Fitz : Movable {
 		base.Start();
 		
 		ball = Resources.Load("devBall");
-		sounds = new Sounds();
-		source = gameObject.AddComponent<AudioSource>();
 		//Find the animations from Fitz's children
 		foreach(Transform anims in GetComponentsInChildren<Transform>()){
 			if (anims.name.Contains ("Pinky")){
@@ -599,11 +596,11 @@ public class Fitz : Movable {
 		if (IsBoogerBoy){
 			bool wasHanging = wallHanging;
 			wallHanging = boogerBoy && CheckIfConnected(sideRays) && (input != 0);
-			if (wallHanging){
-				anim.Play (a.hang);
-			} else if (!grounded && !wallHanging){
-				anim.Play (velocity.y > 0? a.jump : a.fall);
-			}
+//			if (wallHanging){
+//				anim.Play (a.hang);
+//			} else if (!grounded && !wallHanging){
+//				anim.Play (velocity.y > 0? a.jump : a.fall);
+//			}
 		}
 		return basic;
 	}
@@ -720,6 +717,7 @@ public class Fitz : Movable {
 	void PlayRunSound(){
 		source.clip = sounds.run;
 		source.Play ();
+		Debug.Log("Playrunsound");
 	}
 	
 	void PlayRollSounds(){
