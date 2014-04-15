@@ -24,14 +24,8 @@ public class RecessManager {
 		set{ currentTime = value; }
 	}
 	public static string TimeString{
-		get { 
-			//int minutes = (int) Mathf.Floor(currentTime/60);
-//			int seconds = (int) Mathf.Floor(currentTime % 60);
-//			float centiSeconds = (int) Mathf.Floor((currentTime - (int) currentTime) * 100);
-//			return Mathf.Floor(currentTime/60).ToString() + (seconds < 10? ":0" : ":") + seconds.ToString() + ":" + centiSeconds.ToString();
-			
+		get {
 			return Textf.ConvertTimeToString(currentTime);
-	
 		}
 	}
 	public static readonly int garbageValue = 10;
@@ -102,6 +96,12 @@ public class RecessManager {
 			}
 		}
 		
+	}
+	
+	public static void ClearCurrentScores(){
+		score = 0;
+		currentTime = 0;
+		garbage = 0;
 	}
 	
 	public static void LoadLevel(int index, GameModes gameMode){

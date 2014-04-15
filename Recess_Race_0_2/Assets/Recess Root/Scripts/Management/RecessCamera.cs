@@ -126,7 +126,7 @@ public class RecessCamera : MonoBehaviour {
 	
 	public int TimeRemainingPoints{
 		get {
-			return (int) TimeRemaining * pointsPerSecondLeft;
+			return Mathf.Max((int) TimeRemaining * pointsPerSecondLeft, 0);
 		}
 	}
 	
@@ -176,6 +176,10 @@ public class RecessCamera : MonoBehaviour {
 	private Transform[] racers;
 	private Transform fitz;
 	private List<Popup> popups = new List<Popup>();
+	
+	private Button continueButton;
+	private Button restartButton;
+	private Button quitButton;
 	
 //	private Controller controller = new Controller();
 	
@@ -265,15 +269,78 @@ public class RecessCamera : MonoBehaviour {
 			goTimer = goTime;
 			
 		}
+		UnityEngine.Object button = Resources.Load("Button");
+		GameObject continueButtonGO = Instantiate(button) as GameObject;
+		continueButton = continueButtonGO.GetComponent<Button>();
+		continueButton.transform.parent = trans;
+		continueButton.Text = "Continue!";
+		continueButton.camOffset = new Vector2(0, 1.27f);
+		continueButton.buttonFunction = TogglePause;
 		
+		
+		GameObject restartButtonGO = Instantiate(button) as GameObject;
+		restartButton = restartButtonGO.GetComponent<Button>();
+		restartButton.transform.parent = trans;
+		restartButton.camOffset = new Vector2(0, -1.41f);
+		
+		restartButton.Text = "Restart!";
+		
+		restartButton.buttonFunction = delegate() {
+			RecessManager.ClearCurrentScores();
+			Application.LoadLevel(Application.loadedLevel);
+			Time.timeScale = 1;
+		};
+		
+		GameObject quitButtonGO = Instantiate(button) as GameObject;
+		quitButton = quitButtonGO.GetComponent<Button>();
+		quitButton.transform.parent = trans;
+		
+		quitButton.Text = "Quit!";
+		quitButton.camOffset = new Vector2(0, -4.11f);
+		quitButton.buttonFunction = delegate() {
+			RecessManager.ClearCurrentScores();
+			Application.LoadLevel(0);
+			Time.timeScale = 1;
+		};
+		ToggleButtons(false);
 	}
+	
+	
 	void StartRace() {
 		raceBegun = true;
 		foreach (Movable mov in FindObjectsOfType(typeof(Movable)) as Movable[]){
 			mov.setActivated();
 		}
 	}
-	// Update is called once per frame
+	
+	void ToggleButtons (bool value){
+		continueButton.Active = value;
+		quitButton.Active = value;
+		restartButton.Active = value;
+	}
+	
+	void TogglePause (){
+		Time.timeScale = 1 - Time.timeScale;
+		PlaySound(sounds.collect);
+		
+		if (Time.timeScale > 0){
+			ToggleButtons(false);
+		}
+		else{
+			ToggleButtons(true);
+		}
+	}
+	
+	void Update(){
+		//pauseTime
+		
+		bool pauseButton = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P);
+		if (pauseButton){
+			TogglePause();
+		}
+		
+	}
+	
 	void FixedUpdate () {
 		//TEMP give points for free to test
 		if (Input.GetKey(KeyCode.Equals)){
@@ -521,6 +588,10 @@ public class RecessCamera : MonoBehaviour {
 	}
 	
 	public void PlaySound(AudioClip clip){
+		PlaySound(clip, 1f);
+	}
+	public void PlaySound(AudioClip clip, float volume){
+		audioSource.volume = volume;
 		audioSource.clip = clip;
 		audioSource.Play();
 	}
