@@ -18,7 +18,7 @@ public class Movable : MonoBehaviour {
 	protected float lerpAccel							= 0.0375f;
 	protected float lerpTargetAdd						= 4f/TileProperties.tileDimension;
 	protected float baseDecel							= 6f/TileProperties.tileDimension;
-	protected float secondsToMax						= 0.8f;
+	protected float secondsToMax						= 0.6f;
 	
 	protected float maxSpeed							= 140f/TileProperties.tileDimension;
 	protected float jumpImpulse							= 196f/TileProperties.tileDimension;
@@ -393,7 +393,6 @@ public class Movable : MonoBehaviour {
 	void PlayJumpSound(){
 		source.clip = sounds.jump;
 		source.Play();
-		Debug.Log("Here it is dude");
 	}
 	
 	

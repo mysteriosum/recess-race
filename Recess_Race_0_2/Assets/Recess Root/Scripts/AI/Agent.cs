@@ -13,7 +13,12 @@ public class Agent : Movable {
 	private Vector3 lastPosition;
 	public float distanceDone = 111;
 	private int unstuckTickNumber = 60;
-
+	
+	protected override void Start() {
+		base.Start();
+		secondsToMax = 0.3f;
+	}
+	
     void Update() {
         if (currentInstruction != null) {
             currentInstruction.update();
