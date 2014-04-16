@@ -185,6 +185,12 @@ public class Fitz : Movable {
 		}
 	}
 	
+	protected override string LandAnimation {
+		get {
+			return IsHurt? a.rest : a.land;
+		}
+	}
+	
 	private float HorizontalInput{
 		get {
 			if (!CanControl || (boogerBoy && wallJumpLockTimer > 0))
@@ -227,6 +233,14 @@ public class Fitz : Movable {
 		}
 	}
 	
+	public bool IsGrounded{
+		get{ return grounded; }
+	}
+	
+	public bool IsInvulnerable {
+		get{ return invulnTimer > 0; }
+	}
+	
 	//--------------------------------------------------------------------------\\
 	//-----------------------------Stunning/Damage------------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -240,7 +254,8 @@ public class Fitz : Movable {
 	private float hideFor = 0.05f;
 	private float blinkTimer = 0;
 	private bool spriteShowing = true;
-	
+	private float extraInvulnTime = 1.2f;
+	private float invulnTimer = 0;
 	//finish the race
 	private bool lockControls = false;
 	
@@ -440,7 +455,8 @@ public class Fitz : Movable {
 	//-----------------------------hurt & blinking------------------------------\\
 	//--------------------------------------------------------------------------\\
 		
-		if (stunTimer > 0){
+		if (invulnTimer > 0){
+			invulnTimer -= Time.deltaTime;
 			stunTimer -= Time.deltaTime;
 			blinkTimer += Time.deltaTime;
 			if (blinkTimer > showFor && spriteShowing){
@@ -452,9 +468,10 @@ public class Fitz : Movable {
 				r.material.color = Color.white;
 				blinkTimer = 0;
 			}
-			
 			if (stunTimer <= 0){
 				CanControl = true;
+			}
+			if (invulnTimer <= 0){
 				blinkTimer = 0;
 				r.material.color = Color.white;
 			}
@@ -620,9 +637,18 @@ public class Fitz : Movable {
 	{
 		Vector2 result = base.Jump (currentVelocity, amount);
 		controller.ResetJumpInput();
-		source.clip = sounds.jump;
-		source.Play ();
+		PlaySound(sounds.jump, 0.7f);
 		return result;
+	}
+	
+	public void PlaySound(AudioClip clip, float volume){
+		source.volume = volume;
+		source.clip = clip;
+		source.Play ();
+	}
+	
+	public void PlaySound(AudioClip clip){
+		PlaySound(clip, 1f);
 	}
 	
 	private void OnLand(){
@@ -673,12 +699,13 @@ public class Fitz : Movable {
 			
 			if (other.GetComponent<TennisBall>() != null && CheckCaughtTennisBall(TennisBall.catchBallLeeway)){
 				Destroy(other.gameObject);
-			} else if (!boogerBoy){
+			} else if (!boogerBoy && !IsInvulnerable){
 				if (anim){
 					anim.Play (a.hurt);
 				}
 				CanControl = false;
 				stunTimer = dmgScript.StunDuration;
+				invulnTimer = stunTimer + extraInvulnTime;
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 				source.clip = sounds.stun;
 				source.Play ();

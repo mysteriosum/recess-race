@@ -170,6 +170,11 @@ public class Movable : MonoBehaviour {
 			return a.fall;
 		}
 	}
+	protected virtual string LandAnimation {
+		get{
+			return a.land;
+		}
+	}
 	//------------------------------------------------------\\
 	//----------------------Debugging-----------------------\\
 	//------------------------------------------------------\\
@@ -260,6 +265,9 @@ public class Movable : MonoBehaviour {
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
 				if (debug){
 					Debug.Log ("I'm grounded now. This is what I hit: " + downRays[lastConnection].collider.name);
+				}
+				if (animated){
+					anim.Play(LandAnimation);
 				}
 			}
 			else if (!connectedDown){
