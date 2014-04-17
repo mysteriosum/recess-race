@@ -50,15 +50,22 @@ public class Controller {
 	private float getRLastTime = 0f;
 	private float doubleTapTime = 0.188f;
 	
+	private static KeyCode jump;
+	private static KeyCode run;
 	
+	public Controller(){
+		jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("JumpButton", "Z"));
+		run = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("RunButton", "X"));
+		 
+	}
 	
 	public void GetInputs(){
 		doubleTap = false;
 		if (locked) return;
 		
-		getRun = Input.GetButton("Run");
-		getRunDown = Input.GetButtonDown("Run");
-		getRunUp = Input.GetButtonUp("Run");
+		getRun = Input.GetButton("Run") || Input.GetKey(run);
+		getRunDown = Input.GetButtonDown("Run") || Input.GetKeyDown(run);
+		getRunUp = Input.GetButtonUp("Run") || Input.GetKeyUp(run);
 		
 		if (getRunDown){
 			isSpammingRun = Time.time - lastRunDownTime < spamResetTimer;
@@ -67,8 +74,8 @@ public class Controller {
 			
 		}
 		
-		getJump = Input.GetButton("Jump");
-		getJumpUp = Input.GetButtonUp("Jump");
+		getJump = Input.GetButton("Jump") || Input.GetKey(jump);
+		getJumpUp = Input.GetButtonUp("Jump") || Input.GetKeyUp(jump);
 		
 		if (getJump && !getJumpLast){
 			lastJumpTime = Time.time;
