@@ -35,7 +35,7 @@ public class Sounds {
 		run = Resources.Load("Sounds/Sounds-Run") as AudioClip;
 		roll = Resources.Load("Sounds/Sounds-Roll") as AudioClip;
 		flap = Resources.Load("Sounds/Sound-Pinky") as AudioClip;
-		jump = Resources.Load("Sounds/Sounds-Jump") as AudioClip;
+		jump = Resources.Load("Sounds/Sound-Jump") as AudioClip;
 		wallJump = Resources.Load("Sounds/Sound-WallJump") as AudioClip;
 		land = Resources.Load("Sounds/Sound-Land") as AudioClip;
 		collect = Resources.Load("Sounds/Sound-Collect") as AudioClip;

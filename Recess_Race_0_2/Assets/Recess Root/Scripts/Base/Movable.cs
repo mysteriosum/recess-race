@@ -18,7 +18,7 @@ public class Movable : MonoBehaviour {
 	protected float lerpAccel							= 0.0375f;
 	protected float lerpTargetAdd						= 4f/TileProperties.tileDimension;
 	protected float baseDecel							= 6f/TileProperties.tileDimension;
-	protected float secondsToMax						= 0.8f;
+	protected float secondsToMax						= 0.6f;
 	
 	protected float maxSpeed							= 140f/TileProperties.tileDimension;
 	protected float jumpImpulse							= 196f/TileProperties.tileDimension;
@@ -82,6 +82,8 @@ public class Movable : MonoBehaviour {
 	protected Sprite sprite;
 	protected Animator anim;
 	protected bool animated = true;
+	protected AudioSource source;
+	protected Sounds sounds;
 
 	//------------------------------------------------------\\
 	//------------------other properties--------------------\\
@@ -148,6 +150,7 @@ public class Movable : MonoBehaviour {
 		public string roll = "Roll";
 		public string down = "Down";
 		public string hang = "Hang";
+		public string skid = "Skid";
 	}
 	
 	public AnimationNames a = new AnimationNames();
@@ -167,6 +170,11 @@ public class Movable : MonoBehaviour {
 			return a.fall;
 		}
 	}
+	protected virtual string LandAnimation {
+		get{
+			return a.land;
+		}
+	}
 	//------------------------------------------------------\\
 	//----------------------Debugging-----------------------\\
 	//------------------------------------------------------\\
@@ -181,7 +189,8 @@ public class Movable : MonoBehaviour {
 		bc = GetComponent<BoxCollider2D>();
 		sprite = r.sprite;
 		anim = GetComponent<Animator>();
-		
+		source = gameObject.AddComponent<AudioSource>();
+		sounds = new Sounds();
 		if (!anim){
 			if (debug){
 				Debug.LogWarning("No animations on this Movable. Disabling animations!");
@@ -212,10 +221,11 @@ public class Movable : MonoBehaviour {
 			
 			if (velocity.y < 0 && !falling){
 				falling = true;
-				if (animated && !hurt){
-					anim.Play(FallAnimation);
-				}
+				
 				SendMessage("OnFall", SendMessageOptions.DontRequireReceiver);
+			}
+			if (falling && animated && !hurt){
+				anim.Play(FallAnimation);
 			}
 		}
 
@@ -255,6 +265,9 @@ public class Movable : MonoBehaviour {
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
 				if (debug){
 					Debug.Log ("I'm grounded now. This is what I hit: " + downRays[lastConnection].collider.name);
+				}
+				if (animated){
+					anim.Play(LandAnimation);
 				}
 			}
 			else if (!connectedDown){
@@ -380,7 +393,14 @@ public class Movable : MonoBehaviour {
 			anim.Play(JumpAnimation);
 		}
 		Vector2 newVel = new Vector2(currentVelocity.x, amount);
+		
+		Invoke("PlayJumpSound", 0.03f);
 		return newVel;
+	}
+	
+	void PlayJumpSound(){
+		source.clip = sounds.jump;
+		source.Play();
 	}
 	
 	
@@ -393,5 +413,10 @@ public class Movable : MonoBehaviour {
 			Gizmos.DrawLine(box.center, box.center + new Vector2(0, box.height / -2 + velocity.y * Time.deltaTime));
 			Gizmos.DrawCube (box.center, new Vector3(box.width, box.height, 1));
 		}
+	}
+	
+	public void GarbagePickup(){
+		source.clip = sounds.cameraSound;
+		source.Play();
 	}
 }

@@ -121,7 +121,7 @@ public class MapLoader {
         createBorder("left", new Vector3(map.mapDimension.width + 1, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
         createBorder("right", new Vector3(right, map.mapDimension.height / 2, 0), 1, this.map.mapDimension.height+1, parent);
 		if (loadGameElement) {
-			border.border = new Rect (0, 0, map.mapDimension.width, map.mapDimension.height);		
+			border.border = new Rect (2, 0, map.mapDimension.width-4, map.mapDimension.height-1);		
 		}
 		
 		
