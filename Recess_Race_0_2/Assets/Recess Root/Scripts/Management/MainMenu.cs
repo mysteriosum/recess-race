@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,6 +12,8 @@ public enum MenuEnum{
 	modeSelect,
 	grandPrix,
 	timeTrial,
+	controls,
+	reset,
 }
 
 public class MainMenu : MonoBehaviour {
@@ -21,6 +24,8 @@ public class MainMenu : MonoBehaviour {
 	public Texture2D modeSelect;
 	public Texture2D timeTrial;
 	public Texture2D grandPrix;
+	public Texture2D optionsTex;
+	public Texture2D controlsTex;
 	
 	public Texture2D stopwatchTexture;
 	public Texture2D medalTexture;
@@ -32,6 +37,7 @@ public class MainMenu : MonoBehaviour {
 	public Texture2D silverTexture;
 	public Texture2D bronzeTexture;
 	public Texture2D participationTexture;
+	public Texture2D popupTexture;
 	
 	public Sprite[] logoCards;
 	public SpriteRenderer sceneLogoCard;
@@ -43,11 +49,13 @@ public class MainMenu : MonoBehaviour {
 	
 	public Rect playButtonRect;
 	public Rect creditsButtonRect;
+	public Rect optionsButtonRect;
 	public Texture2D buttonBanner;
 	
 	private MenuEnum currentMenu = MenuEnum.intro;
 	public Vector2 mainButtonOffset = Vector2.zero;
 	public Vector2 creditsOffset;
+	public Vector2 optionsOffset;
 	private float selectFontScreenRation = 0.085f;
 	public Rect timeTrialRect = new Rect(0.1f, 0.6f, 0.3f, 0.085f);
 	public Rect grandPrixRect = new Rect(0.1f, 0.4f, 0.3f, 0.085f);
@@ -72,6 +80,39 @@ public class MainMenu : MonoBehaviour {
 	private float lerpAmount = 0.1f;
 	private int currentIndex = 0;
 	
+	[System.SerializableAttribute]
+	public class ControlsVariables{
+		public Rect movementRect;
+		public Rect titleRect;
+		public float leftMargin;
+		public float rightMargin;
+		public float yTop = 0.1f;
+		
+		public Vector2 buttonSize = new Vector2(0.1f, 0.1f);
+		public Rect waitRect;
+		public Rect waitTextRect = new Rect(0.1f,0.1f,0.1f,0.1f);
+	}
+	
+	
+	[System.SerializableAttribute]
+	public class OptionsVariables{
+		public Rect titleRect;
+		public float leftMargin = 0.1f;
+		public float selectionsTop = 0.1f;
+		public float spacing = 0.1f;
+		
+		public float buttonHeight = 0.1f;
+		public float controlsWidth = 0.1f;
+		public float resetWidth = 0.1f;
+		
+	}
+	public OptionsVariables options;
+	
+	public ControlsVariables controls = new ControlsVariables();
+	
+	//input & stuff
+	private bool[] waitingForInput = new bool[2] {false, false };
+	private KeyCode keytoAssign = KeyCode.None;
 	private float ThumbsStartAt{
 		get{
 			int mod = -currentIndex;
@@ -205,8 +246,33 @@ public class MainMenu : MonoBehaviour {
 	void Start (){
 		Application.targetFrameRate = 100;
 	}
-	
 	void Update (){
+		
+		//TEST change keys
+		if (waitingForInput[0]){
+			KeyCode code;
+			string input = Input.inputString;
+			if (input.Length > 1){
+				input = input.Remove(1);
+			}
+			if (input != ""){
+				if (input == " "){
+					code = KeyCode.Space;
+				}
+				else{
+					try{
+						code = (KeyCode) System.Enum.Parse(typeof(KeyCode), input.ToUpper());
+					}
+					catch(System.ArgumentException){
+						code = KeyCode.F;
+					}
+				}
+				PlayerPrefs.SetString("Button" + System.Convert.ToInt32(waitingForInput[1]).ToString(), code.ToString());
+				waitingForInput[0] = false;
+			}
+			
+		}
+		
 		if (currentMenu == MenuEnum.timeTrial || currentMenu == MenuEnum.grandPrix){
 			//int directionModifier = goingUp? 1 : -1;
 			
@@ -287,14 +353,10 @@ public class MainMenu : MonoBehaviour {
 	// Update is called once per frame
 	void OnGUI () {
 		//start with intro animation: credits, logos, etc.
-		
+		float yValue;
 		
 		switch(currentMenu){
-		case MenuEnum.intro:
-			//play intro animation!
-			
-			
-			break;
+			#region main
 		case MenuEnum.main:
 			//render background (animated?! or just one long animated texture that loops?)
 			
@@ -302,6 +364,7 @@ public class MainMenu : MonoBehaviour {
 			
 			GUI.DrawTexture(MultiplyRectByScreenDimensions(playButtonRect), buttonBanner);
 			GUI.DrawTexture(MultiplyRectByScreenDimensions(creditsButtonRect), buttonBanner);
+			GUI.DrawTexture(MultiplyRectByScreenDimensions(optionsButtonRect), buttonBanner);
 			
 			//Texture2D buttonTex = skin.button.normal.background;
 			GUIStyle playStyle = new GUIStyle(skin.customStyles[2]);
@@ -309,6 +372,7 @@ public class MainMenu : MonoBehaviour {
 			float buttonWidth = Screen.width * playButtonRect.width / 2;
 			playStyle.fontSize = (int)((float)Screen.height * playButtonRect.height/2);
 			GUIStyle creditsStyle = new GUIStyle(skin.customStyles[2]);
+			GUIStyle optionsStyle = new GUIStyle(skin.customStyles[2]);
 			Rect playRect = SelectionRect(mainButtonOffset.x * Screen.width, Screen.height * mainButtonOffset.y, buttonWidth, buttonHeight, playStyle);
 			bool pressPlay = GUI.Button(playRect, mainMenu[0], playStyle);
 			if (pressPlay){
@@ -316,19 +380,31 @@ public class MainMenu : MonoBehaviour {
 //				Application.LoadLevel (firstLevelName);
 				currentMenu = MenuEnum.modeSelect;
 			}
+			Rect optionsRect = SelectionRect((mainButtonOffset.x + optionsOffset.x) * Screen.width, (mainButtonOffset.y + optionsOffset.y) * Screen.height, buttonWidth, buttonHeight, optionsStyle);
+			bool pressOptions = GUI.Button (optionsRect, mainMenu[1], optionsStyle);
+			if (pressOptions){
+				currentMenu = MenuEnum.options;
+			}
 			Rect creditsRect = SelectionRect((mainButtonOffset.x + creditsOffset.x) * Screen.width, (mainButtonOffset.y + creditsOffset.y) * Screen.height, buttonWidth, buttonHeight, creditsStyle);
-			bool pressCredits = GUI.Button (creditsRect, mainMenu[1], creditsStyle);
+			bool pressCredits = GUI.Button (creditsRect, mainMenu[2], creditsStyle);
 			if (pressCredits){
 				currentMenu = MenuEnum.credits;
 				creditsOrigin = creditsVars.origin * Screen.height;
 				creditsSpeed = 0;
 				creditsTimer = 0;
 			}
+			
+			
+			
 			break;
+			#endregion
+			#region title
 		case MenuEnum.title:
 			
 			break;
-		case MenuEnum.credits:
+			#endregion
+			#region credits
+		case MenuEnum.credits: 
 			
 			
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), credits);
@@ -358,13 +434,78 @@ public class MainMenu : MonoBehaviour {
 			}
 			
 		GUI.EndGroup();
+			break;
+			#endregion
+			#region options
+		case MenuEnum.options:	
+			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), optionsTex);
+			GUIStyle controlsStyle = new GUIStyle(skin.customStyles[2]);
+			GUIStyle resetStyle = new GUIStyle(skin.customStyles[2]);
+			
+			yValue = options.selectionsTop;
+			Rect controlsRect = MultiplyRectByScreenDimensions(new Rect(options.leftMargin, yValue, options.controlsWidth, options.buttonHeight));
+			controlsRect = SelectionRect(controlsRect, controlsStyle);
+			bool controlsPressed = GUI.Button(controlsRect, "Controls", controlsStyle);
+			
+			if (controlsPressed){
+				currentMenu = MenuEnum.controls;
+			}
+			
+			yValue += options.spacing;
+			Rect resetRect = MultiplyRectByScreenDimensions(new Rect(options.leftMargin, yValue, options.resetWidth, options.buttonHeight));
+			resetRect = SelectionRect(resetRect, resetStyle);
+			bool resetPressed = GUI.Button(resetRect, "Reset Data", resetStyle);
+			
+			if (resetPressed){
+				currentMenu = MenuEnum.reset;
+			}
 			
 			break;
-		case MenuEnum.options:
+		case MenuEnum.controls:
+			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), controlsTex);
+			GUIStyle movementStyle = new GUIStyle(skin.customStyles[1]);
+			movementStyle.fontSize = (int)(Screen.height * controls.movementRect.height);
+			movementStyle.alignment = TextAnchor.MiddleCenter;
+			GUI.TextArea(MultiplyRectByScreenDimensions(controls.movementRect), "Arrows or WASD to move", movementStyle);
+			if (waitingForInput[0]){
+				Rect waitRect = MultiplyRectByScreenDimensions(controls.waitRect);
+				GUI.DrawTexture (waitRect, popupTexture);
+				GUIStyle waitStyle = new GUIStyle(skin.customStyles[1]);
+				waitStyle.alignment = TextAnchor.MiddleCenter;
+				Rect waitTextRect = MultiplyRectByScreenDimensions(controls.waitTextRect);
+				GUI.TextArea(waitTextRect, "Press a Key " + Environment.NewLine + "to assign to Button " + (System.Convert.ToInt32(waitingForInput[1])+1).ToString(), waitStyle);
+			}
+			else{
+				GUIStyle[] buttonStyles = new GUIStyle[]{new GUIStyle(skin.customStyles[1]), new GUIStyle(skin.customStyles[1])};
+				yValue = controls.yTop;
+				for (int i = 0; i < 2; i++) {
+					GUI.TextArea(MultiplyRectByScreenDimensions(new Rect(controls.rightMargin, yValue, 0.1f, 0.1f)), PlayerPrefs.GetString("Button" + i.ToString(), i == 0? "Z": "X"), skin.customStyles[1]);
+					Rect buttonRect = MultiplyRectByScreenDimensions(new Rect(controls.leftMargin, yValue, controls.buttonSize.x, controls.buttonSize.y));
+					buttonRect = SelectionRect(buttonRect, buttonStyles[i]);
+					bool buttonPressed = GUI.Button(buttonRect, "Button " + (i+1).ToString(), buttonStyles[i]);
+					
+					if (buttonPressed){
+						waitingForInput = new bool[2]{true, System.Convert.ToBoolean(i)};
+					}
+					
+					yValue += options.spacing;
+				}
+				
+				
+				
+			}
+			
 			
 			break;
+		case MenuEnum.reset:
+			
+			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), optionsTex);
+			GUI.DrawTexture (MultiplyRectByScreenDimensions(controls.movementRect), popupTexture);
+			
+			break;
+			#endregion
+			#region modeSelect
 		case MenuEnum.modeSelect:
-			
 			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), modeSelect);
 			
 			GUIStyle trialStyle = new GUIStyle(skin.customStyles[2]);
@@ -470,7 +611,7 @@ public class MainMenu : MonoBehaviour {
 			
 			for (int i = 0; i < RecessManager.levelStats.Length; i++) {
 				float xValue = levelSelectPositions.courseStatX;
-				float yValue = levelSelectPositions.courseStatBeginY + i * levelSelectPositions.courseStatInterval;
+				yValue = levelSelectPositions.courseStatBeginY + i * levelSelectPositions.courseStatInterval;
 				
 				if (RecessManager.levelStats[i].HasParticipated){
 					Texture2D texture = participationTexture;
@@ -499,6 +640,7 @@ public class MainMenu : MonoBehaviour {
 			
 			
 			break;
+			#endregion
 		default:
 			Debug.LogError ("There's something wrong with this situation. Time to bail!");
 			Destroy (this.gameObject);
@@ -540,9 +682,13 @@ public class MainMenu : MonoBehaviour {
 			
 			returnArrowPressed = GUI.Button(returnRect, returnArrow, rectStyle);
 			
-			if (returnArrowPressed){
+			if (returnArrowPressed || Input.GetKeyDown (KeyCode.Escape)){
 				if (currentMenu == MenuEnum.timeTrial || currentMenu == MenuEnum.grandPrix){
 					currentMenu = MenuEnum.modeSelect;
+				}
+				else if (currentMenu == MenuEnum.controls || currentMenu == MenuEnum.reset){
+					currentMenu = MenuEnum.options;
+					waitingForInput[0] = false;
 				}
 				else{
 					currentMenu = MenuEnum.main;

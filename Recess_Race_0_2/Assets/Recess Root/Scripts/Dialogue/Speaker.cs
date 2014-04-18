@@ -50,7 +50,8 @@ public class Speaker : MonoBehaviour {
 		square.transform.position -= Vector3.forward * count;
 		tm.transform.position -= Vector3.forward * count;
 		
-		speaker = transform.parent.GetComponent<SpriteRenderer>();
+//		speaker = transform.parent.GetComponent<SpriteRenderer>();
+		speaker = GetComponent<SpriteRenderer>();
 		//DEV
 		//Speak (testDialogue, showTimerDefault, SayItAgain);
 		maxScaleX = defaultScaleX;
