@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -24,6 +25,7 @@ public class MainMenu : MonoBehaviour {
 	public Texture2D timeTrial;
 	public Texture2D grandPrix;
 	public Texture2D optionsTex;
+	public Texture2D controlsTex;
 	
 	public Texture2D stopwatchTexture;
 	public Texture2D medalTexture;
@@ -80,7 +82,7 @@ public class MainMenu : MonoBehaviour {
 	
 	[System.SerializableAttribute]
 	public class ControlsVariables{
-		public Rect backRect;
+		public Rect movementRect;
 		public Rect titleRect;
 		public float leftMargin;
 		public float rightMargin;
@@ -88,6 +90,7 @@ public class MainMenu : MonoBehaviour {
 		
 		public Vector2 buttonSize = new Vector2(0.1f, 0.1f);
 		public Rect waitRect;
+		public Rect waitTextRect = new Rect(0.1f,0.1f,0.1f,0.1f);
 	}
 	
 	
@@ -108,7 +111,7 @@ public class MainMenu : MonoBehaviour {
 	public ControlsVariables controls = new ControlsVariables();
 	
 	//input & stuff
-	private bool waitingForInput = false;
+	private bool[] waitingForInput = new bool[2] {false, false };
 	private KeyCode keytoAssign = KeyCode.None;
 	private float ThumbsStartAt{
 		get{
@@ -246,7 +249,7 @@ public class MainMenu : MonoBehaviour {
 	void Update (){
 		
 		//TEST change keys
-		if (waitingForInput){
+		if (waitingForInput[0]){
 			KeyCode code;
 			string input = Input.inputString;
 			if (input.Length > 1){
@@ -264,7 +267,8 @@ public class MainMenu : MonoBehaviour {
 						code = KeyCode.F;
 					}
 				}
-				Debug.Log("My code is " + code.ToString());
+				PlayerPrefs.SetString("Button" + System.Convert.ToInt32(waitingForInput[1]).ToString(), code.ToString());
+				waitingForInput[0] = false;
 			}
 			
 		}
@@ -458,30 +462,45 @@ public class MainMenu : MonoBehaviour {
 			
 			break;
 		case MenuEnum.controls:
-			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), optionsTex);
-			GUI.DrawTexture (MultiplyRectByScreenDimensions(controls.backRect), popupTexture);
-			
-			GUIStyle button1Style = new GUIStyle(skin.customStyles[1]);
-			GUIStyle button2Style = new GUIStyle(skin.customStyles[1]);
-
-			yValue = controls.yTop;
-			
-			Rect button1Rect = MultiplyRectByScreenDimensions(new Rect(controls.leftMargin, yValue, controls.buttonSize.x, controls.buttonSize.y));
-			button1Rect = SelectionRect(button1Rect, button1Style);
-			bool button1Pressed = GUI.Button(button1Rect, "Reset Data", button1Style);
-			
-			if (button1Pressed){
-				waitingForInput = true;
+			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), controlsTex);
+			GUIStyle movementStyle = new GUIStyle(skin.customStyles[1]);
+			movementStyle.fontSize = (int)(Screen.height * controls.movementRect.height);
+			movementStyle.alignment = TextAnchor.MiddleCenter;
+			GUI.TextArea(MultiplyRectByScreenDimensions(controls.movementRect), "Arrows or WASD to move", movementStyle);
+			if (waitingForInput[0]){
+				Rect waitRect = MultiplyRectByScreenDimensions(controls.waitRect);
+				GUI.DrawTexture (waitRect, popupTexture);
+				GUIStyle waitStyle = new GUIStyle(skin.customStyles[1]);
+				waitStyle.alignment = TextAnchor.MiddleCenter;
+				Rect waitTextRect = MultiplyRectByScreenDimensions(controls.waitTextRect);
+				GUI.TextArea(waitTextRect, "Press a Key " + Environment.NewLine + "to assign to Button " + (System.Convert.ToInt32(waitingForInput[1])+1).ToString(), waitStyle);
 			}
-			
-			yValue += options.spacing;
+			else{
+				GUIStyle[] buttonStyles = new GUIStyle[]{new GUIStyle(skin.customStyles[1]), new GUIStyle(skin.customStyles[1])};
+				yValue = controls.yTop;
+				for (int i = 0; i < 2; i++) {
+					GUI.TextArea(MultiplyRectByScreenDimensions(new Rect(controls.rightMargin, yValue, 0.1f, 0.1f)), PlayerPrefs.GetString("Button" + i.ToString(), i == 0? "Z": "X"), skin.customStyles[1]);
+					Rect buttonRect = MultiplyRectByScreenDimensions(new Rect(controls.leftMargin, yValue, controls.buttonSize.x, controls.buttonSize.y));
+					buttonRect = SelectionRect(buttonRect, buttonStyles[i]);
+					bool buttonPressed = GUI.Button(buttonRect, "Button " + (i+1).ToString(), buttonStyles[i]);
+					
+					if (buttonPressed){
+						waitingForInput = new bool[2]{true, System.Convert.ToBoolean(i)};
+					}
+					
+					yValue += options.spacing;
+				}
+				
+				
+				
+			}
 			
 			
 			break;
 		case MenuEnum.reset:
 			
 			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), optionsTex);
-			GUI.DrawTexture (MultiplyRectByScreenDimensions(controls.backRect), popupTexture);
+			GUI.DrawTexture (MultiplyRectByScreenDimensions(controls.movementRect), popupTexture);
 			
 			break;
 			#endregion
@@ -663,12 +682,13 @@ public class MainMenu : MonoBehaviour {
 			
 			returnArrowPressed = GUI.Button(returnRect, returnArrow, rectStyle);
 			
-			if (returnArrowPressed){
+			if (returnArrowPressed || Input.GetKeyDown (KeyCode.Escape)){
 				if (currentMenu == MenuEnum.timeTrial || currentMenu == MenuEnum.grandPrix){
 					currentMenu = MenuEnum.modeSelect;
 				}
 				else if (currentMenu == MenuEnum.controls || currentMenu == MenuEnum.reset){
 					currentMenu = MenuEnum.options;
+					waitingForInput[0] = false;
 				}
 				else{
 					currentMenu = MenuEnum.main;

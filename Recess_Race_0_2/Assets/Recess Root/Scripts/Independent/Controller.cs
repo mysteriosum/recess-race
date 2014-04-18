@@ -54,8 +54,8 @@ public class Controller {
 	private static KeyCode run;
 	
 	public Controller(){
-		jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("JumpButton", "Z"));
-		run = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("RunButton", "X"));
+		jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Button0", "Z"));
+		run = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Button1", "X"));
 		 
 	}
 	
