@@ -294,15 +294,11 @@ public class PlateformGenerator {
 	private bool canOverRunFromLeft(float x, float y){
 		if(x-1 < 0 || map.pathingMap[(int)x-1][(int)y]) return false; 
 		if(y-1 < 0 || !map.pathingMap[(int)x-1][(int)y-1]) return false;
-		if(x-2 < 0 || map.pathingMap[(int)x-2][(int)y]) return false; 
-		if(!map.pathingMap[(int)x-2][(int)y-1]) return false;
 		return true;
 	}
 	private bool canOverRunFromRight(float x, float y){
 		if(x+1 > map.pathingMap.Length || map.pathingMap[(int)x+1][(int)y]) return false; 
 		if(y-1 < 0 || !map.pathingMap[(int)x+1][(int)y-1]) return false;
-		if(x+2 > map.pathingMap.Length || map.pathingMap[(int)x+2][(int)y]) return false; 
-		if(!map.pathingMap[(int)x+2][(int)y-1]) return false;
 		return true;
 	}
 
