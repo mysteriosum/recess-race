@@ -279,7 +279,7 @@ public class PlateformGenerator {
 					}
 					try{
 						if (!jump.jumpingPath.collideWith(checkDirection, pathingMap)) {
-							fromPlateform.linkedJumpPlateform.Add(new LinkedPlateform(jump.direction, from, toPlateform, jump.instruction));
+							fromPlateform.addLinksToPlateform(toPlateform, jump.direction, from, jump.instruction);
 						}	
 					}catch(IndexOutOfRangeException){
 						//Debug.LogError("Plateform " + fromPlateform.name + " to " + toPlateform.name + " - To close of map edge");

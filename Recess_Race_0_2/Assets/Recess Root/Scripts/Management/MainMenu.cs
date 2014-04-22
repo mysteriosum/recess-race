@@ -112,7 +112,7 @@ public class MainMenu : MonoBehaviour {
 	
 	//input & stuff
 	private bool[] waitingForInput = new bool[2] {false, false };
-	private KeyCode keytoAssign = KeyCode.None;
+//	private KeyCode keytoAssign = KeyCode.None;
 	private float ThumbsStartAt{
 		get{
 			int mod = -currentIndex;

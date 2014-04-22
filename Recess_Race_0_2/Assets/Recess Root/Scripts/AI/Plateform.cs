@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Plateform : MonoBehaviour, IComparable<Plateform> {
 
-    public List<LinkedPlateform> linkedJumpPlateform;
+	public List<LinksToPlateform> linksToPlateforms;
 
     public Color color;
     public int id;
@@ -64,30 +64,31 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
 			Gizmos.DrawLine(pointLocation, to);
 		}
 
-        foreach (var linked in linkedJumpPlateform) {
-            if (linked == null || !linked.plateform) continue;
-		
-			InstructionCreationData data = linked.instruction;
-			if(linked.instruction.type.Equals(InstructionCreationData.InstructionType.Jump)){
-				Gizmos.color = new Color(1, 1, 0, 0.8f);
-				int direction = (int)data.direction;
-				float finalX = linked.startLocation.x +  direction * (data.moveHoldingLenght + data.totalDistanceAfterMoveAgain + 1);
-				//float aproximativeJumpHeight = 3 + 2 * (data.jumpHoldingLenght / 13);
+        foreach (var linked in linksToPlateforms) {
+			foreach(var jump in linked.jumps){
 
-				Vector3 v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
-				Gizmos.DrawLine(linked.startLocation, v3);
+				InstructionCreationData data = jump.instruction;
+				if(data.type.Equals(InstructionCreationData.InstructionType.Jump)){
+					Gizmos.color = new Color(1, 1, 0, 0.8f);
+					int direction = (int)data.direction;
+					float finalX = jump.startLocation.x +  direction * (data.moveHoldingLenght + data.totalDistanceAfterMoveAgain + 1);
+					//float aproximativeJumpHeight = 3 + 2 * (data.jumpHoldingLenght / 13);
 
-			} else if( linked.instruction.type.Equals(InstructionCreationData.InstructionType.Run)) {
-				Gizmos.color = new Color(1, 0, 1, 0.8f);
-				Vector3 v2 = new Vector3(linked.startLocation.x + data.moveHoldingLenght, linked.startLocation.y, 0);
-				Gizmos.DrawLine(linked.startLocation, v2);
-			} else if(linked.instruction.type.Equals(InstructionCreationData.InstructionType.DropOff)){
-				Gizmos.color = new Color(0, 1, 1, 0.8f);
-				Vector3 v2 = new Vector3(linked.startLocation.x + ((float)linked.startingDirection), linked.plateform.transform.position.y, 0);
-				Gizmos.DrawLine(linked.startLocation, v2);
+					Vector3 v3 = new Vector3(finalX, linked.plateform.transform.position.y, 0);
+					Gizmos.DrawLine(jump.startLocation, v3);
+
+				} else if( data.type.Equals(InstructionCreationData.InstructionType.Run)) {
+					Gizmos.color = new Color(1, 0, 1, 0.8f);
+					Vector3 v2 = new Vector3(jump.startLocation.x + data.moveHoldingLenght, jump.startLocation.y, 0);
+					Gizmos.DrawLine(jump.startLocation, v2);
+				} else if( data.type.Equals(InstructionCreationData.InstructionType.DropOff)){
+					Gizmos.color = new Color(0, 1, 1, 0.8f);
+					Vector3 v2 = new Vector3(jump.startLocation.x + ((float)jump.startingDirection), linked.plateform.transform.position.y, 0);
+					Gizmos.DrawLine(jump.startLocation, v2);
+				}
+
+				Gizmos.DrawSphere(jump.startLocation, 0.15f);
 			}
-
-			Gizmos.DrawSphere(linked.startLocation, 0.15f);
 		}
 	}
 
@@ -101,21 +102,47 @@ public class Plateform : MonoBehaviour, IComparable<Plateform> {
     public int getWidth() {
         return (int)this.transform.localScale.x;
     }
+
+	public void addLinksToPlateform(Plateform toPlateform, Direction startingDirection, Vector3 startLocation, InstructionCreationData instruction){
+		foreach(LinksToPlateform linked in this.linksToPlateforms){
+			if(toPlateform.id == linked.plateform.id){
+				linked.jumps.Add (new PreciseJumpConfig(startingDirection,startLocation, instruction));
+				return;
+			}
+		}
+		this.linksToPlateforms.Add (new LinksToPlateform(toPlateform));
+	}
+
+	public LinksToPlateform getLinksTo(Plateform to){
+		foreach (var item in linksToPlateforms) {
+			if(item.plateform.id == to.id){
+				return item;
+			}
+		}
+		return null;
+	}
 }
 
 [Serializable]
-public class LinkedPlateform {
-    public Vector3 startLocation;
-    public Plateform plateform;
-	public InstructionCreationData instruction;
-	public Direction startingDirection;
+public class LinksToPlateform{
+	public Plateform plateform;
+	public List<PreciseJumpConfig> jumps;
 
-	public LinkedPlateform(Direction startingDirection, Vector3 startLocation, Plateform plateform, InstructionCreationData instruction) {
-        this.startLocation = startLocation;
-        this.plateform = plateform;
-        this.instruction = instruction;
-		this.startingDirection = startingDirection;
-    }
+	public LinksToPlateform(Plateform toPlaform){
+		this.plateform = toPlaform;
+		jumps = new List<PreciseJumpConfig>();
+	}
 }
 
-
+[Serializable]
+public class PreciseJumpConfig{
+	public Vector3 startLocation;
+	public InstructionCreationData instruction;
+	public Direction startingDirection;
+	
+	public PreciseJumpConfig(Direction startingDirection, Vector3 startLocation, InstructionCreationData instruction) {
+		this.startLocation = startLocation;
+		this.instruction = instruction;
+		this.startingDirection = startingDirection;
+	}
+}

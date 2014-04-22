@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Agent : Movable {
 
+	private AgentPlateformFinder agentPlateformFinder;
+
     private Instruction currentInstruction;
     private Plateform lastPlateform;
     public int currentWayPoint = 0;
@@ -13,10 +15,11 @@ public class Agent : Movable {
 	private Vector3 lastPosition;
 	public float distanceDone = 111;
 	private int unstuckTickNumber = 60;
-	
+
 	protected override void Start() {
 		base.Start();
 		secondsToMax = 0.3f;
+		agentPlateformFinder = new AgentPlateformFinder (this);
 	}
 	
     void Update() {
@@ -83,6 +86,7 @@ public class Agent : Movable {
 					this.currentWayPoint = plateform.waypointId;
 				}
 				handlePlateform(plateform);
+				Debug.Log("HANDLE");
 			}
 			
 		}
@@ -95,27 +99,27 @@ public class Agent : Movable {
 
 
     private void handlePlateform(Plateform plateform) {
-        LinkedPlateform linkedPlateform = AgentPlateformFinder.generateMove(this, plateform);
-        if (linkedPlateform == null) {
+		PreciseJumpConfig preciseJump = this.agentPlateformFinder.generateMove(plateform);
+        if (preciseJump == null) {
             Debug.LogError("No More jump Possible for agent : " + this.name);
         } else {
-			Instruction instructionsToGetThere = InstructionFactory.makeInstruction(this,linkedPlateform.instruction);
+			Instruction instructionsToGetThere = InstructionFactory.makeInstruction(this,preciseJump.instruction);
 			//Debug.Log("test" + linkedPlateform.startLocation);
-			if(linkedPlateform.instruction.needRunCharge){
-				makeRunCharge(linkedPlateform,instructionsToGetThere);
+			if(preciseJump.instruction.needRunCharge){
+				makeRunCharge(preciseJump,instructionsToGetThere);
 			}else{
-                makeJump(linkedPlateform, instructionsToGetThere);
+                makeJump(preciseJump, instructionsToGetThere);
 			}
         }
     }
 
-    private void makeJump(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere) {
-        if (Mathf.Abs(this.transform.position.x - linkedPlateform.startLocation.x) < 0.1) {
+	private void makeJump(PreciseJumpConfig preciseJump, Instruction instructionsToGetThere) {
+        if (Mathf.Abs(this.transform.position.x - preciseJump.startLocation.x) < 0.1) {
             switchTo(instructionsToGetThere);
         } else {
-            if ((this.transform.position.x < linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.left))
-               || (this.transform.position.x > linkedPlateform.startLocation.x && linkedPlateform.startingDirection.Equals(Direction.right))) {
-				Instruction run = new RunToInstruction(this, getXOffsetedPosition(linkedPlateform.startLocation), true);
+            if ((this.transform.position.x < preciseJump.startLocation.x && preciseJump.startingDirection.Equals(Direction.left))
+               || (this.transform.position.x > preciseJump.startLocation.x && preciseJump.startingDirection.Equals(Direction.right))) {
+				Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation), true);
                 Instruction wait = new WaitInstruction(this, 0.4f);
                 run.nextInstruction = wait;
 				wait.nextInstruction = instructionsToGetThere;
@@ -123,7 +127,7 @@ public class Agent : Movable {
                 switchTo(run);
             } else {
 				//debugLog("On attend pas");
-				Instruction run = new RunToInstruction(this, getXOffsetedPosition(linkedPlateform.startLocation));
+				Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation));
                 run.nextInstruction = instructionsToGetThere;
                 switchTo(run);
             }
@@ -131,18 +135,18 @@ public class Agent : Movable {
         }
     }
 
-	private void makeRunCharge(LinkedPlateform linkedPlateform, Instruction instructionsToGetThere){
-		float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, linkedPlateform);
-		if (xToGo != linkedPlateform.startLocation.x) {
+	private void makeRunCharge(PreciseJumpConfig preciseJump, Instruction instructionsToGetThere){
+		float xToGo = AgentPlateformFinder.getXToGetToMakeTheJump(this, preciseJump);
+		if (xToGo != preciseJump.startLocation.x) {
 			//debugLog("Making a run charge prepositioning");
-			Instruction overRun = new RunToInstruction(this, getXOffsetedPosition(new Vector3(xToGo, linkedPlateform.startLocation.y, 0)));
-			Instruction run = new RunToInstruction(this, getXOffsetedPosition(linkedPlateform.startLocation));
+			Instruction overRun = new RunToInstruction(this, getXOffsetedPosition(new Vector3(xToGo, preciseJump.startLocation.y, 0)));
+			Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation));
 			overRun.nextInstruction = run;
 			run.nextInstruction = instructionsToGetThere;
 			switchTo(overRun);
 		} else {
 			//debugLog("RUN");
-			Instruction run = new RunToInstruction(this, getXOffsetedPosition(linkedPlateform.startLocation));
+			Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation));
 			run.nextInstruction = instructionsToGetThere;
 			switchTo(run);
 		}
