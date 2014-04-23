@@ -15,6 +15,12 @@ public class Agent : Movable {
 	private Vector3 lastPosition;
 	public float distanceDone = 111;
 	private int unstuckTickNumber = 60;
+	
+	protected override float SecondsToMax {
+		get {
+			return grounded? base.SecondsToMax : 8f;
+		}
+	}
 
 	protected override void Start() {
 		base.Start();
