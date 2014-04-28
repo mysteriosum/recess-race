@@ -6,128 +6,152 @@ using System.Linq;
 
 public class AgentPlateformFinder {
 
-    private static int trys = 0;
-    private static int currentDepth;
-    private static int maxDepth = 10;
+	private Agent agent;
 
-    public static LinkedPlateform generateMove(Agent agent, Plateform plateform) {
-        trys = 0;
+	private int minJumpsFound;
+    private int trys;
+    private int currentDepth;
+    private int maxDepth = 10;
 
-        int min = maxDepth;
-		LinkedPlateform plateformWayPoint = null;
-
-        int targetWayPointId = agent.currentWayPoint + 1;
-        List<PlateformNbTry> tryiedPlateform = new List<PlateformNbTry>();
-        foreach (var link in plateform.linkedJumpPlateform) {
-			if (contain(tryiedPlateform, link.plateform)) continue;
-
-			if (link.plateform.waypointId == targetWayPointId) {
-				min = 1;
-				plateformWayPoint = link;
-				break;
-			}
-
-			int minForP = findHowManyMoveToWayPoint(link.plateform, null, targetWayPointId);
-			if (minForP < min) {
-				min = minForP;
-				plateformWayPoint = link;
-			}
-			tryiedPlateform.Add(new PlateformNbTry(minForP,link));
-        }
+	public AgentPlateformFinder(Agent agent){
+		this.agent = agent;
+	}
 
 
-		if (min == 1) {
-			if (agent.debug)
-				Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformWayPoint.plateform.id+" in direct jumps (trys " + trys + ").");
-			return plateformWayPoint;
-		} else {
-
-			int target = (int) (min + (1 - agent.jumpDecissionSkill) * UnityEngine.Random.Range (0, 5));
-			for (int i = 0; i < 5; i++) {
-				for (int j = -1; j <= 1; j+=2) {
-					PlateformNbTry plateformTry = getPlateformWithMoveOf(tryiedPlateform,target + j*i);
-					if(plateformTry != null){
-						if (agent.debug)
-							Debug.Log("From p#" + plateform.id + " to wp #" + targetWayPointId + " by p#" + plateformTry.plateform.plateform.id+" in " + min + " jumps (trys " + trys + ").");
-						return plateformTry.plateform;
-					}
-				}
-			}
-		}
-		return null;
+	public PreciseJumpConfig generateMove(Plateform fromPlateform) {
+		List<PlateformAndNbTry> tryiedPlateform = generateListPlateformAndNbTry (fromPlateform);
+		LinksToPlateform choosenPlateform = choosenPlateformWithSkillAndStuff (tryiedPlateform);
+		if (choosenPlateform == null || choosenPlateform.jumps.Count == 0) return null;
+		return findAPreciseJump (fromPlateform, choosenPlateform.plateform);
     }
 
-	private static bool contain(List<PlateformNbTry> plateforms, Plateform p){
-		foreach (var item in plateforms) {
-			if(item.plateform.plateform.id == p.id){
-				return true;
+	private List<PlateformAndNbTry> generateListPlateformAndNbTry(Plateform fromPlateform){
+		this.trys = 0;
+		this.currentDepth = 0;
+		this.minJumpsFound = maxDepth;
+
+		int targetWayPointId = agent.currentWayPoint + 1;
+		List<PlateformAndNbTry> tryiedPlateform = new List<PlateformAndNbTry>();
+
+		foreach (var links in fromPlateform.linksToPlateforms) {
+			if(links.plateform.id == targetWayPointId){
+				minJumpsFound = 1;
+				tryiedPlateform.Clear();
+				tryiedPlateform.Add(new PlateformAndNbTry(1,links));
+				return tryiedPlateform;
 			}	
+
+			int minForP = 1+ findHowManyMoveToWayPoint(links.plateform, null, targetWayPointId);
+			minJumpsFound = Mathf.Min(minForP, minJumpsFound);
+			tryiedPlateform.Add(new PlateformAndNbTry(minForP,links));
 		}
-		return false;
+
+
+		return tryiedPlateform;
 	}
 
-	private static PlateformNbTry getPlateformWithMoveOf(List<PlateformNbTry> plateforms, int nbMoves){
-		foreach (var item in plateforms) {
-			if(item.nbTry == nbMoves){
-				return item;
+	private LinksToPlateform choosenPlateformWithSkillAndStuff(List<PlateformAndNbTry> countedPlateforms){
+		PlateformAndNbTry plateforandNbTry = null;
+
+		if (this.minJumpsFound == 1) {
+			plateforandNbTry = countedPlateforms[0];
+			if (agent.debug)
+				Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in direct jumps (trys " + trys + ").");		
+		} else {
+			int add = ( UnityEngine.Random.Range(0f,1f) > agent.jumpDecissionSkill) ? 1 : 0;
+			int target = this.minJumpsFound + add;
+			
+			plateforandNbTry = findPlateformForTargetJump(countedPlateforms, target);
+			if(plateforandNbTry != null){
+				if (agent.debug)
+					Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in jumps (trys " + trys + ").");
+				return plateforandNbTry.links;
+			}else if(target != this.minJumpsFound){
+				plateforandNbTry = findPlateformForTargetJump(countedPlateforms, this.minJumpsFound);
+				if (agent.debug)
+					Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in jumps (trys " + trys + ").");
+				return plateforandNbTry.links;
 			}
 		}
 		return null;
 	}
 
-	public static float getXToGetToMakeTheJump(Agent agent, LinkedPlateform link){
-		float xToGo = link.startLocation.x;
-		if (agent.transform.position.x > link.startLocation.x) { // agent on right of target
-			if(link.startingDirection.Equals(Direction.right)){
-				xToGo -= 1.5f;
-			}else if(agent.transform.position.x - link.startLocation.x < 1.5f){
-				xToGo += 1.5f;
+	private PlateformAndNbTry findPlateformForTargetJump(List<PlateformAndNbTry> tryiedPlateform, int targetJumps){
+
+		List<PlateformAndNbTry> plateformTryesInTagerJumpsCount = new List<PlateformAndNbTry> ();
+
+		foreach (var item in tryiedPlateform) {
+			if(item.nbTry == targetJumps){
+				plateformTryesInTagerJumpsCount.Add(item);
+			}
+		}
+		if (plateformTryesInTagerJumpsCount.Count == 0) {
+			return null;		
+		} else {
+			int randomIndex = UnityEngine.Random.Range (0, plateformTryesInTagerJumpsCount.Count-1);
+			return plateformTryesInTagerJumpsCount[randomIndex];		
+		}
+
+	}
+
+
+	//Random pour linstant
+	private PreciseJumpConfig findAPreciseJump(Plateform from, Plateform to){
+		LinksToPlateform links = from.getLinksTo (to);
+		int randomIndex = UnityEngine.Random.Range (0, links.jumps.Count-1);
+		return links.jumps[randomIndex];
+	}
+
+
+
+	private int findHowManyMoveToWayPoint(Plateform from, Plateform beforeFrom, int targetWayPointId) {
+		trys++;
+		if (currentDepth++ >= maxDepth) {
+			currentDepth--;
+			return maxDepth;
+		}
+		int min = maxDepth;
+		foreach (var link in from.linksToPlateforms) {
+			if (from.id == link.plateform.id || (beforeFrom != null && beforeFrom.id == link.plateform.id)) {
+				continue;
+			} else if (link.plateform.waypointId == targetWayPointId) {
+				currentDepth--;
+				return 1;
+			} else {
+				int nb = findHowManyMoveToWayPoint(link.plateform, from, targetWayPointId);
+				min = Mathf.Min(nb, min);
+			}	
+		}
+		currentDepth--;
+		return 1 + min;
+	}
+
+	public static float getXToGetToMakeTheJump(Agent agent, PreciseJumpConfig preciseJump){
+		float xToGo = preciseJump.startLocation.x;
+		if (agent.transform.position.x > preciseJump.startLocation.x) { // agent on right of target
+			if(preciseJump.startingDirection.Equals(Direction.right)){
+				xToGo -= 0.5f;
+			}else if(agent.transform.position.x - preciseJump.startLocation.x < 0.5f){
+				xToGo += 0.5f;
 			}
 		} else {
-			if(link.startingDirection.Equals(Direction.left)){
-				xToGo += 1.5f;
-			}else if(agent.transform.position.x - link.startLocation.x > -1.5f){
-				xToGo -= 1.5f;
+			if(preciseJump.startingDirection.Equals(Direction.left)){
+				xToGo += 0.5f;
+			}else if(agent.transform.position.x - preciseJump.startLocation.x > -0.5f){
+				xToGo -= 0.5f;
 			}	
 		}
 		//Debug.Log ("location : " + agent.transform.position.x  + ", wanted : " + link.startLocation.x + " -- xToGo: " + xToGo);
 		return xToGo;
 	}
 
-    private static int findHowManyMoveToWayPoint(Plateform from, Plateform beforeFrom, int targetWayPointId) {
-        trys++;
-        if (currentDepth++ >= maxDepth) {
-            currentDepth--;
-            return maxDepth;
-        }
-        int min = maxDepth;
-        List<Plateform> tryiedPlateform = new List<Plateform>();
-        foreach (var link in from.linkedJumpPlateform) {
-            if (tryiedPlateform.Contains(link.plateform)) {
-                continue;
-            }
-            tryiedPlateform.Add(link.plateform);
-			if (from.id == link.plateform.id || (beforeFrom != null && beforeFrom.id == link.plateform.id)) {
-                continue;
-            } else if (link.plateform.waypointId == targetWayPointId) {
-                currentDepth--;
-                return 1;
-            } else {
-                int nb = findHowManyMoveToWayPoint(link.plateform, from, targetWayPointId);
-                min = Mathf.Min(nb, min);
-            }
-        }
-        currentDepth--;
-        return 1 + min;
-    }
-
-	private class PlateformNbTry{
+	private class PlateformAndNbTry{
 		public int nbTry;
-		public LinkedPlateform plateform;
+		public LinksToPlateform links;
 
-		public PlateformNbTry (int nbTry, LinkedPlateform plateform){
+		public PlateformAndNbTry (int nbTry, LinksToPlateform links){
 			this.nbTry = nbTry;
-			this.plateform = plateform;
+			this.links = links;
 		}
 	}
 }

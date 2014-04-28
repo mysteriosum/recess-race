@@ -59,7 +59,6 @@ public class RunToInstruction : Instruction {
 				} else {
 					agent.setMovingStrenght(Mathf.Sign(targetX - this.agent.transform.position.x) / 8);
 				}
-			}else{
 			}
         }
 		ranDistance += ranDistanceThisFrame;

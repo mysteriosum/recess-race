@@ -169,7 +169,13 @@ public class MapLoader {
 
 
 	private void loadObject(IEnumerable<XElement> xElement, string objectToTreatName, string prefabName, string unityObjectName, float yOffset, Transform parent){
-		XElement element = xElement.First(e => e.Attribute("name").Value.Equals(objectToTreatName));
+		XElement element = null;
+		try{
+			element = xElement.First(e => e.Attribute("name").Value.Equals(objectToTreatName));
+		}catch(InvalidOperationException){
+			UnityEngine.Debug.LogError("MapLoader : Missing Element " + objectToTreatName);
+			return;
+		}
 
 		GameObject prefab = Resources.Load<GameObject>(prefabName);
 		GameObject obj = GameObjectFactory.createCopyGameObject(prefab, unityObjectName, parent);

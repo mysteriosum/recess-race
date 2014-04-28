@@ -35,16 +35,15 @@ public  class BackgroundLoader {
 			camera.parallaxes = new List<Transform>();		
 		}
         
-
-		GameObject prefab = Resources.Load<GameObject>("SkyBackdrop");
-		/*GameObject obj = */GameObjectFactory.createCopyGameObject(prefab, "SkyBackdrop", parent);
-
 		addLayerOfSprites("Silouette"	, parent, "Background/Silouette/", silhouetteDistance, silhouetteYOffset + yOffset, Vector2.one);
 		addLayerOfSprites("House"		, parent, "Background/BuildingAndStuff/", bgDistance, houseYOffset + yOffset, Vector2.one);
 		addLayerOfSprites("GrassLine"	, parent, "Background/GrassLine/", grassLineDistance, grassLineYOffset + yOffset, Vector2.one);
 		addLayerOfSprites("Fence"		, parent, "Background/Fences/", fenceDistance, fenceYOffset + yOffset, Vector2.one);
 		addLayerOfSprites("Tree"		, parent, "Background/Trees/", treesDistance, treesYOffset + yOffset, new Vector2(0.4f,3f));
-		if (MapLoader.loadGameElement) {
+	
+			if (MapLoader.loadGameElement) {
+			GameObject prefab = Resources.Load<GameObject>("SkyBackdrop");
+			GameObjectFactory.createCopyGameObject(prefab, "SkyBackdrop", parent);
 			makeParallax ();
 		}
     }

@@ -611,7 +611,7 @@ public class Fitz : Movable {
 			dashing = false;
 		}
 		if (IsBoogerBoy){
-			bool wasHanging = wallHanging;
+//			bool wasHanging = wallHanging;
 			wallHanging = boogerBoy && CheckIfConnected(sideRays) && (input != 0);
 //			if (wallHanging){
 //				anim.Play (a.hang);
