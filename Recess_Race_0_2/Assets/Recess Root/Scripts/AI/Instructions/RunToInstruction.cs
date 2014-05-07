@@ -47,19 +47,22 @@ public class RunToInstruction : Instruction {
         }
 
         if (!isDone && arriveWithSpeedZero) {
-			if(Mathf.Abs(this.agent.transform.position.x - targetX) < 2.5){
-				if (ranDistance > 2 ) {
-					if(Mathf.Abs(this.agent.transform.position.x - targetX) < 0.5){
-						float force = (targetX - this.agent.transform.position.x) / 16;
-						agent.setMovingStrenght(force);
-					}else{
-						float force = (this.agent.transform.position.x - targetX) / 16;
-						agent.setMovingStrenght(force);
-					}
-				} else {
-					agent.setMovingStrenght(Mathf.Sign(targetX - this.agent.transform.position.x) / 8);
-				}
+			float distance = Mathf.Abs(this.agent.transform.position.x - targetX);
+			float force = 1;
+			if(distance < 0.5){
+				force = (ranDistance > 1 )? 0.03f : 0.03f ;
+				Debug.Log("near" + force);
+			} else if(distance < 0.9){
+				force = (ranDistance > 1 )? -1f : 0.4f ;
+				Debug.Log("getting" + force);
+			} else if(distance < 1.2){
+				force = (ranDistance > 1 )? -1f : 0.7f ;
+				Debug.Log("getting" + force);
+			} else if(distance < 1.5){
+				force = (ranDistance > 1 )? 0.2f : 0.9f ;
+				Debug.Log("far" + force);
 			}
+			agent.setMovingStrenght( (int)this.direction * force);
         }
 		ranDistance += ranDistanceThisFrame;
         

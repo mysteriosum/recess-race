@@ -68,7 +68,7 @@ public class JumpInstruction : Instruction {
 			}
 		} else {
 			if(removing || moveAgainAfterYMoved == 0){
-				if (Mathf.Abs (startX - agent.transform.position.x) >= moveAgainMoveLenght && agent.isGrounded()) {
+				if (Mathf.Abs (startX - agent.transform.position.x) >= moveAgainMoveLenght || agent.isGrounded()) {
 					removing = false;
 					//agent.setMovingStrenght ((float)direction);
 					agent.setMovingStrenght (0);

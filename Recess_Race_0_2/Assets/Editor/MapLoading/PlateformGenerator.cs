@@ -196,12 +196,6 @@ public class PlateformGenerator {
 				if(id==nbWayPoints){
 					plateform.isLastWayPoint = true;
 				}
-				/*if(id == 1){
-					BullyInstructionConfiguration con = new BullyInstructionConfiguration(LengthEnum.none, CommandEnum.right, DifficultyEnum.assured);
-					BullyInstruction bi = MapElementHelper.generateInstructionOnCentered(con, plateform, this.bullyInstructionParent);
-					bi.gameObject.transform.localScale = plateform.gameObject.transform.localScale;
-					bi.gameObject.name = "Starting instruction";
-				}*/
 			}
 		}
 	}

@@ -264,7 +264,7 @@ public class Movable : MonoBehaviour {
 				falling = false;
 				SendMessage("OnLand", SendMessageOptions.DontRequireReceiver);
 				if (debug){
-					Debug.Log ("I'm grounded now. This is what I hit: " + downRays[lastConnection].collider.name);
+					//Debug.Log ("I'm grounded now. This is what I hit: " + downRays[lastConnection].collider.name);
 				}
 				if (animated){
 					anim.Play(LandAnimation);

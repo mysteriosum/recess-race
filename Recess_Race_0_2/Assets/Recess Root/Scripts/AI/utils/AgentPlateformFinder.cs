@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+[System.Serializable]
 public class AgentPlateformFinder {
 
 	private Agent agent;
@@ -34,10 +35,11 @@ public class AgentPlateformFinder {
 		List<PlateformAndNbTry> tryiedPlateform = new List<PlateformAndNbTry>();
 
 		foreach (var links in fromPlateform.linksToPlateforms) {
-			if(links.plateform.id == targetWayPointId){
+			if(links.plateform.waypointId == targetWayPointId){
 				minJumpsFound = 1;
 				tryiedPlateform.Clear();
 				tryiedPlateform.Add(new PlateformAndNbTry(1,links));
+				Debug.Log("On fait un jump direct!");
 				return tryiedPlateform;
 			}	
 
@@ -51,25 +53,23 @@ public class AgentPlateformFinder {
 	}
 
 	private LinksToPlateform choosenPlateformWithSkillAndStuff(List<PlateformAndNbTry> countedPlateforms){
-		PlateformAndNbTry plateforandNbTry = null;
-
 		if (this.minJumpsFound == 1) {
-			plateforandNbTry = countedPlateforms[0];
 			if (agent.debug)
-				Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in direct jumps (trys " + trys + ").");		
+				Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + countedPlateforms[0].links.plateform.id+" in direct jumps (trys " + trys + ").");		
+			return countedPlateforms[0].links;
 		} else {
 			int add = ( UnityEngine.Random.Range(0f,1f) > agent.jumpDecissionSkill) ? 1 : 0;
 			int target = this.minJumpsFound + add;
 			
-			plateforandNbTry = findPlateformForTargetJump(countedPlateforms, target);
+			PlateformAndNbTry plateforandNbTry = findPlateformForTargetJump(countedPlateforms, target);
 			if(plateforandNbTry != null){
 				if (agent.debug)
-					Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in jumps (trys " + trys + ").");
+					Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in " + target + " jumps (trys " + trys + ").");
 				return plateforandNbTry.links;
 			}else if(target != this.minJumpsFound){
 				plateforandNbTry = findPlateformForTargetJump(countedPlateforms, this.minJumpsFound);
 				if (agent.debug)
-					Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in jumps (trys " + trys + ").");
+					Debug.Log("Agent go to wp #" + (agent.currentWayPoint +1) + " by p#" + plateforandNbTry.links.plateform.id+" in "+minJumpsFound+"jumps (trys " + trys + ").");
 				return plateforandNbTry.links;
 			}
 		}

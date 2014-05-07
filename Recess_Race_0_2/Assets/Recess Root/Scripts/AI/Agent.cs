@@ -18,7 +18,7 @@ public class Agent : Movable {
 	
 	protected override float SecondsToMax {
 		get {
-			return grounded? base.SecondsToMax : 8f;
+			return grounded? 0.6f : 0.8f;
 		}
 	}
 
@@ -32,18 +32,20 @@ public class Agent : Movable {
         if (currentInstruction != null) {
             currentInstruction.update();
             if (currentInstruction.isDone) {
+				///Debug.Log("Done switching to next");
                 switchTo(currentInstruction.nextInstruction);
             }
         }
     }
 
     private void switchTo(Instruction instruction) {
-        if (instruction != null) {
-            instruction.start();
-			debugLog(instruction.ToString());
-        }
+		if (instruction != null) {
+			instruction.start ();
+			debugLog ("switching to : " + instruction.ToString ());
+		}
         this.currentInstruction = instruction;
 		if (instruction == null) {
+			debugLog ("switching to null");
 			this.setMovingStrenght (1);		
 		}
     }
@@ -83,7 +85,9 @@ public class Agent : Movable {
                 switchTo(instruction.getInstruction(this));
             }
         } else if (plateform) {
-			if (isCurrentPlateform(plateform)) return;
+			if (currentInstruction != null || isCurrentPlateform (plateform)) {
+					return;
+			} 
 			if(plateform.isLastWayPoint){
 				this.setMovingStrenght(1);
 			}else{
@@ -92,7 +96,6 @@ public class Agent : Movable {
 					this.currentWayPoint = plateform.waypointId;
 				}
 				handlePlateform(plateform);
-				Debug.Log("HANDLE");
 			}
 			
 		}
@@ -100,6 +103,9 @@ public class Agent : Movable {
 	}
 	
 	private bool isCurrentPlateform(Plateform plateform){
+		/*Debug.Log ((currentInstruction != null) + " - " + (lastPlateform != null) 
+		           + " | " + ((lastPlateform!= null)?lastPlateform.id+"":"")
+		           +" , "+ plateform.id);*/
 		return currentInstruction != null && lastPlateform != null && lastPlateform.id == plateform.id;
 	}
 
@@ -123,20 +129,27 @@ public class Agent : Movable {
         if (Mathf.Abs(this.transform.position.x - preciseJump.startLocation.x) < 0.1) {
             switchTo(instructionsToGetThere);
         } else {
-            if ((this.transform.position.x < preciseJump.startLocation.x && preciseJump.startingDirection.Equals(Direction.left))
+            /*if ((this.transform.position.x < preciseJump.startLocation.x && preciseJump.startingDirection.Equals(Direction.left))
                || (this.transform.position.x > preciseJump.startLocation.x && preciseJump.startingDirection.Equals(Direction.right))) {
 				Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation), true);
-                Instruction wait = new WaitInstruction(this, 0.4f);
+                Instruction wait = new WaitInstruction(this, 0.3f);
                 run.nextInstruction = wait;
 				wait.nextInstruction = instructionsToGetThere;
-				//Debug.Log(instructionsToGetThere.ToString());
+				Debug.Log(instructionsToGetThere.ToString());
                 switchTo(run);
             } else {
-				//debugLog("On attend pas");
+				debugLog("On attend pas");
 				Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation));
                 run.nextInstruction = instructionsToGetThere;
                 switchTo(run);
-            }
+            }*/
+
+			Instruction run = new RunToInstruction(this, getXOffsetedPosition(preciseJump.startLocation), true);
+			Instruction wait = new WaitInstruction(this, 0.3f);
+			run.nextInstruction = wait;
+			wait.nextInstruction = instructionsToGetThere;
+			Debug.Log(instructionsToGetThere.ToString());
+			switchTo(run);
 
         }
     }

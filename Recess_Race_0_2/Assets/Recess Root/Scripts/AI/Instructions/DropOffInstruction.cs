@@ -18,6 +18,7 @@ public class DropOffInstruction : Instruction {
 	public bool moving;
 	public bool droping;
 	public bool removing;
+	public bool wentAirborn = false;
 
 	public DropOffInstruction(Agent agent, Direction firstDirection, float moveXLenght, float totalDrop, float dropLenghtToStartMovingAgain, Direction endDropDirection)
 	: base(agent) {
@@ -51,13 +52,20 @@ public class DropOffInstruction : Instruction {
 				this.agent.setMovingStrenght(0);
 			}		
 		}else if (droping) {
-			if(isInTargetYRange()){
+			if(!agent.isGrounded()){
+				wentAirborn = true;
+			}
+			if(wentAirborn && agent.isGrounded()){
+				this.removing = false;
+				this.agent.setMovingStrenght(0);
+				this.isDone = true;
+			}else if(isInTargetYRange()){
 				this.droping = false;
 				this.removing = true;
 				this.agent.setMovingStrenght((float)endDropDirection);
 			}		
 		}else if (removing) {
-			if(isInFinalYRange()){
+			if(agent.isGrounded() || isInFinalYRange()){
 				this.removing = false;
 				this.agent.setMovingStrenght(0);
 				this.isDone = true;
