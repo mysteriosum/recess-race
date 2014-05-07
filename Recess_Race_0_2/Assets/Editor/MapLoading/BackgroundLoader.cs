@@ -27,7 +27,7 @@ public  class BackgroundLoader {
     private RecessCamera camera;
     private Map map;
 
-    public void loadBackground(GameObject gameObjectMapParent, Map map, RecessCamera camera, int yOffset) {
+    public void loadBackground(GameObject gameObjectMapParent, Map map, RecessCamera camera, float yOffset) {
         this.camera = camera;
         this.map = map;
         parent = GameObjectFactory.createGameObject("Backgrounds", gameObjectMapParent.transform).transform;

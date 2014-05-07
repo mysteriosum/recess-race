@@ -16,7 +16,6 @@ public class MapLoader {
 	public static bool verbose;
     public static bool inDebugMode = false;
 	public static bool loadGameElement = true;
-	public static int backgroundYOffset = 0;
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
@@ -94,7 +93,7 @@ public class MapLoader {
 
         if (makeBackground) {
             BackgroundLoader bgl = new BackgroundLoader();
-            bgl.loadBackground(worldRootGameObject,map,recessCamera, backgroundYOffset);
+            bgl.loadBackground(worldRootGameObject,map,recessCamera, map.backgroundYOffset);
             print("Loaded Background");
         }
 
@@ -148,11 +147,11 @@ public class MapLoader {
 		IEnumerable<XElement> positions = getAllObjectFromObjectGroup("Positions");
 		loadObject (positions, "End", "FinishLine","Finish Line", 2.8f, parent);
 		if (loadGameElement) {
-			loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.4f, parent);
-			loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
-			loadObject (positions, "StartObjects", "StartObjects","StartObjects", -0.4f, parent);
-			loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
-			loadObject (positions, "George", "George","George", -0.4f, parent);
+			loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.5f, parent);
+			loadObject (positions, "Billy", "Billy","Billy", -0.5f, parent);
+			loadObject (positions, "StartObjects", "StartObjects","StartObjects", -0.5f, parent);
+			loadObject (positions, "Liddy", "Liddy","Liddy", -0.5f, parent);
+			loadObject (positions, "George", "George","George", -0.5f, parent);
 			
 			//Stuff to do with loading monitors; they're not in though at the moment so we'll keep this out
 //			loadObject (positions, "Dialogue_1", "Dialogue_1","Dialogue_1", -0.4f, parent);
@@ -182,6 +181,7 @@ public class MapLoader {
 
 		float x = (float) parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
 		float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
+		y = Mathf.Floor (y);
 		obj.transform.Translate(x,y + yOffset,0);
 	}
 
@@ -313,7 +313,7 @@ public class MapLoader {
             foreach (var tileData in tileList) {
                 int id = parse(tileData.Attribute("id").Value);
                 try {
-                    XElement noCollision = element.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
+					XElement noCollision = tileData.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
                     if (noCollision != null) {
                         this.tilesData[firstGridId + id - 1].hasCollision = false;
                        // Debug.LogError("Tile " + id + " in " + name + " have noCollision");
@@ -336,6 +336,9 @@ public class MapLoader {
 		this.map.mapDimension = new Dimension (width,height);
 		this.map.tileDimension = new Dimension (tileWidth,tileHeight);
         this.map.pathingMap = BoolArray.generateBoolArrayArray(width,height);
+		var properties = mapElement.Descendants ().First (e => e.Name == "properties");
+		UnityEngine.Debug.Log (properties.Descendants().Count());
+		map.backgroundYOffset = parse( properties.Descendants ().First (e => e.Name == "property" && e.Attribute ("name").Value == "background-yOffset").Attribute("value").Value );
 	}
 
 

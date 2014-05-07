@@ -17,8 +17,6 @@ public class MapLoaderEditor : EditorWindow {
         MapLoader.inDebugMode = GUILayout.Toggle(MapLoader.inDebugMode, "Is in debug mod (show Plateform Gizmos)");
         MapLoader.verbose = GUILayout.Toggle(MapLoader.verbose, "Verbose");
 		MapLoader.loadGameElement = !GUILayout.Toggle(!MapLoader.loadGameElement, "Load only tiles and AI");
-		MapLoader.backgroundYOffset = (int)GUILayout.HorizontalSlider(MapLoader.backgroundYOffset, -25f, 25f);
-		GUILayout.Label("Background Y Offset: " + MapLoader.backgroundYOffset.ToString());
 		if (fileName.Length == 0) {
 			GUI.enabled = false;
 			GUILayout.Button("Load Map");
