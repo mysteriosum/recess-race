@@ -2,14 +2,17 @@
 using System.Collections;
 
 public class Garbage : MonoBehaviour {
+
 	public Sprite[] garbages;
-	// Use this for initialization
+	public PopupConfiguration popupConfig;
+	public Vector2 topLeftOffset;
+
 	void Start () {
 		SpriteRenderer spr = GetComponent<SpriteRenderer>();
 		spr.sprite = garbages[Random.Range (0, garbages.Length)];
 	}
-	
-	// Update is called once per frame
+
+
 	void Update () {
 	
 	}
@@ -29,7 +32,15 @@ public class Garbage : MonoBehaviour {
 		}
 		other.SendMessage("GarbagePickup");
 		//gameObject.SetActive(false);
+		makePopup ();
+
 		Destroy(gameObject);
+	}
+
+	void makePopup(){
+		Vector2 garbagePositionInScreen = ScreenUtils.getPositionInScreen (this.transform.position);
+		PopupText popup = PopupFactory.makeLinearPopup (popupConfig, "+1", garbagePositionInScreen, ScreenUtils.getPositionFromTopRight(topLeftOffset), 0.3f, 0.95f);
+		PopupSystem.AddPopup(popup);
 	}
 	
 	void OnTriggerExit2D (Collider2D other){

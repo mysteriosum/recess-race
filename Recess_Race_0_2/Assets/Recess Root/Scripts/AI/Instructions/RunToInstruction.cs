@@ -51,16 +51,16 @@ public class RunToInstruction : Instruction {
 			float force = 1;
 			if(distance < 0.5){
 				force = (ranDistance > 1 )? 0.03f : 0.03f ;
-				Debug.Log("near" + force);
+				//Debug.Log("near" + force);
 			} else if(distance < 0.9){
 				force = (ranDistance > 1 )? -1f : 0.4f ;
-				Debug.Log("getting" + force);
+				//Debug.Log("getting" + force);
 			} else if(distance < 1.2){
 				force = (ranDistance > 1 )? -1f : 0.7f ;
-				Debug.Log("getting" + force);
+				//Debug.Log("getting" + force);
 			} else if(distance < 1.5){
 				force = (ranDistance > 1 )? 0.2f : 0.9f ;
-				Debug.Log("far" + force);
+				//Debug.Log("far" + force);
 			}
 			agent.setMovingStrenght( (int)this.direction * force);
         }
