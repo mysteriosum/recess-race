@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Movable : MonoBehaviour {
 
-	protected Controller controller = new Controller();
+	protected Controller controller;
 
 	//------------------------------------------------------\\
 	//--------------Movement variables and such-------------\\
@@ -191,6 +191,7 @@ public class Movable : MonoBehaviour {
 		anim = GetComponent<Animator>();
 		source = gameObject.AddComponent<AudioSource>();
 		sounds = new Sounds();
+		controller = new Controller();
 		if (!anim){
 			if (debug){
 				Debug.LogWarning("No animations on this Movable. Disabling animations!");
