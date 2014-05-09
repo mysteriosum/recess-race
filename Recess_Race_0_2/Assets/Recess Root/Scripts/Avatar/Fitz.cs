@@ -508,7 +508,7 @@ public class Fitz : Movable {
 		
 	}
 	
-	void ChangeToPinky(){
+	public void ChangeToPinky(){
 		CancelInvoke("ChangeToFitz");
 		pinky = true;
 		otto = false;
@@ -524,7 +524,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", pinkyTiming);
 	}
 	
-	void ChangeToBoogerBoy(){
+	public void ChangeToBoogerBoy(){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
@@ -541,7 +541,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", boogerBoyTiming);
 	}
 	
-	void ChangeToOtto(){
+	public void ChangeToOtto(){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = true;
@@ -558,7 +558,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", ottoTiming);
 	}
 	
-	void ChangeToFitz (){
+	public void ChangeToFitz (){
 		pinky = false;
 		otto = false;
 		boogerBoy = false;
@@ -578,7 +578,7 @@ public class Fitz : Movable {
 		RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.losePower);
 	}
 	
-	void ChangeToDust (){
+	public void ChangeToDust (){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
