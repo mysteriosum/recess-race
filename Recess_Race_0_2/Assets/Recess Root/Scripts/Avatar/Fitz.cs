@@ -709,6 +709,11 @@ public class Fitz : Movable {
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 				source.clip = sounds.stun;
 				source.Play ();
+				
+				//if it's a racing bully it's probably George, so play his fire animation
+				if (other.GetComponent<Agent>() && other.GetComponent<Bully>()){
+					other.SendMessage("FlameEffect");
+				}
 			}
 		}
 		
