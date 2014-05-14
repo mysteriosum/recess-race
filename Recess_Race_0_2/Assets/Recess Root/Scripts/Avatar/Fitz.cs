@@ -637,20 +637,20 @@ public class Fitz : Movable {
 	{
 		Vector2 result = base.Jump (currentVelocity, amount);
 		controller.ResetJumpInput();
-		PlaySound(sounds.jump, 0.7f);
+		PlaySound(sounds.jump/*, 0.7f*/);
 		return result;
 	}
 	
+	public void PlaySound(AudioClip clip){
+		PlaySound(clip/*, 1f*/);
+	}
+	/*
 	public void PlaySound(AudioClip clip, float volume){
 		source.volume = volume;
 		source.clip = clip;
 		source.Play ();
 	}
-	
-	public void PlaySound(AudioClip clip){
-		PlaySound(clip, 1f);
-	}
-	
+	*/
 	private void OnLand(){
 		ResetPropeller();
 		if (hurt && anim){
@@ -749,7 +749,6 @@ public class Fitz : Movable {
 	void PlayRunSound(){
 		source.clip = sounds.run;
 		source.Play ();
-		Debug.Log("Playrunsound");
 	}
 	
 	void PlayRollSounds(){
