@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class ScreenUtils {
@@ -13,7 +13,7 @@ public class ScreenUtils {
 	}
 
 	public static Camera getCamera(){
-		return RecessCamera.cam.GetComponent<Camera> ();;
+		return GameManager.gm.GetComponent<Camera> ();;
 	}
 
 	

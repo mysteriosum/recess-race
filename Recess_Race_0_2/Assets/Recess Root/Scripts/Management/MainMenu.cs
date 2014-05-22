@@ -168,7 +168,7 @@ public class MainMenu : MonoBehaviour {
 		get{ return MultiplyRectByScreenDimensions(levelSelectRect); }
 	}
 	
-	public Rect MultiplyRectByScreenDimensions (Rect original){
+	public static Rect MultiplyRectByScreenDimensions (Rect original){
 		return new Rect(original.x * Screen.width, original.y * Screen.height, original.width * Screen.width, original.height * Screen.height);
 	}
 	
@@ -378,7 +378,9 @@ public class MainMenu : MonoBehaviour {
 			if (pressPlay){
 
 //				Application.LoadLevel (firstLevelName);
-				currentMenu = MenuEnum.modeSelect;
+				//currentMenu = MenuEnum.modeSelect;
+				RecessManager.LoadLevelSelect();
+				return;
 			}
 			Rect optionsRect = SelectionRect((mainButtonOffset.x + optionsOffset.x) * Screen.width, (mainButtonOffset.y + optionsOffset.y) * Screen.height, buttonWidth, buttonHeight, optionsStyle);
 			bool pressOptions = GUI.Button (optionsRect, mainMenu[1], optionsStyle);
@@ -529,7 +531,7 @@ public class MainMenu : MonoBehaviour {
 			
 			break;
 		case MenuEnum.timeTrial:
-			
+			/*
 			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), timeTrial);
 			
 			Rect arrowRect1 = SelectionRect(arrow1X * Screen.width, arrowY * Screen.height, ArrowHeight, ArrowHeight);
@@ -581,7 +583,7 @@ public class MainMenu : MonoBehaviour {
 				"Course " + (currentIndex + 1).ToString(), levelSelectStyle);
 			
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.bestScoreY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
-				"Best Score: " + RecessManager.levelStats[currentIndex].highScoreTT.ToString(), levelSelectStyle);
+				"Best Score: " + RecessManager.levelStats[currentIndex].highScore.ToString(), levelSelectStyle);
 			GUI.TextArea(MultiplyRectByScreenDimensions(levelSelectPositions.bestsX, levelSelectPositions.bestTimeY, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
 				"Best Time: " + Textf.ConvertTimeToString(RecessManager.levelStats[currentIndex].bestTime), levelSelectStyle);
 			if (RecessManager.levelStats[currentIndex].HasBronze){
@@ -590,10 +592,10 @@ public class MainMenu : MonoBehaviour {
 				GUI.DrawTexture(new Rect(levelSelectPositions.medalsOrigin.x * Screen.width, levelSelectPositions.medalsOrigin.y * Screen.height, 
 										texture.width * levelSelectPositions.medalsScale, texture.height * levelSelectPositions.medalsScale), texture);
 				
-			}
+			}*/
 			break;
 		case MenuEnum.grandPrix:
-			
+			/*
 			GUI.DrawTexture (new Rect(0, 0, Screen.width, Screen.height), grandPrix);
 			GUIStyle startStyle = new GUIStyle(skin.GetStyle("LevelSelect"));
 			startStyle.fontSize = (int)((float)Screen.height * levelSelectPositions.startRect.height);
@@ -629,7 +631,7 @@ public class MainMenu : MonoBehaviour {
 				yValue += levelSelectPositions.statInterval;
 				
 				GUI.TextArea(MultiplyRectByScreenDimensions(xValue, yValue, levelSelectPositions.bestsWidth, levelSelectPositions.bestsHeight),
-					"Best Score: " + RecessManager.levelStats[i].highScoreGP.ToString(), gpScreenStyle);
+					"Best Score: " + RecessManager.levelStats[i].highScore.ToString(), gpScreenStyle);
 				
 				yValue += levelSelectPositions.statInterval;
 				
@@ -639,7 +641,7 @@ public class MainMenu : MonoBehaviour {
 			}
 			
 			
-			break;
+			break;*/
 			#endregion
 		default:
 			Debug.LogError ("There's something wrong with this situation. Time to bail!");

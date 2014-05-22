@@ -85,13 +85,17 @@ public class Fitz : Movable {
 			return base.Gravity;
 		}
 	}
-	
+	private bool hasFloated = false;
 	protected override float MaxFallSpeed {
 		get {
 			if (pinky){
 				return base.MaxFallSpeed * (spinFalling? spinFallMod : 1);
 			}
 			if (otto){
+				if (!hasFloated && !grounded && controller.getJump){
+					GameManager.gm.pointsManager.hasFloated.Accomplished();
+					hasFloated = true;
+				}
 				return base.MaxFallSpeed * (controller.getJump? tailFallMod : 1);
 			}
 			if (boogerBoy){
@@ -241,6 +245,12 @@ public class Fitz : Movable {
 		get{ return invulnTimer > 0; }
 	}
 	
+	public bool PushedUpThisFrame {
+		get{
+			return controller.getUDown;
+		}
+	}
+	
 	//--------------------------------------------------------------------------\\
 	//-----------------------------Stunning/Damage------------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -271,6 +281,7 @@ public class Fitz : Movable {
 	
 	protected void Awake(){
 		fitz = this;
+		
 	}
 	
 	protected override void Start () {
@@ -305,6 +316,11 @@ public class Fitz : Movable {
 		
 		if (windArea == null){
 			Debug.LogWarning("There's no wind area object on the Avatar so Dust won't work");
+		}
+		
+		
+		if (Application.loadedLevel == RecessManager.LevelSelectIndex && RecessManager.levelSelectPosition != Vector2.zero){
+			t.position = RecessManager.levelSelectPosition;
 		}
 	}
 	
@@ -348,6 +364,9 @@ public class Fitz : Movable {
 		if ((grounded || isRolling) && controller.getJumpDown && CanControl){
 			velocity = Jump(velocity, JumpImpulse);
 			grounded = false;
+			if (isRolling && !grounded){
+				GameManager.gm.pointsManager.hasTumbleJumped.Accomplished();
+			}
 
 			//jumpTimer = 0; //Never USed
 			if (leaveBalls){
@@ -402,6 +421,7 @@ public class Fitz : Movable {
 				itemTimer -= propellerTimePenalty;
 				anim.Play(JumpAnimation, 0, 0);
 				falling = false;
+				GameManager.gm.pointsManager.hasFlapped.Accomplished();
 			}
 			if (propelTimer > 0){
 				propelTimer -= Time.deltaTime;
@@ -427,6 +447,7 @@ public class Fitz : Movable {
 				source.clip = sounds.wallJump;
 				source.Play ();
 				anim.Play (a.jump);
+				GameManager.gm.pointsManager.hasWallJumped.Accomplished();
 			}
 			
 			if (wallJumpLockTimer > 0){
@@ -575,7 +596,7 @@ public class Fitz : Movable {
 		//r.color = Color.white;
 		
 		//TEMP Play audio on camera
-		RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.losePower);
+		GameManager.gm.PlaySound(GameManager.gm.sounds.losePower);
 	}
 	
 	public void ChangeToDust (){

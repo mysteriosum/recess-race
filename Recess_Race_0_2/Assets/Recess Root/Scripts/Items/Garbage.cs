@@ -28,7 +28,7 @@ public class Garbage : MonoBehaviour {
 		
 		Fitz fitz = other.GetComponent<Fitz>();
 		if (fitz != null){
-			RecessCamera.cam.AddGarbage();
+			GameManager.gm.AddGarbage();
 		}
 		other.SendMessage("GarbagePickup");
 		//gameObject.SetActive(false);

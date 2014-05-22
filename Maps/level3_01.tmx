@@ -455,8 +455,8 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#a40080" name="QuestionMarks" width="1204" height="60">
-  <object type="QuestionMark" x="11836" y="556">
+ <objectgroup color="#a40080" name="ItemPickups" width="1204" height="60">
+  <object type="ItemPickup" x="11836" y="556">
    <polyline points="0,0 9,-9 18,-6 24,0 18,9 9,12 9,27"/>
   </object>
   <object type="QuestionMark" x="29879" y="1304">

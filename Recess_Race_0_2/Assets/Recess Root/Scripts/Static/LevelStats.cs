@@ -7,13 +7,15 @@ public enum LetterGrades{
 
 public class LevelStats {
 	
-	public int highScoreTT;
-	public int highScoreGP;
+	public int highScore;
 	public float bestTime;
-	public int bestRank;
+	public int bestPlacement;
+	public int mostGarbages;
+	
+	private readonly int garbagesNeededPerLevel = 35;
 	
 	public readonly int levelIndex;
-	public readonly int scoreToUnlock;
+	public readonly int garbagesToUnlock;
 	public readonly GameObject itemToUnlock;
 	public readonly string objectName;
 	
@@ -21,71 +23,37 @@ public class LevelStats {
 	public readonly float silverTime;
 	public readonly float bronzeTime;
 	
+	private string ScoreKey {
+		get{
+			return "HighScore" + levelIndex.ToString();
+		}
+	}
+	private string GarbageKey {
+		get{
+			return "MostGarbages" + levelIndex.ToString();
+		}
+	}
+	private string PlaceKey {
+		get{
+			return "BestPlacement" + levelIndex.ToString();
+		}
+	}
+	
 	private bool GrandPrix{
 		get{ return RecessManager.currentGameMode == GameModes.grandPrix; }
 	}
-	public bool HasGold {
-		get{
-			if (GrandPrix){
-				return bestRank == 1;
-			}
-			else{
-				return bestTime > 0 && bestTime < goldTime;
-			}
-		}
-	}
-	public bool HasSilver {
-		get{
-			if (GrandPrix){
-				return bestRank > 0 && bestRank < 3;
-			}
-			else{
-				return bestTime > 0 && bestTime < silverTime;
-			}
-		}
-	}
-	public bool HasBronze {
-		get{
-			if (GrandPrix){
-				return bestRank > 0 && bestRank < 4;
-			}
-			else{
-				return bestTime > 0 && bestTime < bronzeTime;
-			}
-		}
-	}
-	
-	public bool HasParticipated {
-		get{
-			if (GrandPrix){
-				return bestRank > 0;
-			}
-			else{
-				return bestTime > 0;
-			}
-		}
-	}
-	
 	
 	public bool HasUnlockedItem{
-		get{ return highScoreGP > scoreToUnlock; }
+		get{ return highScore > garbagesToUnlock; }
 	}
+	
 	public string BestTimeString{
 		get{ return Textf.ConvertTimeToString(bestTime); }
 	}
 	
-	public string GoldTimeString{
-		get{ return Textf.ConvertTimeToString(goldTime); }
-	}
-	public string SilverTimeString{
-		get{ return Textf.ConvertTimeToString(silverTime); }
-	}
-	public string BronzeTimeString{
-		get{ return Textf.ConvertTimeToString(bronzeTime); }
-	}
 	public string RankString {
 		get {
-			switch (bestRank){
+			switch (bestPlacement){
 			case 1:
 				return "1st";
 			case 2:
@@ -101,8 +69,8 @@ public class LevelStats {
 	}
 	public string LetterGradeString{
 		get{
-			int scoreInQuestion = RecessManager.currentGameMode == GameModes.grandPrix? highScoreGP : highScoreTT;
-			float fraction = (float) scoreInQuestion / (float) (scoreToUnlock);
+			int scoreInQuestion = RecessManager.currentGameMode == GameModes.grandPrix? highScore : highScore;
+			float fraction = (float) scoreInQuestion / (float) (garbagesToUnlock);
 			LetterGrades letterGrade = (LetterGrades)Mathf.Round(fraction * (int)LetterGrades.ss);
 			
 			switch (letterGrade){
@@ -124,23 +92,34 @@ public class LevelStats {
 		}
 	}
 	
-	public LevelStats (int levelIndex, int scoreToUnlock, string objectName, float goldTime, float silverTime, float bronzeTime)
+	public LevelStats (int levelIndex)
 	{
 		this.levelIndex = levelIndex;
-		this.scoreToUnlock = scoreToUnlock;
-		this.objectName = objectName;
-		this.goldTime = goldTime;
-		this.silverTime = silverTime;
-		this.bronzeTime = bronzeTime;
-		
-		itemToUnlock = Resources.Load ("objects/" + objectName) as GameObject;
-		
-		highScoreTT = PlayerPrefs.GetInt("highScoreTT" + levelIndex.ToString(), 0);
-		highScoreGP = PlayerPrefs.GetInt ("highScoreGP" + levelIndex.ToString(), 0);
-		bestTime = PlayerPrefs.GetFloat ("bestTime" + levelIndex.ToString (), 0);
-		bestRank = PlayerPrefs.GetInt ("bestRank" + levelIndex.ToString (), 0);
+		this.garbagesToUnlock = (levelIndex - 1) * garbagesNeededPerLevel;
+		LoadStats();
 		
 	}
-
 	
+	public void SaveStats (int garbages, int score, int placement) {
+		mostGarbages = Mathf.Max(garbages, mostGarbages);
+		highScore = Mathf.Max(score, highScore);
+		
+		int compareTo = bestPlacement == 0? int.MaxValue : bestPlacement;
+		bestPlacement = Mathf.Min(placement, compareTo);
+		
+		PlayerPrefs.SetInt(GarbageKey, mostGarbages);
+		PlayerPrefs.SetInt(ScoreKey, highScore);
+		PlayerPrefs.SetInt(PlaceKey, bestPlacement);
+	}
+	
+	public void LoadStats (){
+		mostGarbages = PlayerPrefs.GetInt(GarbageKey, 0);
+		highScore = PlayerPrefs.GetInt(ScoreKey, 0);
+		bestPlacement = PlayerPrefs.GetInt(PlaceKey, 0);
+	}
+	
+	public override string ToString ()
+	{
+		return string.Format ("[LevelStats: Index={0}, garbages={1}, RankString={2}, BestScore={3}]", levelIndex, mostGarbages, RankString, highScore);
+	}
 }

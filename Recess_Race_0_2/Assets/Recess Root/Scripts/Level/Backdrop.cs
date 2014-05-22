@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Backdrop : MonoBehaviour {
@@ -9,7 +9,7 @@ public class Backdrop : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		cam = RecessCamera.cam.transform;
+		cam = GameManager.gm.transform;
 		t = transform;
 	}
 	

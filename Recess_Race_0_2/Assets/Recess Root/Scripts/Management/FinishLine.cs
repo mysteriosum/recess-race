@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class FinishLine : MonoBehaviour {
@@ -22,13 +22,13 @@ public class FinishLine : MonoBehaviour {
 		Fitz fitz = other.gameObject.GetComponent<Fitz>();
 		if (!finished && fitz){
 			if (fitz.transform.position.y > (box.yMin + topFlagBonusHeight)){
-				RecessCamera.cam.ExtraFlagTouchPoints(true);
+				GameManager.gm.ExtraFlagTouchPoints(true);
 			}else if(fitz.transform.position.y > (box.yMin + midFlagBonusHeight)){
-				RecessCamera.cam.ExtraFlagTouchPoints(false);
+				GameManager.gm.ExtraFlagTouchPoints(false);
 			}
 			fitz.FinishRace();
-			RecessCamera.cam.FinishRace();
-			RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.children);
+			GameManager.gm.FinishRace();
+			GameManager.gm.PlaySound(GameManager.gm.sounds.children);
 			finished = true;
 			
 			
