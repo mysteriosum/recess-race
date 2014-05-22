@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum StylePointTypes{
 	garbage,
@@ -39,6 +40,7 @@ public class ScoreManager {
 	public int currentGarbage = 0;
 	public int longestCombo = 0;
 	private const int pointsPerCombo = 5;
+	private List<int> delayedGarbagePoint = new List<int>();
 	
 	public ScoreItem hasWallJumped = new ScoreItem(100);
 	public ScoreItem hasFloated = new ScoreItem (100);
@@ -88,5 +90,16 @@ public class ScoreManager {
 			break;
 		}
 	}
-	
+
+	public void addGarbagePoints(PopupText popup, int points){
+		this.delayedGarbagePoint.Add (points);
+		popup.OnDone += garbageTextArrived;
+	}
+
+
+	private void garbageTextArrived(){
+		int score = delayedGarbagePoint [0];
+		this.delayedGarbagePoint.RemoveAt (0);
+		AddPoints (score, StylePointTypes.garbage);
+	}
 }

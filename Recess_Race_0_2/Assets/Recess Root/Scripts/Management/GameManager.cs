@@ -505,7 +505,9 @@ public class GameManager : MonoBehaviour {
 		RecessManager.LoadLevelSelect();
 	}
 	private bool leavingLevel = false;
-	public void AddGarbage(){
+
+
+	public void AddGarbage(PopupText popup){
 		
 		comboTimer = comboTiming;
 		comboCounter ++;
@@ -525,9 +527,14 @@ public class GameManager : MonoBehaviour {
 			comboPopup.ExtendPopup();	
 		}
 		int points = baseGarbageValue * garbageCurrentMultiplier;
-		
-		pointsManager.AddPoints(points, StylePointTypes.garbage);
-		
+
+		popup.text = "+ " + points;
+		Gradient gradient = popup.popupConfiguration.gradient;
+		GradientColorKey[] colorkey = new GradientColorKey[2];
+		colorkey[0] = new GradientColorKey (comboColours [garbageCurrentMultiplier - 1],0);
+		colorkey[1] = new GradientColorKey (Color.white,0);
+		gradient.SetKeys (colorkey, gradient.alphaKeys);
+		pointsManager.addGarbagePoints (popup, points);
 	}
 	
 	public void ExtraFlagTouchPoints (bool topOfPole){

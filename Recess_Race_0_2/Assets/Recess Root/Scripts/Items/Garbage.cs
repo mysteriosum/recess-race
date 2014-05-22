@@ -28,20 +28,16 @@ public class Garbage : MonoBehaviour {
 		
 		Fitz fitz = other.GetComponent<Fitz>();
 		if (fitz != null){
-			GameManager.gm.AddGarbage();
+			Vector2 garbagePositionInScreen = ScreenUtils.getPositionInScreen (this.transform.position);
+			PopupText popup = PopupFactory.makeLinearPopup (popupConfig, "+ ?", garbagePositionInScreen, ScreenUtils.getPositionFromTopRight(topLeftOffset), 0.3f, 0.95f);
+			GameManager.gm.AddGarbage(popup);
+			fitz.GarbagePickup();
+			ScreenEffectSystem.AddScreenEffect(popup);
 		}
-		other.SendMessage("GarbagePickup");
-		//gameObject.SetActive(false);
-		makePopup ();
 
 		Destroy(gameObject);
 	}
 
-	void makePopup(){
-		Vector2 garbagePositionInScreen = ScreenUtils.getPositionInScreen (this.transform.position);
-		PopupText popup = PopupFactory.makeLinearPopup (popupConfig, "+1", garbagePositionInScreen, ScreenUtils.getPositionFromTopRight(topLeftOffset), 0.3f, 0.95f);
-		PopupSystem.AddPopup(popup);
-	}
 	
 	void OnTriggerExit2D (Collider2D other){
 		GarbagePhysics garbageScript = GetComponent<GarbagePhysics>();
