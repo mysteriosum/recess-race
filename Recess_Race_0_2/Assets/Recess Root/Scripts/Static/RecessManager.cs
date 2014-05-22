@@ -44,7 +44,13 @@ public static class RecessManager {
 		set{ score = value; }
 	}
 	public static int GarbageCount {
-		get { return garbage; }
+		get {
+			int total = 0;
+			foreach (LevelStats ls in levelStats){
+				total += ls.mostGarbages;
+			}
+			return total;
+		}
 	}
 	public static float CurrentTime{
 		get{ return currentTime; }
@@ -108,7 +114,8 @@ public static class RecessManager {
 	
 	public static void LoadLevel(int index, GameModes gameMode){
 		currentGameMode = gameMode;
-		currentLevelStats = levelStats[index];
+		currentLevelStats = levelStats[index-1];
+		Debug.Log ("My level is: " + currentLevelStats.ToString());
 //		currentLevel = index;
 		
 		if (Application.loadedLevel == LevelSelectIndex){

@@ -14,6 +14,7 @@ public class LevelDoor : MonoBehaviour {
 	public static int smallestIndex = int.MaxValue;
 	
 	new private bool active = false;
+	public Sprite unlockedSprite;
 	
 	public Texture[] medalTextures;
 	
@@ -22,6 +23,8 @@ public class LevelDoor : MonoBehaviour {
 	public ImageElement medal;
 	public TextElement garbages;
 	public TextElement score;
+	
+	private bool locked = false;
 	// Use this for initialization
 	void Start () {
 		if (levelIndex < smallestIndex)
@@ -31,15 +34,30 @@ public class LevelDoor : MonoBehaviour {
 		myBox = GetComponent<BoxCollider2D>();
 		levelStats = RecessManager.GetLevelStats(levelIndex);
 		
-		//TODO make actual functions to save these things
-		medal.texture = medalTextures[0];
-		garbages.text += " 0";
+		if (RecessManager.GarbageCount < levelStats.garbagesToUnlock){
+			locked = true;
+		} else {
+			
+			SpriteRenderer sr = GetComponent<SpriteRenderer>();
+			sr.sprite = unlockedSprite;
+			//TODO make actual functions to save these things
+			int placement = levelStats.bestPlacement;
+			if (placement == 0){
+				medal.texture = null;
+			} else {
+				int index = placement > 0? Mathf.Min (placement - 1, medalTextures.Length - 1) : medalTextures.Length - 1;
+				medal.texture = medalTextures[index];
+			}
+			garbages.text = "Garbage: " + levelStats.mostGarbages.ToString ();
+			
+			score.text = "Best Score: " + levelStats.highScore.ToString();
+		}
 		
-		score.text += " " + levelStats.highScore.ToString();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (locked) return;
 		if (myBox.OverlapPoint(fitz.position)){
 			active = true;
 			

@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class Button {
 	
+	private Rect rect;
 	
 	public delegate void ButtonDelegate();
 	public ButtonDelegate buttonFunction;
@@ -11,7 +12,6 @@ public class Button {
 	public ImageElement imageElement;
 	public TextElement textElement;
 	private UIElement butt;
-	private Rect rect;
 	
 	private float hoverScale = 1.1f;
 	private float clickScale = 0.95f;
@@ -33,11 +33,8 @@ public class Button {
 	
 	// Update is called once per frame
 	public void Show () {
-	
 		
-		Rect hoverRect = butt.PositionRect;
-		
-		mouseIsOn = hoverRect.Contains(UIElement.MousePosition);
+		mouseIsOn = rect.Contains(UIElement.MousePosition);
 		
 		if (mouseIsOn && !mouseWasOn){
 			OnMouseEnter();

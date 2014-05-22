@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System;
 
 public class GameManager : MonoBehaviour {
-	private Transform trans;
 
 	public AudioSource audioSource;
 	public Sounds sounds;
@@ -22,11 +21,6 @@ public class GameManager : MonoBehaviour {
 
 	private bool raceFinished = false;
 	private float finishedTimer = 0;
-	private float congratulationsAt = 0.5f;
-	private float placeAt = 2.2f;
-	private float scoredAt = 3.7f;
-	private float showScoreAt = 4.3f;
-	private float tryAgainAt = 6.5f;
 	
 	private bool timeTrial = false;
 	
@@ -241,7 +235,6 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
 		
-		trans = transform;
 		audioSource = GetComponent<AudioSource>();
 		//Fitz fitzScript = GameObject.FindObjectOfType(typeof(Fitz)) as Fitz;
 		
@@ -455,12 +448,11 @@ public class GameManager : MonoBehaviour {
 			}
 			
 			
-			if (finishedTimer > runningTally){
+			if (finishedTimer > runningTally && !leavingLevel){
 				continueButton.Show();
 				restartButton.Show();
 				quitButton.Show();
 			}
-			
 		}
 	}
 	
@@ -488,6 +480,7 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	public void SaveStats () {
+		leavingLevel = true;
 		try{
 			RecessManager.currentLevelStats.SaveStats(pointsManager.currentGarbage, pointsManager.totalScore, rank);
 		}
@@ -511,7 +504,7 @@ public class GameManager : MonoBehaviour {
 		SaveStats();
 		RecessManager.LoadLevelSelect();
 	}
-	
+	private bool leavingLevel = false;
 	public void AddGarbage(){
 		
 		comboTimer = comboTiming;

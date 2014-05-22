@@ -663,7 +663,7 @@ public class Fitz : Movable {
 	}
 	
 	public void PlaySound(AudioClip clip){
-		PlaySound(clip/*, 1f*/);
+		PlaySound(clip, 1f);
 	}
 	
 	public void PlaySound(AudioClip clip, float volume){
