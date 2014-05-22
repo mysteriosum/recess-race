@@ -223,7 +223,7 @@ public class RecessCamera : MonoBehaviour {
 		else{
 			cam = this;
 		}
-		
+		/*
 		if (RecessManager.currentGameMode == GameModes.timeTrial){
 			timeTrial = true;
 			
@@ -232,7 +232,7 @@ public class RecessCamera : MonoBehaviour {
 			foreach (var item in bullies) {
 				Destroy(item.gameObject);
 			}
-		}
+		}*/
 	}
 	void Start () {
 

@@ -508,7 +508,7 @@ public class Fitz : Movable {
 		
 	}
 	
-	void ChangeToPinky(){
+	public void ChangeToPinky(){
 		CancelInvoke("ChangeToFitz");
 		pinky = true;
 		otto = false;
@@ -524,7 +524,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", pinkyTiming);
 	}
 	
-	void ChangeToBoogerBoy(){
+	public void ChangeToBoogerBoy(){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
@@ -541,7 +541,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", boogerBoyTiming);
 	}
 	
-	void ChangeToOtto(){
+	public void ChangeToOtto(){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = true;
@@ -558,7 +558,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", ottoTiming);
 	}
 	
-	void ChangeToFitz (){
+	public void ChangeToFitz (){
 		pinky = false;
 		otto = false;
 		boogerBoy = false;
@@ -578,7 +578,7 @@ public class Fitz : Movable {
 		RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.losePower);
 	}
 	
-	void ChangeToDust (){
+	public void ChangeToDust (){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
@@ -641,14 +641,14 @@ public class Fitz : Movable {
 		return result;
 	}
 	
+	public void PlaySound(AudioClip clip){
+		PlaySound(clip/*, 1f*/);
+	}
+	
 	public void PlaySound(AudioClip clip, float volume){
 		source.volume = volume;
 		source.clip = clip;
 		source.Play ();
-	}
-	
-	public void PlaySound(AudioClip clip){
-		PlaySound(clip, 1f);
 	}
 	
 	private void OnLand(){
@@ -709,6 +709,11 @@ public class Fitz : Movable {
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 				source.clip = sounds.stun;
 				source.Play ();
+				
+				//if it's a racing bully it's probably George, so play his fire animation
+				if (other.GetComponent<Agent>() && other.GetComponent<Bully>()){
+					other.SendMessage("FlameEffect");
+				}
 			}
 		}
 		
@@ -744,7 +749,6 @@ public class Fitz : Movable {
 	void PlayRunSound(){
 		source.clip = sounds.run;
 		source.Play ();
-		Debug.Log("Playrunsound");
 	}
 	
 	void PlayRollSounds(){
