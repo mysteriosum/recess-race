@@ -44,6 +44,7 @@ public class MapLoader {
         loadAssets();
 		emptyScene ();
         createEmptyWorld();
+		addSystems ();
 
         document = XDocument.Parse(mapText);
         XElement mapElement = document.Elements().First();
@@ -290,6 +291,11 @@ public class MapLoader {
 		}
 
 		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);
+	}
+
+	private void addSystems(){
+		GameObject systems = GameObjectFactory.createGameObject ("Systems", null);
+		systems.AddComponent<PopupSystem> ();
 	}
 
 	private void loadTileset(IEnumerable<XElement> tileSetElements){
