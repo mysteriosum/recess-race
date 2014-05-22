@@ -107,7 +107,11 @@ public class MapLoader {
 	private void emptyScene(){
 		GameObject world = GameObject.Find ("World");
 		if (world != null) {
-			GameObject.DestroyImmediate(world);		
+			GameObject.DestroyImmediate(world);	
+		}
+		GameObject system = GameObject.Find ("Systems");
+		if (system != null) {
+			GameObject.DestroyImmediate(system);
 		}
 	}
 
@@ -295,7 +299,6 @@ public class MapLoader {
 
 	private void addSystems(){
 		GameObject systems = GameObjectFactory.createGameObject ("Systems", null);
-		systems.AddComponent<PopupSystem> ();
 		systems.AddComponent<ScreenEffectSystem> ();
 	}
 
