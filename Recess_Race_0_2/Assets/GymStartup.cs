@@ -10,9 +10,16 @@ public class GymStartup : MonoBehaviour {
             agent.setActivated();
         }
 	}
-	
-	// Update is called once per frame
+
+	private bool once = false;
+
 	void Update () {
-	
+		if (!once) {
+			once = true;
+			ScreenEffect e = new FadeOut(2,new Color(1,0.8f,0));
+			ScreenEffectSystem.AddScreenEffect(e);
+		}
 	}
+
+
 }

@@ -296,6 +296,7 @@ public class MapLoader {
 	private void addSystems(){
 		GameObject systems = GameObjectFactory.createGameObject ("Systems", null);
 		systems.AddComponent<PopupSystem> ();
+		systems.AddComponent<ScreenEffectSystem> ();
 	}
 
 	private void loadTileset(IEnumerable<XElement> tileSetElements){
