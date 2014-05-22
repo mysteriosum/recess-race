@@ -909,11 +909,11 @@
    <polygon points="0,0 24,18 0,27"/>
   </object>
  </objectgroup>
- <objectgroup name="QuestionMarks" width="1060" height="60">
-  <object type="QuestionMark" x="19759" y="907">
+ <objectgroup name="ItemPickups" width="1060" height="60">
+  <object type="ItemPickup" x="19759" y="907">
    <polyline points="0,0 9,-9 18,-6 24,0 18,9 9,12 9,27"/>
   </object>
-  <object type="QuestionMark" x="6123" y="385">
+  <object type="ItemPickup" x="6123" y="385">
    <polyline points="0,0 9,-9 18,-6 24,0 18,9 9,12 9,27"/>
   </object>
  </objectgroup>

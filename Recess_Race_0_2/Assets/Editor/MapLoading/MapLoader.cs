@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -29,7 +29,7 @@ public class MapLoader {
 	private List<TileData> tilesData;
 
 	private Map map;
-    private RecessCamera recessCamera;
+    private CameraFollow recessCamera;
 	private GameObject worldRootGameObject;
 	private GameObject aiGroupGameObject;
 
@@ -87,7 +87,7 @@ public class MapLoader {
 
         loadGarbage();
         loadTennisBalls();
-        loadQuestionMark();
+        loadItemPickup();
         loadSpeedBoosts();
 		loadFillerTiles();
         print("Loaded Objects");
@@ -231,26 +231,26 @@ public class MapLoader {
         }
 	}
 	
-	private void loadQuestionMark() {
-        GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
-        IEnumerable<XElement> questionMarks = getAllObjectFromObjectGroup("QuestionMarks");
-		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject.transform);
-		foreach (var element in questionMarks) {
+	private void loadItemPickup() {
+        GameObject itemPickupPrefab = Resources.Load<GameObject>("Objects/ItemPickup");
+        IEnumerable<XElement> itemPickups = getAllObjectFromObjectGroup("ItemPickups");
+		GameObject itemPickupParent = GameObjectFactory.createGameObject("Item Pickup Group", worldRootGameObject.transform);
+		foreach (var element in itemPickups) {
             float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-			GameObject questionMark = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "QuestionMark", questionMarkParent);
-			questionMark.transform.Translate(x, y, 0);
+			GameObject itemPickup = GameObjectFactory.createCopyGameObject(itemPickupPrefab, "ItemPickup", itemPickupParent);
+			itemPickup.transform.Translate(x, y, 0);
 		}
 	}
 	
 	private void loadSpeedBoosts() {
-        GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/SpeedBoost");
+        GameObject speedBoostPrefab = Resources.Load<GameObject>("Objects/SpeedBoost");
         IEnumerable<XElement> speedBoosts = getAllObjectFromObjectGroup("SpeedBoosts");
 		GameObject speedBoostParent = GameObjectFactory.createGameObject("Speed Boost Group", worldRootGameObject.transform);
 		foreach (var element in speedBoosts) {
             float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-			GameObject speedBoost = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "SpeedBoost", speedBoostParent);
+			GameObject speedBoost = GameObjectFactory.createCopyGameObject(speedBoostPrefab, "SpeedBoost", speedBoostParent);
 			speedBoost.transform.Translate(x, y, 0);
 		}
 	}	
@@ -287,7 +287,7 @@ public class MapLoader {
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
 		if (loadGameElement) {
-			this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<RecessCamera>();		
+			this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<CameraFollow>();		
 		}
 
 		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);

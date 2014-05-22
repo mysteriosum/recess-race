@@ -17,7 +17,8 @@ public class PopupText {
 		this.xCurve = new AnimationCurve ();
 		this.yCurve = new AnimationCurve ();
 		this.life = 0;
-		sizeCurveLenght = popupConfiguration.sizeCurve [popupConfiguration.sizeCurve.length - 1].time;
+		//sizeCurveLenght = popupConfiguration.sizeCurve [popupConfiguration.sizeCurve.length - 1].time;
+		sizeCurveLenght = 1;
 	}
 	
 	public float getFontSize(){

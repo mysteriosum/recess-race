@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Popup {
@@ -33,12 +33,12 @@ public class Popup {
 		this.maxSize = maxSize;
 		this.timeShown = timeShown;
 		
-		go = GameObject.Instantiate (RecessCamera.cam.hud.normalTextMesh) as GameObject;
+		go = GameObject.Instantiate (GameManager.gm.hud.normalTextMesh) as GameObject;
 		t = go.transform;
 		tm = go.GetComponent<TextMesh>();
 		
 		
-		t.parent = RecessCamera.cam.transform;
+		t.parent = GameManager.gm.transform;
 		t.localPosition = position;
 		t.Rotate (Vector3.forward * rotation);
 		

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Border : MonoBehaviour {
@@ -8,8 +8,8 @@ public class Border : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (RecessCamera.cam != null) {
-				RecessCamera.cam.Border = border;		
+		if (GameManager.gm != null) {
+				CameraFollow.cam.Border = border;		
 		}
 	}
 	
