@@ -14,6 +14,7 @@ public class Bully : MonoBehaviour {
 	private bool threatening = true;
 	private DamageScript damager;
 	
+	private Vector3 fireAttackOffset = new Vector3(0.25f, 1.15f, -1f);
 	
 	Collider2D monitorCol = null;
 	void Start(){
@@ -59,6 +60,13 @@ public class Bully : MonoBehaviour {
 			damager.enabled = true;
 			Debug.Log ("Threatening is true");
 		}
+	}
+	
+	public void FlameEffect () {
+		Object flamer = Resources.Load("FireAttack");
+		GameObject flobject = Instantiate(flamer) as GameObject;
+		flobject.transform.parent = transform;
+		flobject.transform.localPosition = fireAttackOffset;
 	}
 	/*
 	void OnGUI(){

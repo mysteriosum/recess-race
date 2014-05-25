@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="1060" height="60" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="background-yOffset" value="19"/>
+ </properties>
  <tileset firstgid="1" name="BrickOutside" tilewidth="32" tileheight="32">
   <image source="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/TileSet-BrickOutside.jpg" width="160" height="160"/>
   <tile id="3">
@@ -507,8 +510,8 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#a40080" name="QuestionMarks" width="1060" height="60">
-  <object type="QuestionMark" x="16884" y="712">
+ <objectgroup color="#a40080" name="ItemPickups" width="1060" height="60">
+  <object type="ItemPickup" x="16884" y="712">
    <polyline points="0,0 9,-9 18,-6 24,0 18,9 9,12 9,27"/>
   </object>
  </objectgroup>

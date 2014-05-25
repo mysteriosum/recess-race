@@ -9,6 +9,7 @@ public class Map : MonoBehaviour {
 
 	public Dimension mapDimension;
     public Dimension tileDimension;
+	public float backgroundYOffset;
     public BoolArray[] pathingMap;
 
 	public bool[,] splitTo(SplitDirection direction, Vector3 startingPosition, Dimension dimension) {

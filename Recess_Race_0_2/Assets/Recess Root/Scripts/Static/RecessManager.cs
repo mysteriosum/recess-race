@@ -1,23 +1,56 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
-public class RecessManager {
+public enum GameModes{
+	grandPrix, timeTrial, levelSelect,
+}
+
+
+public enum ItemsEnum {
+	boogerBoy,
+	otto,
+	pinky,
+	banana,
+}
+
+public static class RecessManager {
 	
 
 	private static int score;
 	private static float currentTime;
 	private static int garbage = 0;
 	
-	public static GameModes currentGameMode;
+	public static ItemInfo[] itemInfo; 
 	
-	private static int currentLevel;
+	public static void InitiateItemInfo () {
+		itemInfo = new ItemInfo[4] {
+			new ItemInfo("Booger", 0, Fitz.fitz.ChangeToBoogerBoy),
+			new ItemInfo("Bowtie", 1, Fitz.fitz.ChangeToOtto),
+			new ItemInfo("Lolly", 2, Fitz.fitz.ChangeToPinky),
+			new ItemInfo("Banana", 3, Fitz.fitz.ChangeToBoogerBoy)
+		};
+	}
+	private const int defaultItems = 1 << (int)ItemsEnum.boogerBoy | 1 << (int)ItemsEnum.otto | 1 << (int)ItemsEnum.pinky;
+	
+	public static GameModes currentGameMode = GameModes.grandPrix;
+	
+	//private static int currentLevel;
+	
 	
 	public static int Score {
 		get{ return score; }
 		set{ score = value; }
 	}
 	public static int GarbageCount {
-		get { return garbage; }
+		get {
+			int total = 0;
+			foreach (LevelStats ls in levelStats){
+				total += ls.mostGarbages;
+			}
+			return total;
+		}
 	}
 	public static float CurrentTime{
 		get{ return currentTime; }
@@ -29,31 +62,38 @@ public class RecessManager {
 		}
 	}
 	public static readonly int garbageValue = 10;
-	
+//	
+//	public static LevelStats[] levelStats = new LevelStats[4]{
+//		//level 1
+//		new LevelStats(1, 3000, "Banana", 200f, 230f, 260f),
+//		new LevelStats(2, 3000, "Hookshot", 200f, 230f, 260f),
+//		new LevelStats(3, 3000, "ComboCandy", 200f, 230f, 260f),
+//		new LevelStats(4, 3000, "Ahrah", 200f, 230f, 260f),
+//		
+//	};
 	public static LevelStats[] levelStats = new LevelStats[4]{
-		//level 1
-		new LevelStats(1, 3000, "Banana", 200f, 230f, 260f),
-		new LevelStats(2, 3000, "Hookshot", 200f, 230f, 260f),
-		new LevelStats(3, 3000, "ComboCandy", 200f, 230f, 260f),
-		new LevelStats(4, 3000, "Ahrah", 200f, 230f, 260f),
-		
+		new LevelStats(1), new LevelStats(2), new LevelStats(3), new LevelStats(4)
 	};
 	
-	private static RecessManager instance;
-	public static RecessManager Instance{
-		get{
-			if (instance == null){
-				instance = new RecessManager();
-			}
-			return instance;
-		}
+	public static int LevelSelectIndex{
+		get{ return Application.levelCount - 1; }
 	}
 	
-	static RecessManager(){
-		
-		
-		
+	public static Vector2 levelSelectPosition;
+	
+	public static LevelStats currentLevelStats = null;
+	
+	
+	public static LevelStats GetLevelStats (int index){
+		foreach (LevelStats ls in levelStats){
+			if (ls.levelIndex == index){
+				return ls;
+			}
+		}
+		return null;
 	}
+	
+	
 	
 	public static void AddGarbageToScore(){
 		score+= garbageValue;
@@ -64,39 +104,7 @@ public class RecessManager {
 		score += value;
 	}
 	
-	public static void SaveStatistics(int level, bool eraseCurrent){
-		if (currentGameMode == GameModes.timeTrial){
-			if (score > levelStats[level - 1].highScoreTT){
-				PlayerPrefs.SetInt("highScoreTT" + level.ToString(), score);
-				levelStats[level - 1].highScoreTT = score;
-			}
-//			else{
-//				Debug.Log("Score too low");
-//			}
-			if (currentTime < levelStats[level - 1].bestTime || levelStats[level - 1].bestTime == 0){
-				PlayerPrefs.SetFloat("bestTime" + level.ToString(), currentTime);
-				levelStats[level - 1].bestTime = currentTime;
-			}
-//			else{
-//				Debug.Log("time too low");
-//			}
-			if (eraseCurrent){
-				score = 0;
-				currentTime = 0;
-			}
-		} else {
-			if (score > levelStats[level - 1].highScoreGP || levelStats[level - 1].highScoreGP == 0){
-				PlayerPrefs.SetInt("highScoreGP" + level.ToString(), score);
-				levelStats[level - 1].highScoreGP = score;
-			}
-			
-			if (RecessCamera.cam.Rank < levelStats[level-1].bestRank || levelStats[level-1].bestRank == 0){
-				PlayerPrefs.SetInt ("bestRank" + level.ToString(), RecessCamera.cam.Rank);
-				levelStats[level - 1].bestRank = RecessCamera.cam.Rank;
-			}
-		}
-		
-	}
+	
 	
 	public static void ClearCurrentScores(){
 		score = 0;
@@ -106,12 +114,48 @@ public class RecessManager {
 	
 	public static void LoadLevel(int index, GameModes gameMode){
 		currentGameMode = gameMode;
+		currentLevelStats = levelStats[index-1];
+		Debug.Log ("My level is: " + currentLevelStats.ToString());
+//		currentLevel = index;
+		
+		if (Application.loadedLevel == LevelSelectIndex){
+			levelSelectPosition = Fitz.fitz.transform.position;
+		}
 		Application.LoadLevel(index);
 	}
 	
+	public static void NextLevel () {
+		LoadLevel(currentLevelStats.levelIndex + 1, GameModes.grandPrix);
+	}
 	
-}
-
-public enum GameModes{
-	grandPrix, timeTrial
+	public static void ReloadThisLevel () {
+		LoadLevel (currentLevelStats.levelIndex, GameModes.grandPrix);
+	}
+	
+	public static void LoadLevelSelect () {
+		currentLevelStats = null;
+		currentGameMode = GameModes.levelSelect;
+		Application.LoadLevel(LevelSelectIndex);
+	}
+	
+	public static ItemInfo[] ItemsUnlocked (){
+		if (itemInfo == null){
+			InitiateItemInfo();
+		}
+		int items = PlayerPrefs.GetInt("ItemsInRoulette", defaultItems);
+		Debug.Log("Default items: " + items);
+		
+		List<ItemInfo> itemList = new List<ItemInfo>();
+		int max = System.Enum.GetValues(typeof (ItemsEnum)).Length - 1;
+		
+		for (int i = 0; i < max; i ++){
+			int shifted = 1 << i;
+			if ((items & shifted) == shifted){
+				itemList.Add(itemInfo[i]);
+				Debug.Log("Adding an item: " + itemInfo[i].name);
+			}
+		}
+		
+		return itemList.ToArray();
+	}
 }

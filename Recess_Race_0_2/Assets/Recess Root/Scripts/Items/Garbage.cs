@@ -2,14 +2,17 @@
 using System.Collections;
 
 public class Garbage : MonoBehaviour {
+
 	public Sprite[] garbages;
-	// Use this for initialization
+	public PopupConfiguration popupConfig;
+	public Vector2 topLeftOffset;
+
 	void Start () {
 		SpriteRenderer spr = GetComponent<SpriteRenderer>();
 		spr.sprite = garbages[Random.Range (0, garbages.Length)];
 	}
-	
-	// Update is called once per frame
+
+
 	void Update () {
 	
 	}
@@ -25,12 +28,16 @@ public class Garbage : MonoBehaviour {
 		
 		Fitz fitz = other.GetComponent<Fitz>();
 		if (fitz != null){
-			RecessCamera.cam.AddGarbage();
+			Vector2 garbagePositionInScreen = ScreenUtils.getPositionInScreen (this.transform.position);
+			PopupText popup = PopupFactory.makeLinearPopup (popupConfig, "+ ?", garbagePositionInScreen, ScreenUtils.getPositionFromTopRight(topLeftOffset), 0.3f, 0.95f);
+			GameManager.gm.AddGarbage(popup);
+			fitz.GarbagePickup();
+			ScreenEffectSystem.AddScreenEffect(popup);
 		}
-		other.SendMessage("GarbagePickup");
-		//gameObject.SetActive(false);
+
 		Destroy(gameObject);
 	}
+
 	
 	void OnTriggerExit2D (Collider2D other){
 		GarbagePhysics garbageScript = GetComponent<GarbagePhysics>();

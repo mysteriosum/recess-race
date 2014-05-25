@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -16,7 +16,6 @@ public class MapLoader {
 	public static bool verbose;
     public static bool inDebugMode = false;
 	public static bool loadGameElement = true;
-	public static int backgroundYOffset = 0;
 
     private static MapLoader instance = new MapLoader();
     private MapLoader(){
@@ -30,7 +29,7 @@ public class MapLoader {
 	private List<TileData> tilesData;
 
 	private Map map;
-    private RecessCamera recessCamera;
+    private CameraFollow recessCamera;
 	private GameObject worldRootGameObject;
 	private GameObject aiGroupGameObject;
 
@@ -45,6 +44,7 @@ public class MapLoader {
         loadAssets();
 		emptyScene ();
         createEmptyWorld();
+		addSystems ();
 
         document = XDocument.Parse(mapText);
         XElement mapElement = document.Elements().First();
@@ -87,14 +87,14 @@ public class MapLoader {
 
         loadGarbage();
         loadTennisBalls();
-        loadQuestionMark();
+        loadItemPickup();
         loadSpeedBoosts();
 		loadFillerTiles();
         print("Loaded Objects");
 
         if (makeBackground) {
             BackgroundLoader bgl = new BackgroundLoader();
-            bgl.loadBackground(worldRootGameObject,map,recessCamera, backgroundYOffset);
+            bgl.loadBackground(worldRootGameObject,map,recessCamera, map.backgroundYOffset);
             print("Loaded Background");
         }
 
@@ -107,7 +107,11 @@ public class MapLoader {
 	private void emptyScene(){
 		GameObject world = GameObject.Find ("World");
 		if (world != null) {
-			GameObject.DestroyImmediate(world);		
+			GameObject.DestroyImmediate(world);	
+		}
+		GameObject system = GameObject.Find ("Systems");
+		if (system != null) {
+			GameObject.DestroyImmediate(system);
 		}
 	}
 
@@ -148,11 +152,11 @@ public class MapLoader {
 		IEnumerable<XElement> positions = getAllObjectFromObjectGroup("Positions");
 		loadObject (positions, "End", "FinishLine","Finish Line", 2.8f, parent);
 		if (loadGameElement) {
-			loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.4f, parent);
-			loadObject (positions, "Billy", "Billy","Billy", -0.4f, parent);
-			loadObject (positions, "StartObjects", "StartObjects","StartObjects", -0.4f, parent);
-			loadObject (positions, "Liddy", "Liddy","Liddy", -0.4f, parent);
-			loadObject (positions, "George", "George","George", -0.4f, parent);
+			loadObject (positions, "Player", "Fitzwilliam","Fitzwilliam", -0.5f, parent);
+			loadObject (positions, "Billy", "Billy","Billy", -0.5f, parent);
+			loadObject (positions, "StartObjects", "StartObjects","StartObjects", -0.5f, parent);
+			loadObject (positions, "Liddy", "Liddy","Liddy", -0.5f, parent);
+			loadObject (positions, "George", "George","George", -0.5f, parent);
 			
 			//Stuff to do with loading monitors; they're not in though at the moment so we'll keep this out
 //			loadObject (positions, "Dialogue_1", "Dialogue_1","Dialogue_1", -0.4f, parent);
@@ -182,6 +186,7 @@ public class MapLoader {
 
 		float x = (float) parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
 		float y = (float) map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
+		y = Mathf.Floor (y);
 		obj.transform.Translate(x,y + yOffset,0);
 	}
 
@@ -230,26 +235,26 @@ public class MapLoader {
         }
 	}
 	
-	private void loadQuestionMark() {
-        GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/QuestionMark");
-        IEnumerable<XElement> questionMarks = getAllObjectFromObjectGroup("QuestionMarks");
-		GameObject questionMarkParent = GameObjectFactory.createGameObject("Question Mark Group", worldRootGameObject.transform);
-		foreach (var element in questionMarks) {
+	private void loadItemPickup() {
+        GameObject itemPickupPrefab = Resources.Load<GameObject>("Objects/ItemPickup");
+        IEnumerable<XElement> itemPickups = getAllObjectFromObjectGroup("ItemPickups");
+		GameObject itemPickupParent = GameObjectFactory.createGameObject("Item Pickup Group", worldRootGameObject.transform);
+		foreach (var element in itemPickups) {
             float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-			GameObject questionMark = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "QuestionMark", questionMarkParent);
-			questionMark.transform.Translate(x, y, 0);
+			GameObject itemPickup = GameObjectFactory.createCopyGameObject(itemPickupPrefab, "ItemPickup", itemPickupParent);
+			itemPickup.transform.Translate(x, y, 0);
 		}
 	}
 	
 	private void loadSpeedBoosts() {
-        GameObject questionMarkPrefab = Resources.Load<GameObject>("Objects/SpeedBoost");
+        GameObject speedBoostPrefab = Resources.Load<GameObject>("Objects/SpeedBoost");
         IEnumerable<XElement> speedBoosts = getAllObjectFromObjectGroup("SpeedBoosts");
 		GameObject speedBoostParent = GameObjectFactory.createGameObject("Speed Boost Group", worldRootGameObject.transform);
 		foreach (var element in speedBoosts) {
             float x = (float)parse(element.Attribute("x").Value) / (float)map.tileDimension.width;
             float y = (float)map.mapDimension.height - parse(element.Attribute("y").Value) / (float)map.tileDimension.height;
-			GameObject speedBoost = GameObjectFactory.createCopyGameObject(questionMarkPrefab, "SpeedBoost", speedBoostParent);
+			GameObject speedBoost = GameObjectFactory.createCopyGameObject(speedBoostPrefab, "SpeedBoost", speedBoostParent);
 			speedBoost.transform.Translate(x, y, 0);
 		}
 	}	
@@ -286,10 +291,15 @@ public class MapLoader {
 		worldRootGameObject.AddComponent<Map> ();
 		this.map = worldRootGameObject.GetComponent<Map> ();
 		if (loadGameElement) {
-			this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<RecessCamera>();		
+			this.recessCamera = GameObjectFactory.createCopyGameObject(Resources.Load<GameObject>("RecessCamera"), "RecessCamera", worldRootGameObject).GetComponent<CameraFollow>();		
 		}
 
 		aiGroupGameObject = GameObjectFactory.createGameObject ("Ai Group", worldRootGameObject.transform);
+	}
+
+	private void addSystems(){
+		GameObject systems = GameObjectFactory.createGameObject ("Systems", null);
+		systems.AddComponent<ScreenEffectSystem> ();
 	}
 
 	private void loadTileset(IEnumerable<XElement> tileSetElements){
@@ -313,7 +323,7 @@ public class MapLoader {
             foreach (var tileData in tileList) {
                 int id = parse(tileData.Attribute("id").Value);
                 try {
-                    XElement noCollision = element.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
+					XElement noCollision = tileData.Descendants().First(e => e.Name == "property" && e.Attribute("name").Value == "noCollision");
                     if (noCollision != null) {
                         this.tilesData[firstGridId + id - 1].hasCollision = false;
                        // Debug.LogError("Tile " + id + " in " + name + " have noCollision");
@@ -336,6 +346,9 @@ public class MapLoader {
 		this.map.mapDimension = new Dimension (width,height);
 		this.map.tileDimension = new Dimension (tileWidth,tileHeight);
         this.map.pathingMap = BoolArray.generateBoolArrayArray(width,height);
+		var properties = mapElement.Descendants ().First (e => e.Name == "properties");
+		UnityEngine.Debug.Log (properties.Descendants().Count());
+		map.backgroundYOffset = parse( properties.Descendants ().First (e => e.Name == "property" && e.Attribute ("name").Value == "background-yOffset").Attribute("value").Value );
 	}
 
 

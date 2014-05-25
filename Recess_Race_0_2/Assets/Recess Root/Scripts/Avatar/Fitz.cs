@@ -85,13 +85,17 @@ public class Fitz : Movable {
 			return base.Gravity;
 		}
 	}
-	
+	private bool hasFloated = false;
 	protected override float MaxFallSpeed {
 		get {
 			if (pinky){
 				return base.MaxFallSpeed * (spinFalling? spinFallMod : 1);
 			}
 			if (otto){
+				if (!hasFloated && !grounded && controller.getJump){
+					GameManager.gm.pointsManager.hasFloated.Accomplished();
+					hasFloated = true;
+				}
 				return base.MaxFallSpeed * (controller.getJump? tailFallMod : 1);
 			}
 			if (boogerBoy){
@@ -241,6 +245,12 @@ public class Fitz : Movable {
 		get{ return invulnTimer > 0; }
 	}
 	
+	public bool PushedUpThisFrame {
+		get{
+			return controller.getUDown;
+		}
+	}
+	
 	//--------------------------------------------------------------------------\\
 	//-----------------------------Stunning/Damage------------------------------\\
 	//--------------------------------------------------------------------------\\
@@ -271,6 +281,7 @@ public class Fitz : Movable {
 	
 	protected void Awake(){
 		fitz = this;
+		
 	}
 	
 	protected override void Start () {
@@ -305,6 +316,11 @@ public class Fitz : Movable {
 		
 		if (windArea == null){
 			Debug.LogWarning("There's no wind area object on the Avatar so Dust won't work");
+		}
+		
+		
+		if (Application.loadedLevel == RecessManager.LevelSelectIndex && RecessManager.levelSelectPosition != Vector2.zero){
+			t.position = RecessManager.levelSelectPosition;
 		}
 	}
 	
@@ -348,6 +364,9 @@ public class Fitz : Movable {
 		if ((grounded || isRolling) && controller.getJumpDown && CanControl){
 			velocity = Jump(velocity, JumpImpulse);
 			grounded = false;
+			if (isRolling && !grounded){
+				GameManager.gm.pointsManager.hasTumbleJumped.Accomplished();
+			}
 
 			//jumpTimer = 0; //Never USed
 			if (leaveBalls){
@@ -402,6 +421,7 @@ public class Fitz : Movable {
 				itemTimer -= propellerTimePenalty;
 				anim.Play(JumpAnimation, 0, 0);
 				falling = false;
+				GameManager.gm.pointsManager.hasFlapped.Accomplished();
 			}
 			if (propelTimer > 0){
 				propelTimer -= Time.deltaTime;
@@ -427,6 +447,7 @@ public class Fitz : Movable {
 				source.clip = sounds.wallJump;
 				source.Play ();
 				anim.Play (a.jump);
+				GameManager.gm.pointsManager.hasWallJumped.Accomplished();
 			}
 			
 			if (wallJumpLockTimer > 0){
@@ -508,7 +529,7 @@ public class Fitz : Movable {
 		
 	}
 	
-	void ChangeToPinky(){
+	public void ChangeToPinky(){
 		CancelInvoke("ChangeToFitz");
 		pinky = true;
 		otto = false;
@@ -524,7 +545,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", pinkyTiming);
 	}
 	
-	void ChangeToBoogerBoy(){
+	public void ChangeToBoogerBoy(){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
@@ -541,7 +562,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", boogerBoyTiming);
 	}
 	
-	void ChangeToOtto(){
+	public void ChangeToOtto(){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = true;
@@ -558,7 +579,7 @@ public class Fitz : Movable {
 		Invoke("ChangeToFitz", ottoTiming);
 	}
 	
-	void ChangeToFitz (){
+	public void ChangeToFitz (){
 		pinky = false;
 		otto = false;
 		boogerBoy = false;
@@ -575,10 +596,10 @@ public class Fitz : Movable {
 		//r.color = Color.white;
 		
 		//TEMP Play audio on camera
-		RecessCamera.cam.PlaySound(RecessCamera.cam.sounds.losePower);
+		GameManager.gm.PlaySound(GameManager.gm.sounds.losePower);
 	}
 	
-	void ChangeToDust (){
+	public void ChangeToDust (){
 		CancelInvoke("ChangeToFitz");
 		pinky = false;
 		otto = false;
@@ -641,14 +662,14 @@ public class Fitz : Movable {
 		return result;
 	}
 	
+	public void PlaySound(AudioClip clip){
+		PlaySound(clip, 1f);
+	}
+	
 	public void PlaySound(AudioClip clip, float volume){
 		source.volume = volume;
 		source.clip = clip;
 		source.Play ();
-	}
-	
-	public void PlaySound(AudioClip clip){
-		PlaySound(clip, 1f);
 	}
 	
 	private void OnLand(){
@@ -709,6 +730,11 @@ public class Fitz : Movable {
 				velocity = new Vector2(recoilVelocity.x * (dmgScript.transform.position.x > t.position.x? -1 : 1), recoilVelocity.y);
 				source.clip = sounds.stun;
 				source.Play ();
+				
+				//if it's a racing bully it's probably George, so play his fire animation
+				if (other.GetComponent<Agent>() && other.GetComponent<Bully>()){
+					other.SendMessage("FlameEffect");
+				}
 			}
 		}
 		
@@ -744,7 +770,6 @@ public class Fitz : Movable {
 	void PlayRunSound(){
 		source.clip = sounds.run;
 		source.Play ();
-		Debug.Log("Playrunsound");
 	}
 	
 	void PlayRollSounds(){

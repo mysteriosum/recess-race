@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,10 +24,10 @@ public  class BackgroundLoader {
 	private float houseYOffset = 0;
 	private float treesYOffset = 0;
 
-    private RecessCamera camera;
+    private CameraFollow camera;
     private Map map;
 
-    public void loadBackground(GameObject gameObjectMapParent, Map map, RecessCamera camera, int yOffset) {
+    public void loadBackground(GameObject gameObjectMapParent, Map map, CameraFollow camera, float yOffset) {
         this.camera = camera;
         this.map = map;
         parent = GameObjectFactory.createGameObject("Backgrounds", gameObjectMapParent.transform).transform;

@@ -1,82 +1,81 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class Button : MonoBehaviour {
+[System.Serializable]
+public class Button {
 	
-	public string Text{
-		get{
-			return tm.text;
-		}
-		set{
-			if (tm == null){
-				tm = gameObject.GetComponent<TextMesh>();
-			}
-			
-			tm.text = value;
-			
-			Destroy(bc);
-			bc = gameObject.AddComponent<BoxCollider>();
-		}
-	}
-	
-	public Vector2 camOffset = new Vector2(0, 0);
-	private Vector2 fuckOffPos = new Vector2(-10000, -10000);
+	private Rect rect;
 	
 	public delegate void ButtonDelegate();
 	public ButtonDelegate buttonFunction;
 	
-	private SpriteRenderer sr;
-	private Transform t;
-	private TextMesh tm;
-	private BoxCollider bc;
-	private float hoverScale = 1.1f;
-	private float clickScale = 0.9f;
-	private Sounds sounds;
+	public ImageElement imageElement;
+	public TextElement textElement;
+	private UIElement butt;
 	
-	public bool Active {
-		get {
-			return t.position.x > 0;
-		}
-		set {
-			if (t == null)
-				t = transform;
-			if (value){
-				t.localPosition = new Vector3(camOffset.x, camOffset.y, 5);
-			}
-			else{
-				t.localPosition = new Vector3(fuckOffPos.x, fuckOffPos.y, -5);
-			}
-		}
-	}
+	private float hoverScale = 1.1f;
+	private float clickScale = 0.95f;
+	private Sounds sounds;
+	private bool mouseWasOn;
+	private bool mouseIsOn;
 	
 	// Use this for initialization
-	void Start () {
-		t = transform;
+	public void Init () {
 		sounds = new Sounds();
+		if (textElement.text == ""){
+			butt = imageElement;
+			rect = imageElement.PositionRect;
+		} else{
+			butt = textElement;
+			rect = textElement.PositionRect;
+		}
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		//HACK to make sure I have the right positions on stuff. This should be removed by the end.
-		if (Active){
-			Active = true;
+	public void Show () {
+		
+		mouseIsOn = rect.Contains(UIElement.MousePosition);
+		
+		if (mouseIsOn && !mouseWasOn){
+			OnMouseEnter();
+		} else if (mouseWasOn && !mouseIsOn){
+			OnMouseExit();
 		}
+		if (mouseIsOn && Input.GetMouseButton(0)){
+			OnMouseDrag();
+		}
+		if (mouseIsOn && Input.GetMouseButtonUp(0)){
+			OnMouseUp();
+		}
+		
+		if (imageElement.texture != null){
+			imageElement.Show();
+		}
+		if (textElement.text != ""){
+			textElement.Show();
+		}
+		
+		mouseWasOn = mouseIsOn;
 	}
 	
 	void OnMouseEnter () {
-		t.localScale = Vector3.one * hoverScale;
-		RecessCamera.cam.PlaySound(sounds.menuSelect, 0.1f);
+		Debug.Log("On mouse enter: " + textElement.text);
+		butt.scale = hoverScale;
+		GameManager.gm.PlaySound(sounds.menuSelect, 0.1f);
 	}
 	void OnMouseExit () {
-		t.localScale = Vector3.one;
+		Debug.Log("On mouse exit: " + textElement.text);
+		butt.scale = 1f;
 	}
 	
 	void OnMouseDrag () {
-		t.localScale = Vector3.one * clickScale;
+		Debug.Log("On mouse drag: " + textElement.text);
+		butt.scale = clickScale;
 	}
 	
 	void OnMouseUp () {
-		t.localScale = Vector3.one;
+		Debug.Log("On mouse up: " + textElement.text);
+		butt.scale = 1f;
 		buttonFunction();
 	}
 	
