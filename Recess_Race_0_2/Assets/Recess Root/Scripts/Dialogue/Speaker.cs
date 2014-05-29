@@ -20,25 +20,25 @@ public class Speaker : MonoBehaviour {
 	public delegate void SpeechDoneDelegate();
 	public SpeechDoneDelegate finishEvent = null;
 	
-	bool isActive = false;
-	bool growing;
-	float maxScaleY;
-	float maxScaleX;
+	private bool isActive = false;
+	private bool growing;
+	private float growTimer = 0;
+	private float growTime = 0.65f;
+	private float maxScaleY;
+	private float maxScaleX;
 	
-	float showTimer = 0;
-	float showTiming;
-	float showTimerDefault = 4f;
+	private float showTimer = 0;
+	private float showTiming;
+	private float showTimerDefault = 4f;
 	
-	float scaleX;
-	float scaleY;
+	private float scaleX;
+	private float scaleY;
 	
 	public int lineLengths = 40;
-	float growthRateMod = 20f;
 	
 	
-	
-	string dialogue;
-	string testDialogue = "This is a wonderful string, really. It's long enough to test my purpose, and also I'm into things like this. So there!";
+	private string dialogue;
+	private string testDialogue = "This is a wonderful string, really. It's long enough to test my purpose, and also I'm into things like this. So there!";
 	
 	// Use this for initialization
 	void Awake () {
@@ -67,12 +67,13 @@ public class Speaker : MonoBehaviour {
 		
 		
 		if (growing){
-			scaleX += Time.deltaTime * growthRateMod;
-			scaleY += Time.deltaTime * growthRateMod;
-			scaleX = Mathf.Min (scaleX, maxScaleX);
-			scaleY = Mathf.Min (scaleY, maxScaleY);
+			growTimer += Time.deltaTime;
+			float lerpAmount = growTimer / growTime;
+			scaleX = Mathf.Lerp(1, maxScaleX, lerpAmount);
+			scaleY = Mathf.Lerp(1, maxScaleY, lerpAmount);
 			square.transform.localScale = new Vector3(scaleX, scaleY, 1);
-			if (scaleX == maxScaleX && scaleY == maxScaleY){
+			
+			if (growTimer >= growTime){
 				growing = false;
 			}
 		}
@@ -83,12 +84,13 @@ public class Speaker : MonoBehaviour {
 			tm.transform.position = new Vector3(square.bounds.min.x + textOffset.x, square.bounds.max.y + textOffset.y, tm.transform.position.z);
 			
 			if (showTimer > showTiming){
-				scaleX -= Time.deltaTime * growthRateMod;
-				scaleY -= Time.deltaTime * growthRateMod;
-				scaleX = Mathf.Max (scaleX, 0);
-				scaleY = Mathf.Max (scaleY, 0);
-				square.transform.localScale = new Vector3(scaleX, scaleY, 1);
 				tm.renderer.enabled = false;
+				
+				growTimer -= Time.deltaTime;
+				float lerpAmount = growTimer / growTime;
+				scaleX = Mathf.Lerp(0, maxScaleX, lerpAmount);
+				scaleY = Mathf.Lerp(0, maxScaleY, lerpAmount);
+				square.transform.localScale = new Vector3(scaleX, scaleY, 1);
 				if (scaleX <= 0 || scaleY <= 0){
 					isActive = false;
 					triangle.renderer.enabled = false;
@@ -109,6 +111,7 @@ public class Speaker : MonoBehaviour {
 		dialogue = Textf.GangsterWrap(speech, new int[]{ lineLengths }, out lineAmount, out longestLine);
 		
 		growing = true;	
+		growTimer = 0;
 		scaleX = 1;
 		scaleY = 1;
 		maxScaleY = (float) lineAmount * heightPerLine + extraHeight;
