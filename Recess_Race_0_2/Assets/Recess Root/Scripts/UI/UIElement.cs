@@ -7,6 +7,7 @@ public enum StyleEnum {
 	main,
 	pause,
 	levelSelect,
+	endcard,
 }
 [System.Serializable]
 public abstract class UIElement {

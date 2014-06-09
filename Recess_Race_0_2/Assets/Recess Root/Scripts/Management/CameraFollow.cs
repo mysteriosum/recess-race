@@ -32,12 +32,12 @@ public class CameraFollow : MonoBehaviour {
 	// Use this for initialization
 	
 	void Awake () {
+		trans = transform;
 		if (cam == null){
 			cam = this;
 		} else {
 			Destroy(this);
 		}
-		trans = transform;
 	}
 	
 	void Start () {

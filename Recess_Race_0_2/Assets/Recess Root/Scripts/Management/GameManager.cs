@@ -60,6 +60,18 @@ public class GameManager : MonoBehaviour {
 	int comboCounter = 0;
 	float comboRotation = 15f;
 	
+	public int ComboIndex {
+		get{
+			return comboCounter;
+		}
+	}
+	
+	public int MaxCombo {
+		get{
+			return comboSizes.Length;
+		}
+	}
+	
 	float timeLimit = 300f;
 	float currentTime;
 	int pointsPerSecondLeft = 5;
@@ -176,6 +188,14 @@ public class GameManager : MonoBehaviour {
 	public Button continueButton;
 	public Button restartButton;
 	public Button quitButton;
+	
+	[System.SerializableAttribute]
+	public class EndcardButtons {
+		public Button nextButton;
+		public Button restartButton;
+		public Button levelButton;
+	}
+	public EndcardButtons endcardButtons;
 	
 //	private Controller controller = new Controller();
 	
@@ -449,9 +469,9 @@ public class GameManager : MonoBehaviour {
 			
 			
 			if (finishedTimer > runningTally && !leavingLevel){
-				continueButton.Show();
-				restartButton.Show();
-				quitButton.Show();
+				endcardButtons.levelButton.Show();
+				endcardButtons.nextButton.Show();
+				endcardButtons.restartButton.Show();
 			}
 		}
 	}
@@ -470,9 +490,9 @@ public class GameManager : MonoBehaviour {
 		CameraFollow.cam.EndRace();
 		
 		MedalElement.texture = MedalTexture;
-		continueButton.buttonFunction = GoToNextRace;
-		restartButton.buttonFunction = RetryRace;
-		quitButton.buttonFunction = BackToLevelSelect;
+		endcardButtons.nextButton.buttonFunction = GoToNextRace;
+		endcardButtons.restartButton.buttonFunction = RetryRace;
+		endcardButtons.levelButton.buttonFunction = BackToLevelSelect;
 
 		pointsManager.EndRace();
 		pointsManager.AddPoints(TimeRemainingPoints, StylePointTypes.time);

@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
+using DialoguerCore;
 using System.Collections;
-
+[RequireComponent(typeof(AudioSource))]
 public class Speaker : MonoBehaviour {
-	
+	public DialoguerDialogues dialoguerInfo;
 	public SpriteRenderer triangle;
 	public SpriteRenderer square;
 	public SpriteRenderer speaker;
 	public TextMesh tm;
+	
 	
 	private static int count = 0;
 	
@@ -36,15 +38,16 @@ public class Speaker : MonoBehaviour {
 	
 	public int lineLengths = 40;
 	
-	
+	private AudioSource audioSource;
 	private string dialogue;
 	private string testDialogue = "This is a wonderful string, really. It's long enough to test my purpose, and also I'm into things like this. So there!";
-	
 	// Use this for initialization
 	void Awake () {
 		triangle.renderer.enabled = false;
 		square.renderer.enabled = false;
 		tm.renderer.enabled = false;
+		Dialoguer.Initialize();
+		audioSource = gameObject.GetComponent<AudioSource>();
 		
 		triangle.transform.position -= Vector3.forward * count;
 		square.transform.position -= Vector3.forward * count;
@@ -102,6 +105,28 @@ public class Speaker : MonoBehaviour {
 				}
 			}
 		}
+	}
+	public void CollideWithFitz() {
+		if (dialogueGoing) return;
+		
+		Dialoguer.StartDialogue(dialoguerInfo);
+		Dialoguer.events.onTextPhase += TextPhaseHandler;
+		dialogueGoing = true;
+		Debug.Log("Collided with Fitz");
+	}
+	private bool dialogueGoing = false;
+	private DialoguerTextData currentData;
+	private const string voiceFileExtension = ".ogg";
+	private void TextPhaseHandler (DialoguerTextData data){
+		Debug.Log("Text phase!");
+		currentData = data;
+		string filepath = "Sounds/" + name + "/" + data.audio;
+		AudioClip clip = Resources.Load(filepath) as AudioClip;
+		Debug.Log("Loading " + filepath);
+		audioSource.clip = clip;
+		audioSource.Play();
+		float length = clip.length;
+		Speak(currentData.text, length, Dialoguer.ContinueDialogue);
 	}
 	
 	public void Speak (string speech, float duration, SpeechDoneDelegate delegation){

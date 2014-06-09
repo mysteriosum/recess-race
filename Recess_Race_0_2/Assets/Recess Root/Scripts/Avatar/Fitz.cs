@@ -50,7 +50,7 @@ public class Fitz : Movable {
 	
 	private bool isRolling							= false;
 	
-	private float speedBoostMod						= 1.7f;
+	private float SpeedBoostMod						= 1.7f;
 	private float tempMaxSpeed						= 0;
 	private bool speedBoosting						= false;
 	private float speedBoostTimer					= 0;
@@ -59,10 +59,21 @@ public class Fitz : Movable {
 	private int speedBoostDirection					= 0;
 	private float noBoostFor						= 0.3f;
 	
+	private float defaultSlowMod					= 0.85f;
+	
 	private float SpeedBoostFalloff {
 		get{
 			float result = maxSpeed / secondsToMax * Time.deltaTime;
 			return result;
+		}
+	}
+	private int garbageCount = 0;
+	private float garbageMax = 10f;
+	
+	private float GarbageSpeedMultiplier {
+		get{
+			float maxMod = 1.5f;
+			return Mathf.Lerp(1, maxMod, garbageCount / garbageMax);
 		}
 	}
 	
@@ -130,7 +141,7 @@ public class Fitz : Movable {
 			if (boogerBoy){
 				return baseResult * bBoySpeedMod;
 			}
-			return baseResult;
+			return baseResult/* * defaultSlowMod * GarbageSpeedMultiplier*/;
 		}
 	}
 	
@@ -521,6 +532,9 @@ public class Fitz : Movable {
 			}
 		}
 		
+		//check for garbage getting
+		
+		
 		
 	//--------------------------------------------------------------------------\\
 	//-----------------------other random miscellanous checks-------------------\\
@@ -738,6 +752,10 @@ public class Fitz : Movable {
 			}
 		}
 		
+		if (other.GetComponent<Garbage>() != null){
+			garbageCount = Mathf.Min(garbageCount + 1, (int)garbageMax);
+		}
+		
 		
 		//enter a speed boost object!
 		
@@ -785,7 +803,7 @@ public class Fitz : Movable {
 	}
 	
 	public void SpeedBoost(){
-		tempMaxSpeed = maxSpeed * speedBoostMod;
+		tempMaxSpeed = maxSpeed * SpeedBoostMod;
 		speedBoosting = true;
 		speedBoostTimer = 0;
 		speedBoostDirection = Mathf.RoundToInt(controller.hAxis);
