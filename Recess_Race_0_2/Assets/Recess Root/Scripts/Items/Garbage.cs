@@ -33,9 +33,9 @@ public class Garbage : MonoBehaviour {
 			GameManager.gm.AddGarbage(popup);
 			fitz.GarbagePickup();
 			ScreenEffectSystem.AddScreenEffect(popup);
+			Destroy(gameObject);
 		}
 
-		Destroy(gameObject);
 	}
 
 	

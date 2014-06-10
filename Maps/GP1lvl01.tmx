@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="402" height="60" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="background-yOffset" value="7"/>
+ </properties>
  <tileset firstgid="1" name="BrickOutside" tilewidth="32" tileheight="32">
   <image source="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/TileSet-BrickOutside.jpg" width="160" height="160"/>
   <tile id="3">
@@ -76,11 +79,11 @@
    </properties>
   </tile>
  </tileset>
- <tileset firstgid="51" name="TileSet-BrickOutside-02" tilewidth="32" tileheight="32">
-  <image source="../../../../Work/Recess Race/Level Textures/TileSet-BrickOutside-02.jpg" width="160" height="160"/>
+ <tileset firstgid="51" name="TileSet-BrickOutside" tilewidth="32" tileheight="32">
+  <image source="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/TileSet-BrickOutside.jpg" width="160" height="160"/>
  </tileset>
- <tileset firstgid="76" name="TileSet-Pavement-02" tilewidth="32" tileheight="32">
-  <image source="../../../../Work/Recess Race/Level Textures/TileSet-Pavement-02.jpg" width="160" height="160"/>
+ <tileset firstgid="76" name="TileSet-Pavement" tilewidth="32" tileheight="32">
+  <image source="../Recess_Race_0_2/Assets/Recess Root/Resources/tileSets/TileSet-Pavement.jpg" width="160" height="160"/>
  </tileset>
  <layer name="Level01" width="402" height="60">
   <data encoding="csv">
